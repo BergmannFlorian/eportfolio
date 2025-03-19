@@ -35,9 +35,6 @@
         camera.position.x = 5;
         camera.position.y = 10;
 
-        // const controls = new MapControls(camera, renderer.domElement);
-        // controls.enableDamping = true;
-
         // Floor
         const floorGeometry = new THREE.PlaneGeometry(50, 50); // Width and height of the plane
         const floorMaterial = new THREE.MeshPhongMaterial({
@@ -116,10 +113,6 @@
 
             camera.position.x = (cube.position.x += move.x) + 5;
             camera.position.z = cube.position.z += move.z;
-            // camera.rotation.y = Math.PI;
-            // camera.lookAt(cube.position);
-
-            // controls.update();
 
             renderer.render(scene, camera);
         }
