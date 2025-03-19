@@ -11,6 +11,7 @@
     let container: Element;
     const moveSpeed = 0.1;
     const move = new THREE.Vector3(0, 0, 0);
+    const keyPressed: string[] = [];
 
     onMount(() => {
         const scene = new THREE.Scene();
@@ -34,8 +35,8 @@
         camera.position.x = 5;
         camera.position.y = 10;
 
-        const controls = new MapControls(camera, renderer.domElement);
-        controls.enableDamping = true;
+        // const controls = new MapControls(camera, renderer.domElement);
+        // controls.enableDamping = true;
 
         // Floor
         const floorGeometry = new THREE.PlaneGeometry(50, 50); // Width and height of the plane
@@ -56,6 +57,7 @@
         cube.castShadow = true;
         cube.position.y = 5;
         scene.add(cube);
+
         camera.lookAt(cube.position);
 
         // Light
@@ -69,53 +71,55 @@
         scene.add(axesHelper);
 
         // Keyboard control
-        function onKeyPress(event: KeyboardEvent) {
-            updateMove(event.code, true);
+        function isOneOfKeysPressed(keys: string[]) {
+            return keyPressed.some((keyCode) => keys.includes(keyCode));
         }
 
-        function keyup(event: KeyboardEvent) {
-            updateMove(event.code, false);
-        }
-
-        function updateMove(eventCode: string, press: boolean) {
-            console.log(eventCode, press);
-            switch (eventCode) {
-                case "KeyW":
-                case "KeyZ":
-                case "ArrowUp":
-                    move.x -= press ? moveSpeed : -moveSpeed;
-                    // cube.position.x -= moveSpeed;
-                    break;
-                case "KeyS":
-                case "ArrowDown":
-                    move.x += press ? moveSpeed : -moveSpeed;
-                    // cube.position.x += moveSpeed;
-                    break;
-                case "KeyA":
-                case "KeyQ":
-                case "ArrowLeft":
-                    move.z += press ? moveSpeed : -moveSpeed;
-                    // cube.position.z += moveSpeed;
-                    break;
-                case "KeyD":
-                case "ArrowRight":
-                    move.z -= press ? moveSpeed : -moveSpeed;
-                    // cube.position.z -= moveSpeed;
-                    break;
-                default:
-                    console.log(eventCode);
+        function updateMove() {
+            move.x = 0;
+            move.z = 0;
+            if (isOneOfKeysPressed(["KeyW", "KeyZ", "ArrowUp"])) {
+                move.x -= moveSpeed;
+            }
+            if (isOneOfKeysPressed(["KeyS", "ArrowDown"])) {
+                move.x += moveSpeed;
+            }
+            if (isOneOfKeysPressed(["KeyA", "KeyQ", "ArrowLeft"])) {
+                move.z += moveSpeed;
+            }
+            if (isOneOfKeysPressed(["KeyD", "ArrowRight"])) {
+                move.z -= moveSpeed;
             }
         }
-        document.addEventListener("keypress", onKeyPress);
-        document.addEventListener("keyup", keyup);
+
+        function onKeyPress(event: KeyboardEvent) {
+            if (keyPressed.indexOf(event.code) === -1) {
+                keyPressed.push(event.code);
+                updateMove();
+            }
+        }
+
+        function onKeyUp(event: KeyboardEvent) {
+            const index = keyPressed.indexOf(event.code);
+            if (index >= 0) {
+                delete keyPressed[index];
+                updateMove();
+            }
+        }
+
+        document.addEventListener("keypress", onKeyPress, false);
+        document.addEventListener("keyup", onKeyUp, false);
 
         function animate() {
             cube.rotation.x += 0.01;
             cube.rotation.y += 0.01;
 
-            cube.position.x += move.x;
-            cube.position.z += move.z;
-            controls.update();
+            camera.position.x = (cube.position.x += move.x) + 5;
+            camera.position.z = cube.position.z += move.z;
+            // camera.rotation.y = Math.PI;
+            // camera.lookAt(cube.position);
+
+            // controls.update();
 
             renderer.render(scene, camera);
         }
