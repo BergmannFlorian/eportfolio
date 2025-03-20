@@ -1,0 +1,117 @@
+{
+    "infos": {
+        "contacts": {
+            "name": "Florian Bergmann",
+            "email": "florian.bergmann@ik.me",
+            "address": "Rue du Jura 13, 1450 Ste-Croix"
+        },
+        "socials": [
+            {
+                "name": "linkedin",
+                "link": "linkedin.com/in/florian-bergmann"
+            }
+        ],
+        "langs": [
+            {
+                "name": "Français",
+                "level": "Maternelle"
+            },
+            {
+                "name": "Anglais écrit",
+                "level": "Couramment utilisés"
+            },
+            {
+                "name": "Anglais oral",
+                "level": "Occasionnelement"
+            },
+            {
+                "name": "Allemand",
+                "level": "École obligatoire"
+            }
+        ],
+        "hobbys": [
+            "Cuisine",
+            "Lecture",
+            "Animation Japonaise",
+            "Jeux-vidéos"
+        ],
+        "others": [
+            "Permis B"
+        ]
+    },
+    "jobs": [
+        {
+            "title": "DEVELOPPEUR WEB",
+            "company": "IOMEDIA SA",
+            "start": "01.12.2021",
+            "end": "31.07.2021",
+            "tasks": [
+                "Conception et développement d’interface",
+                "Intégration de design des graphiques",
+                "Maintenance et résolution de bug",
+                "Conception, développement et maintenance d’API",
+                "Développement de fonctionnalités métier spécifique",
+                "Écriture de tests unitaires, fonctionnels et d'intégration avec PHPUnit",
+                "Création de scripts sql pour filter/récupérer/insérer des données",
+                "Documentation de fonctionnalités"
+            ],
+            "projects": [
+                {
+                    "name": "Breitling",
+                    "link": "https://www.breitling.com",
+                    "activities": [
+                        "Responsable support dev jusqu'à l'arrêt de la collaboration"
+                    ]
+                },
+                {
+                    "name": "Lacoste UNDW3",
+                    "link": "https://undw3-shop.lacoste.com",
+                    "activities": [
+                        "Développement du site",
+                        "Support dev jusqu'à l'arrêt des ventes"
+                    ]
+                },
+                {
+                    "name": "Orllati",
+                    "link": "https://www.orllati.ch",
+                    "activities": [
+                        "Ajout de fonctionnalités",
+                        "Support dev"
+                    ]
+                },
+                {
+                    "name": "Orllati Intranet",
+                    "link": "",
+                    "activities": [
+                        "Ajout de fonctionnalités",
+                        "Support dev"
+                    ]
+                },
+                {
+                    "name": "Rhone FM",
+                    "link": "https://www.rhonefm.ch",
+                    "activities": [
+                        "Développement du site",
+                        "Support dev"
+                    ]
+                },
+                {
+                    "name": "Iomedia",
+                    "link": "https://www.iomedia.ch",
+                    "activities": [
+                        "Développement du site",
+                        "Support dev"
+                    ]
+                },
+                {
+                    "name": "Abbaye St-Maurice",
+                    "link": "https://www.abbaye-stmaurice.ch",
+                    "activities": [
+                        "Ajout de fonctionnalités",
+                        "Support dev"
+                    ]
+                }
+            ]
+        }
+    ]
+}

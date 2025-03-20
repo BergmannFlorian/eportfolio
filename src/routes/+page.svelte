@@ -47,18 +47,17 @@
         // Floor
         const floorGeometry = new THREE.PlaneGeometry(50, 50); // Width and height of the plane
         const floorMaterial = new THREE.MeshPhongMaterial({
-            color: 0x999999,
+            color: 0xffffff,
             side: THREE.DoubleSide,
         });
         const floor = new THREE.Mesh(floorGeometry, floorMaterial);
         floor.position.y = -0.01;
         floor.rotation.x = Math.PI / 2;
-        floor.receiveShadow = true;
         scene.add(floor);
 
         // Cube
         const geometry = new THREE.BoxGeometry(2, 2, 2);
-        const material = new THREE.MeshBasicMaterial({ color: 0x176288 });
+        const material = new THREE.MeshBasicMaterial({ color: 0xffffff });
         const cube = new THREE.Mesh(geometry, material);
         cube.position.y = 1;
         cube.position.z = 1;
@@ -67,7 +66,7 @@
         const edges = new THREE.EdgesGeometry(geometry);
         const lines = new THREE.LineSegments(
             edges,
-            new THREE.LineBasicMaterial({ color: 0xffffff }),
+            new THREE.LineBasicMaterial({ color: 0x00000 }),
         );
         cube.add(lines);
         camera.lookAt(cube.position);
@@ -116,7 +115,7 @@
             moveSpeed = event.shiftKey ? sprintSpeed : walkSpeed;
         }
 
-        document.addEventListener(
+        addEventListener(
             "keydown",
             (event) => {
                 checkShiftKey(event);
@@ -128,7 +127,7 @@
             false,
         );
 
-        document.addEventListener(
+        addEventListener(
             "keyup",
             (event) => {
                 checkShiftKey(event);
@@ -144,6 +143,17 @@
         addEventListener("wheel", (event) => {
             scale = Math.min(Math.max(0.125, scale + event.deltaY * -0.001), 4);
         });
+
+        addEventListener(
+            "resize",
+            (event) => {
+                camera.aspect = innerWidth / innerHeight;
+                camera.updateProjectionMatrix();
+
+                renderer.setSize(innerWidth, innerHeight);
+            },
+            false,
+        );
 
         function animate() {
             camera.position.x =
