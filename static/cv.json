@@ -11,6 +11,20 @@
                 "link": "linkedin.com/in/florian-bergmann"
             }
         ],
+        "references": [
+            {
+                "name": "Lucas Cucinotta",
+                "title": "Directeur",
+                "company": "IOMEDIA SA",
+                "phone": "0274565643"
+            },
+            {
+                "name": "Fabrice Roublot",
+                "title": "Co-fondateur et Responsable R&D",
+                "company": "WorkStreams",
+                "phone": "0223012014"
+            }
+        ],
         "langs": [
             {
                 "name": "Français",
@@ -41,15 +55,16 @@
     },
     "jobs": [
         {
+            "category": "dev",
             "title": "DEVELOPPEUR WEB",
             "company": "IOMEDIA SA",
             "start": "01.12.2021",
-            "end": "31.07.2021",
+            "end": "31.07.2024",
             "tasks": [
-                "Conception et développement d’interface",
+                "Conception et développement d'interface",
                 "Intégration de design des graphiques",
                 "Maintenance et résolution de bug",
-                "Conception, développement et maintenance d’API",
+                "Conception, développement et maintenance d'API",
                 "Développement de fonctionnalités métier spécifique",
                 "Écriture de tests unitaires, fonctionnels et d'intégration avec PHPUnit",
                 "Création de scripts sql pour filter/récupérer/insérer des données",
@@ -59,14 +74,14 @@
                 {
                     "name": "Breitling",
                     "link": "https://www.breitling.com",
-                    "activities": [
+                    "details": [
                         "Responsable support dev jusqu'à l'arrêt de la collaboration"
                     ]
                 },
                 {
                     "name": "Lacoste UNDW3",
                     "link": "https://undw3-shop.lacoste.com",
-                    "activities": [
+                    "details": [
                         "Développement du site",
                         "Support dev jusqu'à l'arrêt des ventes"
                     ]
@@ -74,7 +89,7 @@
                 {
                     "name": "Orllati",
                     "link": "https://www.orllati.ch",
-                    "activities": [
+                    "details": [
                         "Ajout de fonctionnalités",
                         "Support dev"
                     ]
@@ -82,7 +97,7 @@
                 {
                     "name": "Orllati Intranet",
                     "link": "",
-                    "activities": [
+                    "details": [
                         "Ajout de fonctionnalités",
                         "Support dev"
                     ]
@@ -90,7 +105,7 @@
                 {
                     "name": "Rhone FM",
                     "link": "https://www.rhonefm.ch",
-                    "activities": [
+                    "details": [
                         "Développement du site",
                         "Support dev"
                     ]
@@ -98,7 +113,7 @@
                 {
                     "name": "Iomedia",
                     "link": "https://www.iomedia.ch",
-                    "activities": [
+                    "details": [
                         "Développement du site",
                         "Support dev"
                     ]
@@ -106,12 +121,168 @@
                 {
                     "name": "Abbaye St-Maurice",
                     "link": "https://www.abbaye-stmaurice.ch",
-                    "activities": [
+                    "details": [
                         "Ajout de fonctionnalités",
                         "Support dev"
                     ]
                 }
             ]
+        },
+        {
+            "category": "dev",
+            "title": "TRAVAIL DE DIPLÔME",
+            "company": "Workstreams",
+            "start": "01.05.2021",
+            "end": "30.06.2021",
+            "tasks": [
+                "Développement d'un système scallable de notification pour la plateforme IntrepidKnowledge"
+            ],
+            "projects": [
+                {
+                    "name": "Système de notification par Websocket",
+                    "link": "",
+                    "details": [
+                        "Développement d'un système de notification scalable pour la plateforme IntrepidKnowledge",
+                        "Websockets, NodeJs, TypeScript"
+                    ]
+                }
+            ]
+        },
+        {
+            "category": "dev",
+            "title": "STAGIAIRE DÉVELOPPEUR",
+            "company": "Workstreams",
+            "start": "01.02.2021",
+            "end": "30.04.2021",
+            "tasks": [
+                "Développement d'une application mobile Flutter basé sur la plateforme IntrepidKnowledge"
+            ],
+            "projects": [
+                {
+                    "name": "Application mobile IntrepidKnowledge",
+                    "link": "",
+                    "details": [
+                        "Développement en équipe d'une application mobile basé sur la plateforme IntrepidKnowledge",
+                        "Flutter, Dart"
+                    ]
+                }
+            ]
+        },
+        {
+            "category": "dev",
+            "title": "STAGIAIRE BACK & CLOUD",
+            "company": "Nagravision",
+            "start": "01.09.2018",
+            "end": "28.02.2019",
+            "tasks": [
+                "Implémentation de Workflow & spécification des stratégies de tests selon la méthode Agile",
+                "Documentation et génération de documents de formation"
+            ],
+            "projects": []
+        },
+        {
+            "category": "dev",
+            "title": "STAGIAIRE TECHNICIEN DE SUPPORT",
+            "company": "HEIG-VD",
+            "start": "01.01.2018",
+            "end": "31.08.2018",
+            "tasks": [
+                "Support 1er et 2ème niveau",
+                "Installation d'OS et dépannage hardware"
+            ],
+            "projects": []
+        },
+        {
+            "category": "old",
+            "title": "Crew",
+            "company": "Mcdonald's Montagny-près-Yverdon",
+            "start": "01.12.2013",
+            "end": "31.08.2017",
+            "tasks": [
+                "Réception et rangement des livraisons",
+                "Responsable du poste à friture"
+            ],
+            "projects": []
+        },
+        {
+            "category": "old",
+            "title": "Cuisinier de troupe",
+            "company": "Armée Suisse",
+            "start": "01.06.2012",
+            "end": "30.04.2013",
+            "tasks": [
+                "Organisation et préparation des repas pour 200 personnes en cuisine ou sur le terrain"
+            ],
+            "projects": []
+        }
+    ],
+    "formations": [
+        {
+            "name": "Technicien Informatique développement d'applications",
+            "company": "CPNV",
+            "start": "01.08.2019",
+            "end": "31.07.2021",
+            "tasks": [
+                "Reprise du développement d'une application web de gestion de déplacement en Laravel pour le Paléo",
+                "Création d'une application de gestion de notes en NodeJs, VueJs et NoSql (MongoDB) en équipe",
+                "Développement d'une application en Ruby destinée à aider les CFC 1ère année à apprendre à coder"
+            ],
+            "course": [],
+            "projects": [
+                {
+                    "name": "Progcraft",
+                    "link": "https://github.com/Crepe-Party/ProgCraft",
+                    "details": [
+                        "Développement d'une application à destination des apprentis de 1ère année afin de leur fournir un environnement dans lequel ils doivent déplacer un personnage à l'aide de fonctions de mouvements simples préconçu (comme walk_forward par exemple), ainsi que l'ensemble des structures de contrôles existants",
+                        "Ruby, Gosu",
+                        "1 semestre | ~144h"
+                    ]
+                },
+                {
+                    "name": "Runeo",
+                    "link": "",
+                    "details": [
+                        "Reprise du développement d'une application web de gestion de déplacement en Laravel pour le Paléo",
+                        "Refactor et corrections de bugs",
+                        "Ajout d'une interface de gestion de paramètre pour les administrateur"
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "CFC Informaticien",
+            "company": "CPNV",
+            "start": "01.08.2015",
+            "end": "31.07.2019",
+            "tasks": [
+                "Développement de site web e-Commerce en modèle MVC avec PHP et requêtes SQL",
+                "Développement d'application simple en C# en groupe",
+                "Mise en place d'infrastructures réseaux virtuels Linux et Windows"
+            ],
+            "course": [],
+            "projects": []
+        },
+        {
+            "name": "Séjour linguistique Angleterre / Allemagne",
+            "company": "",
+            "start": "01.08.2015",
+            "end": "31.07.2019",
+            "tasks": [
+                "Obtention d'un diplôme A1 en Anglais et A2 en Allemand"
+            ],
+            "course": [],
+            "projects": []
+        },
+        {
+            "name": "CFC Technologue en Denrées Alimentaires",
+            "company": "Nestlé PTC Orbe",
+            "start": "01.08.2015",
+            "end": "31.07.2019",
+            "tasks": [
+                "Formation pour acquerir les capacité d'un responsable de ligne de production de café et de céréale"
+            ],
+            "course": [],
+            "projects": []
         }
     ]
 }
