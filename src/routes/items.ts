@@ -1,5 +1,6 @@
 import * as THREE from "three";
-import type { Job } from "./interfaces";
+import type { CV, Job } from "./interfaces";
+import { depth } from "three/tsl";
 
 export class Floor extends THREE.Mesh {
     constructor(scene: THREE.Scene) {
@@ -48,17 +49,25 @@ export class Cube extends THREE.Mesh {
     }
 }
 
-export class Experience {
-    job: Job | undefined;
-    constructor(data: object | undefined) {
-        if (data) {
-            this.fromObject(data);
+export class Experience extends THREE.Mesh {
+    width: number;
 
-        }
-    }
+    constructor(
+        private job: Job,
+        pos: THREE.Vector3,
+        scene: THREE.Scene
+    ) {
+        let width = 5;
+        let height = 5;
+        let depth = width / 2;
+        const geometry = new THREE.BoxGeometry(depth, height, height);
+        const material = new THREE.MeshBasicMaterial({ color: 0xffffff });
+        super(geometry, material);
+        this.position.x = pos.x;
+        this.position.z = pos.z;
+        this.position.y = height / 2;
+        this.width = width;
 
-    fromObject(data: object) {
-        let job = <Job>data;
-        console.log(job);
+        scene.add(this);
     }
 }

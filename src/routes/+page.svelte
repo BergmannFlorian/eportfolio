@@ -2,9 +2,10 @@
     import * as THREE from "three";
     import { browser } from "$app/environment";
     import { Camera, Renderer, Light } from "./environnement";
-    import { Cube, Floor } from "./items";
+    import { Cube, Experience, Floor } from "./items";
     import { Helpers } from "./helpers";
     import { Controls } from "./controls";
+    import type { CV } from "./interfaces";
 
     const base = {
         camera: {
@@ -21,8 +22,7 @@
         let container = document.getElementById("container");
         if (container) {
             const cvFile = await fetch("cv.json");
-            const cv = await cvFile.json();
-            console.log(cv);
+            const cv = (await cvFile.json()) as CV;
 
             const scene = new THREE.Scene();
 
@@ -37,6 +37,12 @@
             const helpers = new Helpers(scene);
 
             const controls = new Controls();
+
+            let pos = new THREE.Vector3(-10, 5, 0);
+            cv.jobs.forEach((job) => {
+                let experience = new Experience(job, pos, scene);
+                pos.z += experience.width + 1;
+            });
 
             addEventListener(
                 "resize",
