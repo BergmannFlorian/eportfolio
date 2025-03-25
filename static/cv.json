@@ -284,5 +284,12 @@
             "course": [],
             "projects": []
         }
+    ],
+    "certificates": [
+        {
+            "title": "Professional Scrum Master I",
+            "date": "14.03.2025",
+            "link": "https://www.scrum.org/certificates/1198961"
+        }
     ]
 }
