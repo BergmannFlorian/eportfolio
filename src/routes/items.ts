@@ -1,6 +1,6 @@
 import * as THREE from "three";
 import type { Job } from "./interfaces";
-import { stringToDate } from "./helpers";
+import { HelpPoint, stringToDate } from "./helpers";
 import { Text } from "./font";
 
 export class Floor extends THREE.Mesh {
@@ -17,9 +17,9 @@ export class Floor extends THREE.Mesh {
     }
 }
 
-export class Cube extends THREE.Mesh {
+export class Player extends THREE.Mesh {
     constructor(scene: THREE.Scene) {
-        const geometry = new THREE.BoxGeometry(2, 2, 2);
+        const geometry = new THREE.BoxGeometry(1, 2, 1);
         const material = new THREE.MeshBasicMaterial({ color: 0xffffff });
         const materialFront = new THREE.MeshBasicMaterial({ color: 0x000000 });
         super(geometry, [materialFront, material, material, material, material, material]);
@@ -48,7 +48,7 @@ export class Cube extends THREE.Mesh {
     }
 }
 
-class LinesBox extends THREE.LineSegments {
+export class LinesBox extends THREE.LineSegments {
     constructor(box: THREE.BoxGeometry, mesh: THREE.Mesh, color: THREE.ColorRepresentation = 0x00000) {
         super(
             new THREE.EdgesGeometry(box),

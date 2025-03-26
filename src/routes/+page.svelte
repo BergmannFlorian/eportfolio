@@ -2,11 +2,12 @@
     import * as THREE from "three";
     import { browser } from "$app/environment";
     import { Camera, Renderer, Light } from "./environnement";
-    import { Cube, Experience, Floor } from "./items";
+    import { Player, Experience, Floor } from "./items";
     import { Helpers } from "./helpers";
     import { Controls } from "./controls";
     import type { CV } from "./interfaces";
     import { loadFont } from "./font";
+    import { Building, Wall } from "./buildings";
 
     const base = {
         camera: {
@@ -32,8 +33,8 @@
 
             const renderer = new Renderer(container);
             const camera = new Camera(base.camera.position);
-            const floor = new Floor(scene);
-            const cube = new Cube(scene);
+            // const floor = new Floor(scene);
+            const cube = new Player(scene);
             const light = new Light(scene);
 
             camera.lookAt(cube.position);
@@ -47,6 +48,9 @@
                 let experience = new Experience(job, pos, scene);
                 pos.x = experience.position.x + experience.width / 2 + 1;
             });
+
+            const wall = new Wall(new THREE.Vector3(0, 0, 0));
+            scene.add(wall);
 
             addEventListener(
                 "resize",

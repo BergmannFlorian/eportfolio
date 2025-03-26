@@ -1,8 +1,8 @@
 import * as THREE from "three";
 import { Font, FontLoader, TextGeometry } from "three/examples/jsm/Addons.js";
+import { HelpPoint } from "./helpers";
 
 let font: Font;
-let texts: TextGeometry[] = [];
 
 export async function loadFont() {
     const loader = new FontLoader();
@@ -24,10 +24,12 @@ export class Text extends THREE.Mesh {
         })
         const material = new THREE.MeshBasicMaterial({ color: 0x000000 });
         super(textGeo, material);
-        this.position.set(position.x, position.y, position.z);
+        textGeo.computeBoundingBox();
+        const center = textGeo.boundingBox?.getCenter(new THREE.Vector3());
+        if (center) {
+            this.position.add(position).add(center);
+        }
         this.rotateY(Math.PI);
-
-
 
         mesh.add(this);
     }
