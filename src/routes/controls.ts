@@ -48,16 +48,16 @@ export class Controls {
     updateMove() {
         this.move.x = 0;
         this.move.z = 0;
-        if (this.isOneOfKeysPressed(this.keys.up)) {
-            this.move.x -= this.moveSpeed;
-        }
-        if (this.isOneOfKeysPressed(this.keys.down)) {
+        if (this.isOneOfKeysPressed(this.keys.right)) {
             this.move.x += this.moveSpeed;
         }
-        if (this.isOneOfKeysPressed(this.keys.right)) {
+        if (this.isOneOfKeysPressed(this.keys.left)) {
+            this.move.x -= this.moveSpeed;
+        }
+        if (this.isOneOfKeysPressed(this.keys.up)) {
             this.move.z += this.moveSpeed;
         }
-        if (this.isOneOfKeysPressed(this.keys.left)) {
+        if (this.isOneOfKeysPressed(this.keys.down)) {
             this.move.z -= this.moveSpeed;
         }
     }

@@ -13,7 +13,7 @@ export class Renderer extends THREE.WebGLRenderer {
 }
 
 export class Camera extends THREE.PerspectiveCamera {
-    baseX: number = 0;
+    baseY: number = 0;
     zoom: number = 1;
 
     constructor(position: THREE.Vector3) {
@@ -23,7 +23,7 @@ export class Camera extends THREE.PerspectiveCamera {
             1,
             1000,
         );
-        this.baseX = position.x;
+        this.baseY = position.y;
         this.position.set(position.x, position.y, position.z);
 
         addEventListener("wheel", (event) => {
@@ -35,8 +35,8 @@ export class Camera extends THREE.PerspectiveCamera {
     }
 
     move(position: THREE.Vector3) {
-        this.position.x = position.x + this.baseX / this.zoom;
-        this.position.z = position.z;
+        this.position.x = position.x;
+        this.position.z = position.z - this.baseY / this.zoom;
 
         this.lookAt(position);
     }

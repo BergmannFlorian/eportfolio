@@ -6,10 +6,11 @@
     import { Helpers } from "./helpers";
     import { Controls } from "./controls";
     import type { CV } from "./interfaces";
+    import { loadFont } from "./font";
 
     const base = {
         camera: {
-            position: new THREE.Vector3(15, 10, 0),
+            position: new THREE.Vector3(0, 10, -15),
         },
     };
 
@@ -21,10 +22,13 @@
     if (browser) {
         let container = document.getElementById("container");
         if (container) {
+            await loadFont();
+
             const cvFile = await fetch("cv.json");
             const cv = (await cvFile.json()) as CV;
 
             const scene = new THREE.Scene();
+            scene.background = new THREE.Color(0xd4f7ff);
 
             const renderer = new Renderer(container);
             const camera = new Camera(base.camera.position);
@@ -38,10 +42,10 @@
 
             const controls = new Controls();
 
-            let pos = new THREE.Vector3(-10, 5, 0);
+            let pos = new THREE.Vector3(0, 0, 10);
             cv.jobs.forEach((job) => {
                 let experience = new Experience(job, pos, scene);
-                pos.z += experience.width + 1;
+                pos.x = experience.position.x + experience.width / 2 + 1;
             });
 
             addEventListener(
