@@ -49,7 +49,7 @@
                 pos.x = experience.position.x + experience.width / 2 + 1;
             });
 
-            const wall = new Wall(new THREE.Vector3(0, 0, 0));
+            const wall = new Wall(new THREE.Vector3(0, 0, 0), true);
             scene.add(wall);
 
             addEventListener(
