@@ -33,7 +33,7 @@
 
             const renderer = new Renderer(container);
             const camera = new Camera(base.camera.position);
-            // const floor = new Floor(scene);
+            const floor = new Floor(scene);
             const cube = new Player(scene);
             const light = new Light(scene);
 
@@ -49,8 +49,10 @@
                 pos.x = experience.position.x + experience.width / 2 + 1;
             });
 
-            const wall = new Wall(new THREE.Vector3(0, 0, 0), true);
-            scene.add(wall);
+            const wall1 = new Wall(new THREE.Vector3(0, 0, 0), true);
+            scene.add(wall1);
+            const wall2 = new Wall(new THREE.Vector3(0, 0, 5));
+            scene.add(wall2);
 
             addEventListener(
                 "resize",

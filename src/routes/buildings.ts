@@ -42,68 +42,55 @@ class Floor extends THREE.Mesh {
 
 }
 
-export class Wall extends THREE.Mesh {
-    constructor(pos: THREE.Vector3, withDoor: boolean = false) {
-        const wall = {
-            width: 1.5,
-            height: 1,
-        }
-        const window = {
-            width: 2,
-            height: 1.5
-        }
-        const door = {
-            width: wall.width * 2 + window.width,
-            height: wall.height + window.height
-        }
+class SquareHole extends THREE.Path {
+    constructor(pos: THREE.Vector2, size: THREE.Vector2) {
+        super();
+        this.moveTo(pos.x, pos.y)
+            .lineTo(pos.x + size.x, pos.y)
+            .lineTo(pos.x + size.x, pos.y + size.y)
+            .lineTo(pos.x, pos.y + size.y)
+            .lineTo(pos.x, pos.y);
+    }
+}
 
-        let x = pos.x;
-        let y = pos.y;
+class Window extends SquareHole {
+    constructor(pos: THREE.Vector2, size: THREE.Vector2 | null = null) {
+        size ||= new THREE.Vector2(2, 1);
+        let x = pos.x - size.x / 2;
+        let y = size.y - size.y / 2;
+        super(new THREE.Vector2(x, y), size);
+    }
+}
+
+class Door extends SquareHole {
+    constructor(pos: THREE.Vector2, size: THREE.Vector2 | null = null) {
+        size ||= new THREE.Vector2(3, 2);
+        let x = pos.x - size.x / 2;
+        let y = 0;
+        super(new THREE.Vector2(x, y), size)
+    }
+}
+
+export class Wall extends THREE.Mesh {
+    width: number = 15;
+    height: number = 5;
+
+    constructor(pos: THREE.Vector3, withDoor: boolean = false) {
+        const width = 15;
+        const height = 5;
 
         const tiltWallShape = new THREE.Shape()
             .moveTo(pos.x, pos.y)
-            .lineTo(x += wall.width, y)
-
-            .lineTo(x, y += wall.height + window.height)
-            .lineTo(x += window.width, y)
-            .lineTo(x, y -= window.height)
-            .lineTo(x -= window.width, y)
-            .lineTo(x, y -= wall.height)
-            .lineTo(x += window.width, y)
-            .lineTo(x += wall.width, y);
-
-        if (withDoor) {
-            tiltWallShape
-                .lineTo(x, y += door.height)
-                .lineTo(x += door.width, y)
-                .lineTo(x, y -= door.height);
-        } else {
-            tiltWallShape
-                .lineTo(x += wall.width / 2, y)
-                .lineTo(x, y += wall.height + window.height)
-                .lineTo(x += window.width, y)
-                .lineTo(x, y -= window.height)
-                .lineTo(x -= window.width, y)
-                .lineTo(x, y -= wall.height)
-                .lineTo(x += window.width, y)
-                .lineTo(x += wall.width / 2, y);
-        }
-
-
-        tiltWallShape
-            .lineTo(x += wall.width, y)
-            .lineTo(x, y += wall.height + window.height)
-            .lineTo(x += window.width, y)
-            .lineTo(x, y -= window.height)
-            .lineTo(x -= window.width, y)
-            .lineTo(x, y -= wall.height)
-            .lineTo(x += window.width, y)
-
-            .lineTo(x += wall.width, y)
-            .lineTo(x, y += wall.height + window.height + wall.height)
-            .lineTo(pos.x, y)
-
+            .lineTo(pos.x + width, pos.y)
+            .lineTo(pos.x + width, pos.y + height)
+            .lineTo(pos.x, pos.y + height)
             .lineTo(pos.x, pos.y);
+
+        const windo = new Window(new THREE.Vector2(width / 4, height / 2));
+        const door = new Door(new THREE.Vector2(width / 2, 0));
+
+        tiltWallShape.holes.push(windo, door);
+
         const tiltWallGeometry = new THREE.ExtrudeGeometry(
             [tiltWallShape],
             {
@@ -117,6 +104,7 @@ export class Wall extends THREE.Mesh {
             tiltWallGeometry,
             new THREE.MeshStandardMaterial({ color: 0xff9999 }),
         );
-        this.position.z = -2;
+
+        this.position.add(pos);
     }
 }
