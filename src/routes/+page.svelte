@@ -3,7 +3,7 @@
     import { browser } from "$app/environment";
     import { Camera, Renderer, Light } from "./environnement";
     import { Player, Experience, Floor } from "./items";
-    import { Helpers } from "./helpers";
+    import { Helpers, Position3 } from "./helpers";
     import { Controls } from "./controls";
     import type { CV } from "./interfaces";
     import { loadFont } from "./font";
@@ -44,15 +44,15 @@
             const controls = new Controls();
 
             let pos = new THREE.Vector3(0, 0, 10);
-            cv.jobs.forEach((job) => {
-                let experience = new Experience(job, pos, scene);
-                pos.x = experience.position.x + experience.width / 2 + 1;
+            cv.jobs.forEach((job, index) => {
+                // let experience = new Experience(job, pos, scene);
+                // pos.x = experience.position.x + experience.width / 2 + 1;
+                const building = new Building(
+                    new Position3(index * 30, 0, 0),
+                    5,
+                );
+                scene.add(building);
             });
-
-            const wall1 = new Wall(new THREE.Vector3(0, 0, 0), true);
-            scene.add(wall1);
-            const wall2 = new Wall(new THREE.Vector3(0, 0, 5));
-            scene.add(wall2);
 
             addEventListener(
                 "resize",

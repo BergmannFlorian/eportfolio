@@ -42,11 +42,18 @@ export class Camera extends THREE.PerspectiveCamera {
     }
 }
 
-export class Light extends THREE.DirectionalLight {
+export class Light extends THREE.Group {
     constructor(scene: THREE.Scene) {
-        super(0xffffff, 1.0);
-        this.position.set(4, 4, 8);
-        this.castShadow = true;
+        super();
+
+        const dirLight = new THREE.DirectionalLight(0xffffff, 1.0);
+        dirLight.position.set(4, 4, 8);
+        dirLight.castShadow = true;
+        this.add(dirLight);
+
+        const AmbLight = new THREE.AmbientLight(0xffffff); // soft white light
+
+        this.add(AmbLight);
 
         scene.add(this);
     }

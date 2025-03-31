@@ -6,8 +6,8 @@ import { Text } from "./font";
 export class Floor extends THREE.Mesh {
     constructor(scene: THREE.Scene) {
         const floorGeometry = new THREE.PlaneGeometry(500, 500); // Width and height of the plane
-        const floorMaterial = new THREE.MeshPhongMaterial({
-            color: 0xffffff,
+        const floorMaterial = new THREE.MeshBasicMaterial({
+            color: 0x858585,
             side: THREE.DoubleSide,
         });
         super(floorGeometry, floorMaterial)

@@ -1,36 +1,15 @@
 import * as THREE from "three";
-import { LinesBox } from "./items";
+import { Position2, Position3, Size } from "./helpers";
+import { color } from "three/tsl";
 
 export class Building extends THREE.Group {
-    heightByFloor: number = 2;
 
-    constructor(width: number, height: number, depth: number) {
+    constructor(pos: Position3, nbFloors: number = 1) {
         super();
-        let nbFloors = Math.floor(height / this.heightByFloor);
-        nbFloors = nbFloors < 2 ? 0 : nbFloors - this.heightByFloor;
-
-        const x = 0, y = 0;
-
-        const heartShape = new THREE.Shape();
-
-        heartShape.moveTo(x + 5, y + 5);
-        heartShape.bezierCurveTo(x + 5, y + 5, x + 4, y, x, y);
-        heartShape.bezierCurveTo(x - 6, y, x - 6, y + 7, x - 6, y + 7);
-        heartShape.bezierCurveTo(x - 6, y + 11, x - 3, y + 15.4, x + 5, y + 19);
-        heartShape.bezierCurveTo(x + 12, y + 15.4, x + 16, y + 11, x + 16, y + 7);
-        heartShape.bezierCurveTo(x + 16, y + 7, x + 16, y, x + 10, y);
-        heartShape.bezierCurveTo(x + 7, y, x + 5, y + 5, x + 5, y + 5);
-
-        const geometry = new THREE.ShapeGeometry(heartShape);
-        const material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
-        const mesh = new THREE.Mesh(geometry, material);
-        this.add(mesh);
-
-        // const geometry = new THREE.BoxGeometry(width, height, depth);
-        // const material = new THREE.MeshBasicMaterial({ color: 0xffffff });
-        // super(geometry, material);
-
-        // new LinesBox(geometry, this);
+        for (let f = 0; f < nbFloors; f++) {
+            const floor = new Floor(f, pos);
+            this.add(floor);
+        }
     }
 }
 
@@ -38,58 +17,76 @@ class Ground extends THREE.Mesh {
 
 }
 
-class Floor extends THREE.Mesh {
+class Floor extends THREE.Group {
+    size: Size;
+    floor: number;
 
+    constructor(floor: number = 0, pos: Position3) {
+        super()
+        this.size = new Size(20, 5);
+        this.floor = floor * this.size.height;
+
+        const south = new Wall(new Position3(pos.x, this.floor, pos.y), 0, this.size, !floor);
+        const est = new Wall(new Position3(pos.x + this.size.width, this.floor, pos.y), Math.PI / 2, this.size);
+        const north = new Wall(new Position3(pos.x + this.size.width, this.floor, pos.y + this.size.width), Math.PI, this.size);
+        const west = new Wall(new Position3(pos.x + 0, this.floor, pos.y + this.size.width), Math.PI * 1.5, this.size);
+
+        this.add(south, est, north, west);
+        // this.add(south);
+    }
 }
 
 class SquareHole extends THREE.Path {
-    constructor(pos: THREE.Vector2, size: THREE.Vector2) {
+    constructor(pos: Position2, size: Size) {
         super();
         this.moveTo(pos.x, pos.y)
-            .lineTo(pos.x + size.x, pos.y)
-            .lineTo(pos.x + size.x, pos.y + size.y)
-            .lineTo(pos.x, pos.y + size.y)
+            .lineTo(pos.x + size.width, pos.y)
+            .lineTo(pos.x + size.width, pos.y + size.height)
+            .lineTo(pos.x, pos.y + size.height)
             .lineTo(pos.x, pos.y);
     }
 }
 
 class Window extends SquareHole {
-    constructor(pos: THREE.Vector2, size: THREE.Vector2 | null = null) {
-        size ||= new THREE.Vector2(2, 1);
-        let x = pos.x - size.x / 2;
-        let y = size.y - size.y / 2;
-        super(new THREE.Vector2(x, y), size);
+    constructor(pos: Position2, size: Size | null = null) {
+        size ||= new Size(2.5, 1.5);
+        let x = pos.x - size.width / 2;
+        let y = pos.y - size.height / 2;
+        super(new Position2(x, y), size);
     }
 }
 
 class Door extends SquareHole {
-    constructor(pos: THREE.Vector2, size: THREE.Vector2 | null = null) {
-        size ||= new THREE.Vector2(3, 2);
-        let x = pos.x - size.x / 2;
+    constructor(pos: Position2, size: Size | null = null) {
+        size ||= new THREE.Vector2(4, 2.5);
+        let x = pos.x - size.width / 2;
         let y = 0;
-        super(new THREE.Vector2(x, y), size)
+        super(new Position2(x, y), size)
     }
 }
 
 export class Wall extends THREE.Mesh {
-    width: number = 15;
-    height: number = 5;
-
-    constructor(pos: THREE.Vector3, withDoor: boolean = false) {
-        const width = 15;
-        const height = 5;
-
+    constructor(pos: Position3, angle: number, size: Size, withDoor: boolean = false, color: THREE.ColorRepresentation = 0x000000) {
+        let x = 0;
+        let y = 0;
         const tiltWallShape = new THREE.Shape()
-            .moveTo(pos.x, pos.y)
-            .lineTo(pos.x + width, pos.y)
-            .lineTo(pos.x + width, pos.y + height)
-            .lineTo(pos.x, pos.y + height)
-            .lineTo(pos.x, pos.y);
+            .moveTo(x, y)
+            .lineTo(x += size.width, y)
+            .lineTo(x, y += size.height)
+            .lineTo(x -= size.width, y)
+            .lineTo(x, y);
 
-        const windo = new Window(new THREE.Vector2(width / 4, height / 2));
-        const door = new Door(new THREE.Vector2(width / 2, 0));
+        const windowR = new Window(new Position2(size.width / 5, size.height / 2));
+        const windowL = new Window(new Position2((size.width / 5) * 4, size.height / 2));
+        tiltWallShape.holes.push(windowR, windowL);
 
-        tiltWallShape.holes.push(windo, door);
+        if (withDoor) {
+            const door = new Door(new Position2(size.width / 2, 0));
+            tiltWallShape.holes.push(door);
+        } else {
+            const windowC = new Window(new Position2(size.width / 2, size.height / 2));
+            tiltWallShape.holes.push(windowC);
+        }
 
         const tiltWallGeometry = new THREE.ExtrudeGeometry(
             [tiltWallShape],
@@ -98,13 +95,15 @@ export class Wall extends THREE.Mesh {
                 depth: 0.5,
                 bevelEnabled: false,
                 curveSegments: 32,
+
             },
         );
         super(
             tiltWallGeometry,
-            new THREE.MeshStandardMaterial({ color: 0xff9999 }),
+            new THREE.MeshBasicMaterial({ color: color }),
         );
 
+        this.rotateY(-angle);
         this.position.add(pos);
     }
 }
