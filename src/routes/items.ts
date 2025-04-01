@@ -19,28 +19,6 @@ export class Floor extends THREE.Mesh {
     }
 }
 
-export class Player extends THREE.Mesh {
-    constructor(scene: THREE.Scene) {
-        const geometry = new THREE.BoxGeometry(PLAYER.size.width, PLAYER.size.height, PLAYER.size.width);
-        const material = new THREE.MeshBasicMaterial({ color: COLORS.white });
-        const materialFront = new THREE.MeshBasicMaterial({ color: COLORS.black });
-        super(geometry, [materialFront, material, material, material, material, material]);
-        this.position.set(PLAYER.pos.x, PLAYER.pos.y + PLAYER.size.height / 2, PLAYER.pos.y);
-
-        new LinesBox(geometry, this);
-
-        scene.add(this);
-    }
-
-    move(movement: THREE.Vector3) {
-        this.position.x += movement.x;
-        this.position.z += movement.z;
-        if (movement.length() != 0) {
-            this.rotation.y = -new THREE.Vector2(movement.x, movement.z).angle();
-        }
-    }
-}
-
 export class LinesBox extends THREE.LineSegments {
     constructor(box: THREE.BoxGeometry, mesh: THREE.Mesh, color: THREE.ColorRepresentation = COLORS.black) {
         super(

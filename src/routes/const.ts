@@ -1,5 +1,15 @@
-import { color, depth } from "three/tsl";
-import { Position2, Size } from "./helpers";
+import { Position2, Position3, Size } from "./helpers";
+
+export const CONTROLS = {
+    mode: {
+        fly: 0,
+        fps: 1
+    }
+}
+
+export const CAMERA = {
+    position: new Position3(0, 10, -15),
+}
 
 export const PLAYER = {
     pos: new Position2(0, 0),

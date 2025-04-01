@@ -1,20 +1,12 @@
 <script module lang="ts">
     import * as THREE from "three";
     import { browser } from "$app/environment";
-    import { Camera, Renderer, Light } from "./environnement";
-    import { Player, Experience, Floor } from "./items";
+    import { Renderer, Light } from "./environnement";
+    import { Experience, Floor } from "./items";
     import { Helpers, Position3 } from "./helpers";
-    import { Controls } from "./controls";
     import type { CV } from "./interfaces";
     import { loadFont } from "./font";
-    import { Building, Wall } from "./buildings";
-    import { BUILDING } from "./const";
-
-    const base = {
-        camera: {
-            position: new THREE.Vector3(0, 10, -15),
-        },
-    };
+    import { Player } from "./controls";
 
     let scInnerWidth = $state(0);
     let scOuterWidth = $state(0);
@@ -33,16 +25,11 @@
             scene.background = new THREE.Color(0xd4f7ff);
 
             const renderer = new Renderer(container);
-            const camera = new Camera(base.camera.position);
             const floor = new Floor(scene);
-            const cube = new Player(scene);
+            const player = new Player(renderer, scene);
             const light = new Light(scene);
 
-            camera.lookAt(cube.position);
-
             const helpers = new Helpers(scene);
-
-            const controls = new Controls();
 
             let pos = new Position3(0, 0.1, 10);
             cv.jobs.forEach((job, index) => {
@@ -54,8 +41,7 @@
             addEventListener(
                 "resize",
                 (event) => {
-                    camera.aspect = innerWidth / innerHeight;
-                    camera.updateProjectionMatrix();
+                    player.camera.resize(innerWidth / innerHeight);
 
                     renderer.setSize(innerWidth, innerHeight);
                 },
@@ -63,10 +49,9 @@
             );
 
             function animate() {
-                cube.move(controls.move);
-                camera.move(cube.position);
+                player.animate();
 
-                renderer.render(scene, camera);
+                renderer.render(scene, player.camera);
             }
 
             renderer.setAnimationLoop(animate);
