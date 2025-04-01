@@ -1,10 +1,9 @@
 import * as THREE from "three";
+import { PLAYER } from "./const";
 
 export class Controls {
     move = new THREE.Vector3(0, 0, 0);
     keyPressed: string[] = [];
-    sprintSpeed = 0.5;
-    walkSpeed = 0.2;
     moveSpeed = 0;
     keys = {
         up: ["KeyW", "KeyZ", "ArrowUp"],
@@ -14,7 +13,7 @@ export class Controls {
     }
 
     constructor() {
-        this.moveSpeed = (this.walkSpeed);
+        this.moveSpeed = (PLAYER.speed.walk);
         addEventListener(
             "keyup",
             (event) => {
@@ -63,6 +62,6 @@ export class Controls {
     }
 
     checkShiftKey(event: KeyboardEvent) {
-        this.moveSpeed = event.shiftKey ? this.sprintSpeed : this.walkSpeed;
+        this.moveSpeed = event.shiftKey ? PLAYER.speed.sprint : PLAYER.speed.walk;
     }
 }

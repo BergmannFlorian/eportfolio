@@ -1,13 +1,15 @@
 import * as THREE from "three";
 import type { Job } from "./interfaces";
-import { HelpPoint, stringToDate } from "./helpers";
+import { HelpPoint, Position3, stringToDate } from "./helpers";
 import { Text } from "./font";
+import { BUILDING, COLORS, PLAYER } from "./const";
+import { Building } from "./buildings";
 
 export class Floor extends THREE.Mesh {
     constructor(scene: THREE.Scene) {
         const floorGeometry = new THREE.PlaneGeometry(500, 500); // Width and height of the plane
         const floorMaterial = new THREE.MeshBasicMaterial({
-            color: 0x858585,
+            color: COLORS.gray,
             side: THREE.DoubleSide,
         });
         super(floorGeometry, floorMaterial)
@@ -19,22 +21,13 @@ export class Floor extends THREE.Mesh {
 
 export class Player extends THREE.Mesh {
     constructor(scene: THREE.Scene) {
-        const geometry = new THREE.BoxGeometry(1, 2, 1);
-        const material = new THREE.MeshBasicMaterial({ color: 0xffffff });
-        const materialFront = new THREE.MeshBasicMaterial({ color: 0x000000 });
+        const geometry = new THREE.BoxGeometry(PLAYER.size.width, PLAYER.size.height, PLAYER.size.width);
+        const material = new THREE.MeshBasicMaterial({ color: COLORS.white });
+        const materialFront = new THREE.MeshBasicMaterial({ color: COLORS.black });
         super(geometry, [materialFront, material, material, material, material, material]);
-        this.position.y = 1;
-        this.position.z = 1;
+        this.position.set(PLAYER.pos.x, PLAYER.pos.y + PLAYER.size.height / 2, PLAYER.pos.y);
 
         new LinesBox(geometry, this);
-
-        const arrowHelper = new THREE.ArrowHelper(
-            new THREE.Vector3(1, 0, 0),
-            new THREE.Vector3(0, 1, 0),
-            1,
-            0x000000,
-        );
-        this.add(arrowHelper);
 
         scene.add(this);
     }
@@ -49,7 +42,7 @@ export class Player extends THREE.Mesh {
 }
 
 export class LinesBox extends THREE.LineSegments {
-    constructor(box: THREE.BoxGeometry, mesh: THREE.Mesh, color: THREE.ColorRepresentation = 0x00000) {
+    constructor(box: THREE.BoxGeometry, mesh: THREE.Mesh, color: THREE.ColorRepresentation = COLORS.black) {
         super(
             new THREE.EdgesGeometry(box),
             new THREE.LineBasicMaterial({ color: color }),
@@ -58,34 +51,23 @@ export class LinesBox extends THREE.LineSegments {
     }
 }
 
-export class Experience extends THREE.Mesh {
+export class Experience extends THREE.Group {
     width: number;
 
-    constructor(
-        private job: Job,
-        pos: THREE.Vector3,
-        scene: THREE.Scene
-    ) {
+    constructor(private job: Job, pos: Position3) {
+        super();
+
         let start = stringToDate(job.start)
         let end = stringToDate(job.end);
         let diff = (end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24 * 365);
 
         let height = diff * 10 + 5;
-        let width = height / 2 + 5;
-        let depth = width / 2;
 
-        const geometry = new THREE.BoxGeometry(width, height, depth);
-        const material = new THREE.MeshBasicMaterial({ color: 0xffffff });
-        super(geometry, material);
-        this.position.x = pos.x + width / 2;
-        this.position.z = pos.z + depth / 2;
-        this.position.y = height / 2;
-        this.width = width;
+        const building = new Building(pos, 5);
+        const companyTxt = new Text(job.company, 1, new Position3(pos.x + BUILDING.size.width / 2, BUILDING.door.height + 1, pos.z));
 
-        new LinesBox(geometry, this);
+        this.width = BUILDING.size.width;
 
-        const companyTxt = new Text(job.company, 1, new THREE.Vector3(0, 0, -depth / 2), this);
-
-        scene.add(this);
+        this.add(building, companyTxt)
     }
 }

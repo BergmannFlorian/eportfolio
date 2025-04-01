@@ -8,6 +8,7 @@
     import type { CV } from "./interfaces";
     import { loadFont } from "./font";
     import { Building, Wall } from "./buildings";
+    import { BUILDING } from "./const";
 
     const base = {
         camera: {
@@ -43,15 +44,11 @@
 
             const controls = new Controls();
 
-            let pos = new THREE.Vector3(0, 0, 10);
+            let pos = new Position3(0, 0.1, 10);
             cv.jobs.forEach((job, index) => {
-                // let experience = new Experience(job, pos, scene);
-                // pos.x = experience.position.x + experience.width / 2 + 1;
-                const building = new Building(
-                    new Position3(index * 30, 0, 0),
-                    5,
-                );
-                scene.add(building);
+                let experience = new Experience(job, pos);
+                scene.add(experience);
+                pos.x += experience.width + 5;
             });
 
             addEventListener(

@@ -32,6 +32,9 @@ export class Position2 {
     toV2() {
         return new THREE.Vector2(this.x, this.y);
     }
+    toV3() {
+        return new THREE.Vector3(this.x, this.y, 0);
+    }
 }
 
 export class Position3 extends Position2 {
