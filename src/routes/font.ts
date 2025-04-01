@@ -26,18 +26,13 @@ export class Text extends THREE.Mesh {
 
         super(textGeo, material);
         this.position.add(position);
-        console.log(29, this.position);
 
         textGeo.computeBoundingBox();
         const center = textGeo.boundingBox?.getCenter(new THREE.Vector3());
         if (center) {
             this.position.add(center);
-            console.log(35, this.position);
         }
 
-        console.log(38, this.position);
         this.rotateY(Math.PI);
-        console.log(40, this.position);
-
     }
 }

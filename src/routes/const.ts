@@ -40,7 +40,6 @@ export const BUILDING = {
         height: PLAYER.size.height
     },
     door: {
-        size: new Size(PLAYER.size.width * 4, PLAYER.size.height + 1),
-        height: 0
+        size: new Size(PLAYER.size.width * 4, PLAYER.size.height + 1)
     }
 }

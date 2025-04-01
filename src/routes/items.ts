@@ -61,13 +61,12 @@ export class Experience extends THREE.Group {
         let end = stringToDate(job.end);
         let diff = (end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24 * 365);
 
-        let height = diff * 10 + 5;
-
-        const building = new Building(pos, 5);
-        const companyTxt = new Text(job.company, 1, new Position3(pos.x + BUILDING.size.width / 2, BUILDING.door.height + 1, pos.z));
+        const building = new Building(pos, Math.ceil(diff) * 2);
+        const JobTxt = new Text(job.title, 1, new Position3(pos.x + BUILDING.size.width / 2, BUILDING.door.size.height + 3, pos.z));
+        const companyTxt = new Text(job.company, 1, new Position3(pos.x + BUILDING.size.width / 2, BUILDING.door.size.height + 1, pos.z));
 
         this.width = BUILDING.size.width;
 
-        this.add(building, companyTxt)
+        this.add(building, JobTxt, companyTxt)
     }
 }
