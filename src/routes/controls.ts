@@ -2,7 +2,7 @@ import * as THREE from "three";
 import { CAMERA, COLORS, CONTROLS, PLAYER } from "./const";
 import { PointerLockControls } from "three/examples/jsm/Addons.js";
 import type { Renderer } from "./environnement";
-import type { Position3 } from "./helpers";
+import { Position3 } from "./helpers";
 import { LinesBox } from "./items";
 
 export class Camera extends THREE.PerspectiveCamera {
@@ -21,30 +21,44 @@ export class Camera extends THREE.PerspectiveCamera {
         this.position.add(position);
 
         addEventListener("wheel", (event) => {
+            let z = this.getTargetPos().z;
             this.zoom = Math.min(
                 Math.max(0.125, this.zoom + event.deltaY * -0.001),
                 4,
             );
+            if (!this.isFps) {
+                this.position.z = z - this.baseY / this.zoom;
+                this.lookAt(this.getTargetPos());
+            }
         });
-    }
-
-    move(position: THREE.Vector3) {
-        if (this.isFps) {
-            this.position.set(position.x, PLAYER.size.height, position.z);
-        } else {
-            this.position.set(position.x, this.baseY, position.z - this.baseY / this.zoom);
-            this.lookAt(position);
-        }
     }
 
     resize(aspect: number) {
         this.aspect = aspect;
         this.updateProjectionMatrix();
     }
+
+    switchMode(isFps: boolean, playerPos: THREE.Vector3) {
+        this.isFps = isFps;
+        if (this.isFps) {
+            this.position.set(this.position.x, PLAYER.size.height, this.position.z + this.baseY / this.zoom);
+            this.lookAt(this.position.x, PLAYER.size.height, this.position.z + 1);
+        } else {
+            this.position.set(this.position.x, this.baseY, this.position.z - this.baseY / this.zoom);
+            this.lookAt(this.getTargetPos());
+        }
+    }
+
+    getTargetPos(): THREE.Vector3 {
+        if (this.isFps) {
+            return new THREE.Vector3(this.position.x, PLAYER.size.height, this.position.z);
+        } else {
+            return new THREE.Vector3(this.position.x, PLAYER.size.height, this.position.z + this.baseY / this.zoom);
+        }
+    }
 }
 
 export class Controls extends PointerLockControls {
-    direction = new THREE.Vector3(0, 0, 0);
     keyPressed: string[] = [];
     moveSpeed = 0;
     keys = {
@@ -56,6 +70,7 @@ export class Controls extends PointerLockControls {
     }
     mode = CONTROLS.mode.fly;
     clock: THREE.Clock;
+    move: THREE.Vector3 = new THREE.Vector3();
 
     constructor(camera: Camera, renderer: Renderer) {
         super(camera, renderer.domElement);
@@ -105,27 +120,23 @@ export class Controls extends PointerLockControls {
     }
 
     updateMove() {
-        if (this.isFps()) {
-            const camDir = this.getDirection(new THREE.Vector3());
-            this.direction.x = camDir.x * this.moveSpeed;
-            this.direction.z = camDir.z * this.moveSpeed;
-        } else {
-            this.direction.x = 0;
-            this.direction.z = 0;
-
-            if (this.isOneOfKeysPressed(this.keys.right)) {
-                this.direction.x += this.moveSpeed;
-            }
-            if (this.isOneOfKeysPressed(this.keys.left)) {
-                this.direction.x -= this.moveSpeed;
-            }
-            if (this.isOneOfKeysPressed(this.keys.up)) {
-                this.direction.z += this.moveSpeed;
-            }
-            if (this.isOneOfKeysPressed(this.keys.down)) {
-                this.direction.z -= this.moveSpeed;
-            }
+        this.move.x = 0;
+        this.move.z = 0;
+        if (this.isOneOfKeysPressed(this.keys.right)) {
+            this.move.x -= this.moveSpeed;
         }
+        if (this.isOneOfKeysPressed(this.keys.left)) {
+            this.move.x += this.moveSpeed;
+        }
+        if (this.isOneOfKeysPressed(this.keys.up)) {
+            this.move.z += this.moveSpeed;
+        }
+        if (this.isOneOfKeysPressed(this.keys.down)) {
+            this.move.z -= this.moveSpeed;
+        }
+
+        this.moveForward(this.move.z);
+        this.moveRight(this.move.x);
     }
 
     checkShiftKey(event: KeyboardEvent) {
@@ -146,7 +157,6 @@ export class Controls extends PointerLockControls {
         } else {
             this.mode = CONTROLS.mode.fps;
         }
-        console.log(140, this.mode);
     }
 
     isFps() {
@@ -162,7 +172,7 @@ export class Player extends THREE.Mesh {
         const geometry = new THREE.BoxGeometry(PLAYER.size.width, PLAYER.size.height, PLAYER.size.width);
         const material = new THREE.MeshBasicMaterial({ color: COLORS.white });
         const materialFront = new THREE.MeshBasicMaterial({ color: COLORS.black });
-        super(geometry, [materialFront, material, material, material, material, material]);
+        super(geometry, [material, materialFront, material, material, material, material]);
         this.position.set(PLAYER.pos.x, PLAYER.pos.y + PLAYER.size.height / 2, PLAYER.pos.y);
 
         new LinesBox(geometry, this);
@@ -175,24 +185,23 @@ export class Player extends THREE.Mesh {
         scene.add(this);
 
         addEventListener('switchMode', () => {
-            this.camera.isFps = this.controls.isFps();
+            this.camera.switchMode(this.controls.isFps(), this.position);
         })
     }
 
-    move(movement: THREE.Vector3) {
-        if (this.controls.isFps()) {
-            console.log(this.controls.direction, this.controls.getDirection(new THREE.Vector3()));
-        } else {
-            this.position.x += movement.x;
-            this.position.z += movement.z;
-        }
-        if (movement.length() != 0) {
-            this.rotation.y = -new THREE.Vector2(movement.x, movement.z).angle();
+    move() {
+        this.controls.updateMove();
+
+        const target = this.camera.getTargetPos();
+        this.position.x = target.x;
+        this.position.z = target.z;
+
+        if (this.controls.move.length() != 0) {
+            this.rotation.y = new THREE.Vector2(this.controls.move.x, this.controls.move.z).angle();
         }
     }
 
     animate() {
-        this.move(this.controls.direction);
-        this.camera.move(this.position);
+        this.move();
     }
 }
