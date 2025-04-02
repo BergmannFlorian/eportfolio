@@ -32,10 +32,14 @@
             const helpers = new Helpers(scene);
 
             let pos = new Position3(0, 0.1, 10);
+
+            const boxs3: THREE.Box3[] = [];
             cv.jobs.forEach((job, index) => {
                 let experience = new Experience(job, pos);
                 scene.add(experience);
                 pos.x += experience.width + 5;
+
+                boxs3.push(new THREE.Box3().setFromObject(experience));
             });
 
             addEventListener(
@@ -50,6 +54,13 @@
 
             function animate() {
                 player.animate();
+
+                const playerBox = new THREE.Box3().setFromObject(player);
+                setTimeout(() => {
+                    player.controls.switchMode(
+                        boxs3.some((box3) => box3.intersectsBox(playerBox)),
+                    );
+                }, 300);
 
                 renderer.render(scene, player.camera);
             }

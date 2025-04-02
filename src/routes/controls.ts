@@ -146,17 +146,22 @@ export class Controls extends PointerLockControls {
     checkSwitchMode(event: string) {
         if (this.isOneOfKeysPressed(this.keys.switch)) {
             this.switchMode();
-            dispatchEvent(new Event('switchMode'))
         }
     }
 
-    switchMode() {
-        if (this.isFps()) {
+    switchMode(fps: boolean | null = null) {
+        if (fps === this.isFps()) return;
+        if (fps === null) {
+            fps = !this.isFps();
+        }
+        if (fps) {
+            this.mode = CONTROLS.mode.fps;
+            this.lock();
+        } else {
             this.mode = CONTROLS.mode.fly;
             this.unlock();
-        } else {
-            this.mode = CONTROLS.mode.fps;
         }
+        dispatchEvent(new Event('switchMode'))
     }
 
     isFps() {
@@ -189,7 +194,7 @@ export class Player extends THREE.Mesh {
         })
     }
 
-    move() {
+    animate() {
         this.controls.updateMove();
 
         const target = this.camera.getTargetPos();
@@ -199,9 +204,5 @@ export class Player extends THREE.Mesh {
         if (this.controls.move.length() != 0) {
             this.rotation.y = new THREE.Vector2(this.controls.move.x, this.controls.move.z).angle();
         }
-    }
-
-    animate() {
-        this.move();
     }
 }
