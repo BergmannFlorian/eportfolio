@@ -5,7 +5,7 @@
     import { Experience, Floor } from "./items";
     import { Helpers, Position3 } from "./helpers";
     import type { CV } from "./interfaces";
-    import { loadFont } from "./font";
+    import { loadFont, TextCanevas } from "./font";
     import { Player } from "./controls";
 
     let scInnerWidth = $state(0);

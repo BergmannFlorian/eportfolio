@@ -60,3 +60,21 @@ export class HelpPoint extends THREE.Mesh {
         scene.add(this);
     }
 }
+
+export function fillText(ctx: CanvasRenderingContext2D, text: string, maxWidth: number, lineHeight: number, pos: Position2) {
+    var words = text.split(" ");
+    var currentLine = words[0];
+
+    for (var i = 1; i < words.length; i++) {
+        var word = words[i];
+        var width = ctx.measureText(currentLine + " " + word).width;
+        if (width < maxWidth) {
+            currentLine += " " + word;
+        } else {
+            ctx.fillText(currentLine, pos.x, pos.y)
+            pos.y += lineHeight;
+            currentLine = word;
+        }
+        ctx.fillText(currentLine, pos.x, pos.y)
+    }
+}
