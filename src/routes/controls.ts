@@ -21,12 +21,12 @@ export class Camera extends THREE.PerspectiveCamera {
         this.position.add(position);
 
         addEventListener("wheel", (event) => {
-            let z = this.getTargetPos().z;
-            this.zoom = Math.min(
-                Math.max(0.125, this.zoom + event.deltaY * -0.001),
-                4,
-            );
             if (!this.isFps) {
+                let z = this.getTargetPos().z;
+                this.zoom = Math.min(
+                    Math.max(0.125, this.zoom + event.deltaY * -0.001),
+                    4,
+                );
                 this.position.z = z - this.baseY / this.zoom;
                 this.lookAt(this.getTargetPos());
             }
