@@ -1,8 +1,8 @@
 import * as THREE from "three";
 import type { Job } from "./interfaces";
-import { Position3, stringToDate } from "./helpers";
+import { HelpPoint, Position3, Size2, stringToDate } from "./helpers";
 import { Text } from "./font";
-import { BUILDING, COLORS, PLAYER } from "./const";
+import { BUILDING, COLORS, FONTS, PLAYER } from "./const";
 import { Building } from "./buildings";
 
 export class Floor extends THREE.Mesh {
@@ -30,22 +30,37 @@ export class LinesBox extends THREE.LineSegments {
 }
 
 export class Experience extends THREE.Group {
-    width: number;
+    building: Building;
+    texts: Text[];
 
-    constructor(private job: Job, pos: Position3) {
+    constructor(private job: Job, pos: Position3, scene: THREE.Scene) {
         super();
-        this.width = BUILDING.size.width;
 
         let start = stringToDate(job.start)
         let end = stringToDate(job.end);
         let diff = (end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24 * 365);
 
-        this.add(
-            new Building(pos, Math.ceil(diff) * 2),
-            new Text(job.title, 1, BUILDING.size.width, new Position3(pos.x + BUILDING.size.width / 2, BUILDING.door.size.height + 3, pos.z - 0.1)),
-            new Text(job.company, 0.8, BUILDING.size.width, new Position3(pos.x + BUILDING.size.width / 2, BUILDING.door.size.height + 1.5, pos.z - 0.1)),
-            new Text(`${job.start} - ${job.end}`, 0.5, BUILDING.size.width, new Position3(pos.x + BUILDING.size.width / 2, BUILDING.door.size.height + 1, pos.z - 0.1)),
-            new Text(job.tasks.reduce((tasks, task) => `${tasks}- ${task}\n`), 0.2, 7, new Position3(pos.x + BUILDING.size.width / 2, 0, pos.z + BUILDING.size.width / 2))
-        )
+        this.building = new Building(pos, Math.ceil(diff) * 2);
+
+        this.texts = [
+            new Text(job.title, FONTS.title1, BUILDING.size.width, new Position3(pos.x + BUILDING.size.width / 2, BUILDING.door.size.height + 3.2, pos.z - 0.1), true),
+            new Text(job.company, FONTS.title2, BUILDING.size.width, new Position3(pos.x + BUILDING.size.width / 2, BUILDING.door.size.height + 2, pos.z - 0.1), true),
+            new Text(`${job.start} - ${job.end}`, FONTS.title3, BUILDING.size.width, new Position3(pos.x + BUILDING.size.width / 2, BUILDING.door.size.height + 1, pos.z - 0.1), true),
+        ]
+
+        let currentHeight = pos.y;
+        job.tasks.reverse().forEach(task => {
+            const text = new Text(task, FONTS.standard, 7, new Position3(pos.x + BUILDING.size.width / 2, currentHeight, pos.z + BUILDING.size.width / 2))
+            currentHeight += text.height;
+            this.texts.push(text);
+        });
+
+        this.add(this.building, ...this.texts);
+
+        scene.add(this);
+    }
+
+    get width(): number {
+        return BUILDING.size.width;
     }
 }

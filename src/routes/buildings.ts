@@ -1,5 +1,5 @@
 import * as THREE from "three";
-import { Position2, Position3, Size } from "./helpers";
+import { Position2, Position3, Size2 } from "./helpers";
 import { BUILDING, COLORS } from "./const";
 
 export class Building extends THREE.Group {
@@ -27,7 +27,7 @@ class Ground extends THREE.Mesh {
 }
 
 class Floor extends THREE.Group {
-    size: Size;
+    size: Size2;
     floor: number;
 
     constructor(floor: number, pos: Position3) {
@@ -47,7 +47,7 @@ class Floor extends THREE.Group {
 }
 
 class SquareHole extends THREE.Path {
-    constructor(pos: Position2, size: Size) {
+    constructor(pos: Position2, size: Size2) {
         super();
         this.moveTo(pos.x, pos.y)
             .lineTo(pos.x + size.width, pos.y)
@@ -58,7 +58,7 @@ class SquareHole extends THREE.Path {
 }
 
 class Window extends SquareHole {
-    constructor(pos: Position2, size: Size = BUILDING.window.size) {
+    constructor(pos: Position2, size: Size2 = BUILDING.window.size) {
         let x = pos.x - size.width / 2;
         let y = pos.y - size.height / 2;
         super(new Position2(x, y), size);
@@ -66,7 +66,7 @@ class Window extends SquareHole {
 }
 
 class Glass extends THREE.Mesh {
-    constructor(pos: Position2, size: Size = BUILDING.window.size) {
+    constructor(pos: Position2, size: Size2 = BUILDING.window.size) {
         const glassGeometry = new THREE.PlaneGeometry(BUILDING.window.size.width, BUILDING.window.size.height);
         const calizStella_mat = new THREE.MeshPhysicalMaterial({
             metalness: 1,
@@ -86,7 +86,7 @@ class Glass extends THREE.Mesh {
 }
 
 class Door extends SquareHole {
-    constructor(pos: Position2, size: Size = BUILDING.door.size) {
+    constructor(pos: Position2, size: Size2 = BUILDING.door.size) {
         let x = pos.x - size.width / 2;
         let y = pos.y;
         super(new Position2(x, y), size)

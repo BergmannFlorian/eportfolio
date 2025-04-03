@@ -1,21 +1,26 @@
 import * as THREE from "three";
-import { Font, FontLoader, TextGeometry } from "three/examples/jsm/Addons.js";
-import { fillText, Position2, type Position3 } from "./helpers";
-import { COLORS } from "./const";
+import { Font as ThreeFont, FontLoader, TextGeometry } from "three/examples/jsm/Addons.js";
+import { fillText, getBoxSize, getCenter, HelpPoint, Position2, type Position3 } from "./helpers";
+import { COLORS, FONTS } from "./const";
+import type { Font as IFont } from "./interfaces";
 
-let font: Font;
+let threeFont: ThreeFont;
 
 export async function loadFont() {
     const loader = new FontLoader();
-    font = await loader.loadAsync('fonts/Arial_Regular.json');
+    threeFont = await loader.loadAsync(`fonts/${FONTS.name}.json`);
 }
 
-export class Text extends THREE.Mesh {
-    constructor(text: string, size: number, maxWidth: number, position: Position3) {
+export class Text extends THREE.Group {
+    height: number;
+    texts: THREE.Mesh[] = [];
+    constructor(text: string, font: IFont, maxWidth: number, position: Position3, center: boolean = false) {
+        super();
+
         const textGeoParams = {
-            font: font,
-            size: size,
-            depth: 0,
+            font: threeFont,
+            size: font.size,
+            depth: font.depth,
             curveSegments: 12,
             bevelEnabled: false,
             bevelThickness: 1,
@@ -23,45 +28,59 @@ export class Text extends THREE.Mesh {
             bevelOffset: 0,
             bevelSegments: 5
         }
+        const material = new THREE.MeshBasicMaterial({ color: 0x000000 });
 
         let textGeo = new TextGeometry(text, textGeoParams);
         textGeo.computeBoundingBox();
 
-        if (textGeo.boundingBox && textGeo.boundingBox.getSize(position.toV3()).x > maxWidth) {
+        let textsGeo: TextGeometry[] = []
+        textsGeo = [textGeo];
+
+        if (textGeo.boundingBox && getBoxSize(textGeo).width > maxWidth) {
             const words = text.split(" ");
             let currentLine = "";
+            const lines: TextGeometry[] = [];
 
             if (words.every(word => {
                 let textGeoWraped = new TextGeometry(currentLine + ` ${word}`, textGeoParams);
                 textGeoWraped.computeBoundingBox();
                 if (!textGeoWraped.boundingBox) return false;
-                if (textGeoWraped.boundingBox.getSize(position.toV3()).x > maxWidth) {
-                    currentLine += `\n${word}`;
+                if (getBoxSize(textGeoWraped).width > maxWidth) {
+                    lines.push(textGeoWraped)
+                    currentLine = "";
                 } else {
                     currentLine += ` ${word}`;
-                    position.y += size;
                 }
                 return true;
             })) {
-                textGeo = new TextGeometry(currentLine, textGeoParams);
-                textGeo.computeBoundingBox();
+                textsGeo = lines;
             }
         }
 
-        const material = new THREE.MeshBasicMaterial({ color: 0x000000 });
-        super(textGeo, material);
 
-        const center = textGeo.boundingBox?.getCenter(new THREE.Vector3());
+        textsGeo.forEach((geo, index) => {
+            const text = new THREE.Mesh(geo, material);
+            text.position.y = (textsGeo.length - 1 - index) * (font.size * 1.1);
+
+            if (center) {
+                const size = getBoxSize(text);
+                console.log(68, text.position, size);
+                text.position.x -= size.width / 2;
+                console.log(70, text.position);
+            }
+
+            this.add(text);
+        })
+
         this.position.add(position);
-        if (center) {
-            this.position.add(center);
-        }
+
+        this.height = (textsGeo.length) * font.size;
 
         this.rotateY(Math.PI);
     }
 }
 
-export class TextCanevas {
+class TextCanevas {
     constructor(text: string, scene: THREE.Scene) {
         const canvas = document.createElement("canvas");
         canvas.width = 10000;

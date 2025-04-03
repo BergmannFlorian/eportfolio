@@ -40,8 +40,7 @@
 
             const boxs3: THREE.Box3[] = [];
             cv.jobs.forEach((job, index) => {
-                let experience = new Experience(job, pos);
-                scene.add(experience);
+                let experience = new Experience(job, pos, scene);
                 pos.x += experience.width + 5;
 
                 boxs3.push(new THREE.Box3().setFromObject(experience));
