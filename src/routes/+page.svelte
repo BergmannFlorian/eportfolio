@@ -5,7 +5,7 @@
     import { Experience, Floor } from "./items";
     import { Helpers, Position3 } from "./helpers";
     import type { CV } from "./interfaces";
-    import { loadFont, TextCanevas } from "./font";
+    import { loadFont } from "./font";
     import { Player } from "./controls";
 
     let scInnerWidth = $state(0);
@@ -14,12 +14,17 @@
     let scOuterHeight = $state(0);
 
     if (browser) {
+        fetch("cv.json").then((response) => {
+            init(response);
+        });
+    }
+
+    async function init(cvFile: Response) {
         let container = document.getElementById("container");
         if (container) {
-            await loadFont();
-
-            const cvFile = await fetch("cv.json");
             const cv = (await cvFile.json()) as CV;
+
+            await loadFont();
 
             const scene = new THREE.Scene();
             scene.background = new THREE.Color(0xd4f7ff);
