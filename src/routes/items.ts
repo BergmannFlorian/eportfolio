@@ -48,10 +48,10 @@ export class Experience extends THREE.Group {
             new Text(`${job.start} - ${job.end}`, FONTS.title3, BUILDING.size.width, new Position3(pos.x + BUILDING.size.width / 2, BUILDING.door.size.height + 1, pos.z - 0.1), true),
         ]
 
-        let currentHeight = pos.y;
+        let y = pos.y;
         job.tasks.reverse().forEach(task => {
-            const text = new Text(task, FONTS.standard, 7, new Position3(pos.x + BUILDING.size.width / 2, currentHeight, pos.z + BUILDING.size.width / 2))
-            currentHeight += text.height;
+            const text = new Text(task, FONTS.standard, 7, new Position3(pos.x + BUILDING.size.width / 2, y, pos.z + BUILDING.size.width / 2))
+            y += text.height + FONTS.standard.spacing * 2;
             this.texts.push(text);
         });
 

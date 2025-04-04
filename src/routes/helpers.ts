@@ -97,7 +97,7 @@ function getBoxFrom3DObject(object: THREE.Object3D): THREE.Box3 {
     return new THREE.Box3().setFromObject(object);
 }
 
-function getBox(object: THREE.Object3D | THREE.BufferGeometry) {
+export function getBox(object: THREE.Object3D | THREE.BufferGeometry) {
     if (object instanceof THREE.Object3D) return getBoxFrom3DObject(object);
     return getBoxFromGeometry(object);
 }

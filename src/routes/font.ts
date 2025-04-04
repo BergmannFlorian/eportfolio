@@ -1,8 +1,9 @@
 import * as THREE from "three";
 import { Font as ThreeFont, FontLoader, TextGeometry } from "three/examples/jsm/Addons.js";
-import { fillText, getBoxSize, getCenter, HelpPoint, Position2, type Position3 } from "./helpers";
+import { fillText, getBox, getBoxSize, getCenter, HelpPoint, Position2, type Position3 } from "./helpers";
 import { COLORS, FONTS } from "./const";
 import type { Font as IFont } from "./interfaces";
+import { LinesBox } from "./items";
 
 let threeFont: ThreeFont;
 
@@ -12,7 +13,7 @@ export async function loadFont() {
 }
 
 export class Text extends THREE.Group {
-    height: number;
+    height: number = 0;
     texts: THREE.Mesh[] = [];
     constructor(text: string, font: IFont, maxWidth: number, position: Position3, center: boolean = false) {
         super();
@@ -41,15 +42,18 @@ export class Text extends THREE.Group {
             let currentLine = "";
             const lines: TextGeometry[] = [];
 
-            if (words.every(word => {
+            if (words.every((word, index) => {
                 let textGeoWraped = new TextGeometry(currentLine + ` ${word}`, textGeoParams);
                 textGeoWraped.computeBoundingBox();
                 if (!textGeoWraped.boundingBox) return false;
                 if (getBoxSize(textGeoWraped).width > maxWidth) {
-                    lines.push(textGeoWraped)
-                    currentLine = "";
+                    lines.push(new TextGeometry(currentLine.trim(), textGeoParams))
+                    currentLine = word;
                 } else {
                     currentLine += ` ${word}`;
+                }
+                if (index === words.length - 1) {
+                    lines.push(new TextGeometry(currentLine.trim(), textGeoParams));
                 }
                 return true;
             })) {
@@ -57,22 +61,26 @@ export class Text extends THREE.Group {
             }
         }
 
-
         textsGeo.forEach((geo, index) => {
             const text = new THREE.Mesh(geo, material);
-            text.position.y = (textsGeo.length - 1 - index) * (font.size * 1.1);
+            text.position.y = - this.height;
+
+            const size = getBoxSize(text);
+            this.height += size.height;
 
             if (center) {
-                const size = getBoxSize(text);
                 text.position.x -= size.width / 2;
             }
 
+            this.add(new THREE.Box3Helper(getBox(text), COLORS.red));
+            // this.add(new HelpPoint(text.position));
+
             this.add(text);
         })
+        // this.add(new HelpPoint(this.position));
 
+        this.position.y += this.height;
         this.position.add(position);
-
-        this.height = (textsGeo.length) * font.size;
 
         this.rotateY(Math.PI);
     }

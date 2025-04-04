@@ -66,17 +66,21 @@ export const FONTS = {
     title1: {
         size: 1,
         depth: 0.1,
+        spacing: 0.1,
     } as Font,
     title2: {
         size: 0.8,
         depth: 0.1,
+        spacing: 0.1,
     } as Font,
     title3: {
         size: 0.5,
         depth: 0.1,
+        spacing: 0.1,
     } as Font,
     standard: {
         size: 0.2,
-        depth: 0
+        depth: 0,
+        spacing: 0.05
     } as Font,
 }
