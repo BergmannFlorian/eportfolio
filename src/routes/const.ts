@@ -84,3 +84,10 @@ export const FONTS = {
         spacing: 0.05
     } as Font,
 }
+
+export const DIRECTIONS = {
+    north: Math.PI / 2,
+    south: - Math.PI / 2,
+    west: 0,
+    east: Math.PI,
+}

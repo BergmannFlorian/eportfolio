@@ -15,7 +15,7 @@ export async function loadFont() {
 export class Text extends THREE.Group {
     height: number = 0;
     texts: THREE.Mesh[] = [];
-    constructor(text: string, font: IFont, maxWidth: number, position: Position3, center: boolean = false) {
+    constructor(text: string, font: IFont, maxWidth: number, position: Position3, center: boolean = false, color: THREE.ColorRepresentation = COLORS.black) {
         super();
 
         const textGeoParams = {
@@ -29,7 +29,7 @@ export class Text extends THREE.Group {
             bevelOffset: 0,
             bevelSegments: 5
         }
-        const material = new THREE.MeshBasicMaterial({ color: 0x000000 });
+        const material = new THREE.MeshBasicMaterial({ color: color });
 
         let textGeo = new TextGeometry(text, textGeoParams);
         textGeo.computeBoundingBox();
