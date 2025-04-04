@@ -64,9 +64,7 @@ export class Text extends THREE.Group {
 
             if (center) {
                 const size = getBoxSize(text);
-                console.log(68, text.position, size);
                 text.position.x -= size.width / 2;
-                console.log(70, text.position);
             }
 
             this.add(text);

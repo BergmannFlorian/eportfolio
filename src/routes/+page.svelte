@@ -31,7 +31,7 @@
 
             const renderer = new Renderer(container);
             const floor = new Floor(scene);
-            const player = new Player(renderer, scene);
+            const player = new Player(renderer, scene, true);
             const light = new Light(scene);
 
             const helpers = new Helpers(scene);
@@ -59,12 +59,12 @@
             function animate() {
                 player.animate();
 
-                const playerBox = new THREE.Box3().setFromObject(player);
-                setTimeout(() => {
-                    player.controls.switchMode(
-                        boxs3.some((box3) => box3.intersectsBox(playerBox)),
-                    );
-                }, 300);
+                // const playerBox = new THREE.Box3().setFromObject(player);
+                // setTimeout(() => {
+                //     player.controls.switchMode(
+                //         boxs3.some((box3) => box3.intersectsBox(playerBox)),
+                //     );
+                // }, 300);
 
                 renderer.render(scene, player.camera);
             }

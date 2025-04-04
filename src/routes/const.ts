@@ -8,16 +8,21 @@ export const CONTROLS = {
     }
 }
 
-export const CAMERA = {
-    position: new Position3(0, 10, -15),
-}
-
 export const PLAYER = {
     pos: new Position2(0, 0),
     size: new Size2(1, 2),
     speed: {
         walk: 0.2,
         sprint: 0.5,
+    }
+}
+
+export const CAMERA = {
+    fly: {
+        position: new Position3(0, 10, -15),
+    },
+    fps: {
+        position: new Position3(0, PLAYER.size.height / 2, 0),
     }
 }
 

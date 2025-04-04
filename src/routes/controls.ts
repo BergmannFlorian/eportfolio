@@ -6,19 +6,21 @@ import { Position3 } from "./helpers";
 import { LinesBox } from "./items";
 
 export class Camera extends THREE.PerspectiveCamera {
-    baseY: number = 0;
+    baseY: number;
     zoom: number = 1;
-    isFps: boolean = false;
+    isFps: boolean = true;
 
-    constructor(position: Position3 = CAMERA.position) {
+    constructor(player: Player, isFps: boolean = true) {
         super(
             50,
             innerWidth / innerHeight,
             1,
             1000,
         );
-        this.baseY = position.y;
-        this.position.add(position);
+        this.position.add(player.position);
+        this.switchMode(isFps)
+
+        this.baseY = isFps ? CAMERA.fps.position.y : CAMERA.fly.position.y;
 
         addEventListener("wheel", (event) => {
             if (!this.isFps) {
@@ -38,20 +40,19 @@ export class Camera extends THREE.PerspectiveCamera {
         this.updateProjectionMatrix();
     }
 
-    switchMode(isFps: boolean, playerPos: THREE.Vector3) {
-        this.isFps = isFps;
+    switchMode(isFps: boolean | undefined = undefined) {
+        this.isFps = isFps || !this.isFps;
         if (this.isFps) {
-            this.position.set(this.position.x, PLAYER.size.height, this.position.z + this.baseY / this.zoom);
-            this.lookAt(this.position.x, PLAYER.size.height, this.position.z + 1);
+            this.position.set(this.position.x, PLAYER.size.height, this.position.z);
         } else {
             this.position.set(this.position.x, this.baseY, this.position.z - this.baseY / this.zoom);
-            this.lookAt(this.getTargetPos());
         }
+        this.lookAt(this.getTargetPos());
     }
 
-    getTargetPos(): THREE.Vector3 {
+    getTargetPos(origin: boolean = false): THREE.Vector3 {
         if (this.isFps) {
-            return new THREE.Vector3(this.position.x, PLAYER.size.height, this.position.z);
+            return new THREE.Vector3(this.position.x + (origin ? 0 : 1), PLAYER.size.height, this.position.z);
         } else {
             return new THREE.Vector3(this.position.x, PLAYER.size.height, this.position.z + this.baseY / this.zoom);
         }
@@ -68,13 +69,14 @@ export class Controls extends PointerLockControls {
         left: ["KeyD", "ArrowRight"],
         switch: ["Enter", "	Space"],
     }
-    mode = CONTROLS.mode.fly;
     clock: THREE.Clock;
     move: THREE.Vector3 = new THREE.Vector3();
+    camera: Camera;
 
     constructor(camera: Camera, renderer: Renderer) {
         super(camera, renderer.domElement);
 
+        this.camera = camera;
         this.moveSpeed = PLAYER.speed.walk;
         this.clock = new THREE.Clock();
 
@@ -107,7 +109,7 @@ export class Controls extends PointerLockControls {
         addEventListener(
             "click",
             (event) => {
-                if (this.mode === CONTROLS.mode.fps) {
+                if (this.camera.isFps) {
                     this.lock();
                 }
             },
@@ -145,27 +147,18 @@ export class Controls extends PointerLockControls {
 
     checkSwitchMode(event: string) {
         if (this.isOneOfKeysPressed(this.keys.switch)) {
-            this.switchMode();
+            this.switchMode()
         }
     }
 
-    switchMode(fps: boolean | null = null) {
-        if (fps === this.isFps()) return;
-        if (fps === null) {
-            fps = !this.isFps();
-        }
-        if (fps) {
-            this.mode = CONTROLS.mode.fps;
+    switchMode(fps: boolean | undefined = undefined) {
+        this.camera.switchMode(fps)
+
+        if (this.camera.isFps) {
             this.lock();
         } else {
-            this.mode = CONTROLS.mode.fly;
             this.unlock();
         }
-        dispatchEvent(new Event('switchMode'))
-    }
-
-    isFps() {
-        return this.mode === CONTROLS.mode.fps;
     }
 }
 
@@ -173,7 +166,7 @@ export class Player extends THREE.Mesh {
     camera: Camera;
     controls: Controls;
 
-    constructor(renderer: Renderer, scene: THREE.Scene) {
+    constructor(renderer: Renderer, scene: THREE.Scene, isFps: boolean = false) {
         const geometry = new THREE.BoxGeometry(PLAYER.size.width, PLAYER.size.height, PLAYER.size.width);
         const material = new THREE.MeshBasicMaterial({ color: COLORS.white });
         const materialFront = new THREE.MeshBasicMaterial({ color: COLORS.black });
@@ -182,22 +175,16 @@ export class Player extends THREE.Mesh {
 
         new LinesBox(geometry, this);
 
-        this.camera = new Camera();
+        this.camera = new Camera(this, isFps);
         this.controls = new Controls(this.camera, renderer);
 
-        this.camera.lookAt(this.position);
-
         scene.add(this);
-
-        addEventListener('switchMode', () => {
-            this.camera.switchMode(this.controls.isFps(), this.position);
-        })
     }
 
     animate() {
         this.controls.updateMove();
 
-        const target = this.camera.getTargetPos();
+        const target = this.camera.getTargetPos(true);
         this.position.x = target.x;
         this.position.z = target.z;
 
