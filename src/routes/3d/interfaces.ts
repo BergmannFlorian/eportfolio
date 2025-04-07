@@ -16,6 +16,7 @@ export interface Lang {
 }
 
 export interface Infos {
+    title: string,
     contact: {
         name: string,
         email: string,
