@@ -20,11 +20,11 @@
 {#if cv}
     <div class="pdf">
         <div class="page">
-            <div class="left">
+            <div class="left h-full w-[40%]">
                 <Infos infos={cv.infos} />
             </div>
-            <div class="right">
-                <div>{cv.infos.title}</div>
+            <div class="right p-5">
+                <div class="text-2xl">{cv.infos.title}</div>
                 <Skills />
                 <Certificates certificates={cv.certificates} />
                 <Formations formations={cv.formations} />
@@ -40,14 +40,12 @@
 
 <style>
     .left {
-        width: 40%;
-        height: 100%;
         background-color: #3b3b3b;
         color: #b4b4b4;
     }
 
     .pdf {
-        font: 7pt "Arial";
+        font: 7pt "Verdana";
     }
 
     * {

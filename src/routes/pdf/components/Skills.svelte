@@ -3,10 +3,10 @@
 
 <div>
     <div>Compétence</div>
-    <table>
-        <thead>
-            <tr>
-                <td></td>
+    <table class="w-full border-solid">
+        <thead class="text-[7px] font-bold">
+            <tr class="border-b t-border">
+                <td class="border-r t-border"></td>
                 <td>LANGUAGES</td>
                 <td>FRAMEWORK / BIBLIOTHÈQUE</td>
                 <td>OUTILS</td>
@@ -14,20 +14,70 @@
         </thead>
         <tbody>
             <tr>
-                <td>COURAMMENT UTILISÉS</td>
-                <td></td>
-                <td></td>
+                <td class="text-[7px] font-bold border-r t-border">
+                    COURAMMENT UTILISÉS
+                </td>
+                <td>
+                    HTML<br />
+                    CSS/SCSS<br />
+                    JAVASCRIPT<br />
+                    TYPESCRIPT<br />
+                    PHP<br />
+                    SQL/MYSQL<br />
+                    BASH<br />
+                    TWIG
+                </td>
+                <td>
+                    NUXT2<br />
+                    SYMFONY5
+                </td>
+                <td>
+                    DOCKER<br />
+                    GITHUB<br />
+                    GIT<br />
+                    JIRA<br />
+                    SLACK<br />
+                    VSCODE<br />
+                    DBEAVER
+                </td>
             </tr>
             <tr>
-                <td>OCCASIONNELEMENT</td>
-                <td></td>
-                <td></td>
+                <td class="text-[7px] font-bold border-r t-border">
+                    OCCASIONNELEMENT
+                </td>
+                <td>MJML</td>
+                <td>
+                    NUXT3/BRIDGE<br />
+                    THREEJS
+                </td>
+                <td>
+                    BITBUCKET<br />
+                    HTACCESS
+                </td>
             </tr>
             <tr>
-                <td>IL Y A LONGTEMPS</td>
-                <td></td>
-                <td></td>
+                <td class="text-[7px] font-bold border-r t-border">
+                    IL Y A LONGTEMPS
+                </td>
+                <td>
+                    RUBY<br />
+                    C<br />
+                    C++<br />
+                    C#<br />
+                    JAVA
+                </td>
+                <td> LARAVEL </td>
+                <td> PHPSTORM </td>
             </tr>
         </tbody>
     </table>
 </div>
+
+<style>
+    .t-border {
+        border-color: #d3d3d3;
+    }
+    td {
+        padding: 10px;
+    }
+</style>

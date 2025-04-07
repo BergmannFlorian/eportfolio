@@ -1,53 +1,52 @@
 <script lang="ts">
     import type { Infos } from "../../3d/interfaces";
     import profil from "$lib/assets/images/florian-b.jpg";
+    import Info from "./Info.svelte";
 
     export let infos: Infos;
 </script>
 
-<img src={profil} alt="profil" />
-<div>{infos.contact.name}</div>
-<div>
-    <div>Contact</div>
-    <div>
-        <div>{infos.contact.address}</div>
-        <div>{infos.contact.email}</div>
-        {#each infos.socials as social}
-            <div>{social}</div>
-        {/each}
-        {#each infos.others as other}
-            <div>{other}</div>
-        {/each}
-    </div>
-</div>
-<div>
-    <div>Références</div>
-    <div>Sur demande</div>
-</div>
-<div>
-    <div>Langues</div>
-    <table>
-        <tbody>
-            {#each infos.langs as lang}
-                <tr>
-                    <td>{lang.name}</td>
-                    <td>: {lang.level}</td>
-                </tr>
+<div class="h-full flex flex-col">
+    <img src={profil} alt="profil" />
+    <div class="text-2xl text-center">{infos.contact.name}</div>
+    <div class="flex flex-col pr-5 pl-5 justify-around h-full">
+        <Info title="CONTACT">
+            <div>{infos.contact.address}</div>
+            <div>{infos.contact.email}</div>
+            {#each infos.socials as social}
+                <div>{social.link}</div>
             {/each}
-        </tbody>
-    </table>
-</div>
-<div>
-    <div>Centres d'intérêt</div>
-    <div>
-        {#each infos.hobbys as hobby}
-            <div>{hobby}</div>
-        {/each}
+            {#each infos.others as other}
+                <div>{other}</div>
+            {/each}
+        </Info>
+        <Info title="REFERENCES">
+            <div class="text-center w-full">Sur demande</div>
+        </Info>
+        <Info title="LANGUES">
+            <table>
+                <tbody>
+                    {#each infos.langs as lang}
+                        <tr>
+                            <td>{lang.name}</td>
+                            <td>: {lang.level}</td>
+                        </tr>
+                    {/each}
+                </tbody>
+            </table>
+        </Info>
+        <Info title="CENTRES D'INTERETS">
+            {#each infos.hobbys as hobby}
+                <div>{hobby}</div>
+            {/each}
+        </Info>
     </div>
 </div>
 
 <style>
     img {
         width: 100%;
+        height: 9cm;
+        object-fit: cover;
     }
 </style>
