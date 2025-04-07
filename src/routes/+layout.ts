@@ -1,7 +1,12 @@
-import type { LayoutLoad } from './$types';
+import { browser } from "$app/environment";
 
-export const prerender = true;
-
-export const load: LayoutLoad = () => {
-    return {};
-};
+export async function load() {
+    if (browser) {
+        const res = await fetch("cv.json");
+        return {
+            cv: await res.json()
+        }
+    } else {
+        return {};
+    }
+}

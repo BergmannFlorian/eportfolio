@@ -1,5 +1,5 @@
 <script lang="ts">
-    import type { CV } from "./3d/interfaces.js";
+    import type { CV } from "../3d/interfaces.js";
 
     const { data } = $props();
     let cv = null;
