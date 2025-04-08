@@ -6,7 +6,7 @@
     export let infos: Infos;
 </script>
 
-<div class="h-full flex flex-col">
+<div class="h-full flex flex-col left">
     <img src={profil} alt="profil" />
     <div class="text-[29px] text-center font-questrial">
         {infos.contact.name}
@@ -49,5 +49,10 @@
         width: 100%;
         height: 9cm;
         object-fit: cover;
+    }
+
+    .left {
+        background-color: #3b3b3b;
+        color: #b4b4b4;
     }
 </style>

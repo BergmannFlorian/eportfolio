@@ -1,15 +1,14 @@
 <script lang="ts">
     import type { CV } from "$lib/interfaces/cv";
-    import Infos from "./components/left/Infos.svelte";
-    import Job from "./components/left/Job.svelte";
-    import Skills from "./components/right/Skills.svelte";
-    import Certificates from "./components/right/Certificates.svelte";
-    import Formations from "./components/right/Formations.svelte";
-    import Section from "./components/Section.svelte";
+    import Infos from "./first/left/Infos.svelte";
+    import Skills from "./first/right/Skills.svelte";
+    import Certificates from "./first/right/Certificates.svelte";
+    import Formations from "./first/right/Formations.svelte";
+    import Section from "./first/Section.svelte";
+    import Jobs from "./second/jobs.svelte";
 
     const { data } = $props();
     let cv = $state(data.cv ? (data.cv as CV) : null);
-    // if (data.cv) cv = data.cv as CV;
 </script>
 
 <nav class="no-print">
@@ -21,7 +20,7 @@
 {#if cv}
     <div class="pdf">
         <div class="page">
-            <div class="left h-full min-w-[7cm] w-[7cm] max-w-[7cm]">
+            <div class="h-full min-w-[7cm] w-[7cm] max-w-[7cm]">
                 <Infos infos={cv.infos} />
             </div>
             <div class="right h-full flex flex-col p-5 gap-y-5">
@@ -40,9 +39,7 @@
             </div>
         </div>
         <div class="page">
-            {#each cv.jobs as job}
-                <Job {job} />
-            {/each}
+            <Jobs jobs={cv.jobs} />
         </div>
     </div>
 {/if}
@@ -65,11 +62,6 @@
         color: #3b3b3b;
     }
 
-    .left {
-        background-color: #3b3b3b;
-        color: #b4b4b4;
-    }
-
     .pdf {
         font-family: "Teachers", sans-serif;
         font-size: 14px;
@@ -85,7 +77,6 @@
     .page {
         width: 21cm;
         height: 29.7cm;
-        /* padding: 2cm; */
         margin: 1cm auto;
         border: 1px #d3d3d3 solid;
         border-radius: 5px;
@@ -103,11 +94,8 @@
 
     @media print {
         .page {
-            /* html,
-            body {
-                width: 21cm;
-                height: 29.7cm;
-            } */
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
             margin: 0;
             border: initial;
             border-radius: initial;
@@ -116,6 +104,9 @@
             box-shadow: initial;
             background: initial;
             page-break-after: always;
+        }
+        nav {
+            display: none !important;
         }
     }
 </style>

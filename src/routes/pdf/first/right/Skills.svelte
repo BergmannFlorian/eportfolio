@@ -4,10 +4,10 @@
 <table class="w-full border-solid text-[9px] font-teachers">
     <thead class="font-bold">
         <tr class="border-b t-border">
-            <td class="border-r t-border"></td>
-            <td>LANGUAGES</td>
-            <td>FRAMEWORK / BIBLIOTHÈQUE</td>
-            <td>OUTILS</td>
+            <td class="border-r t-border w-[25%]"></td>
+            <td class="w-[25%]">LANGUAGES</td>
+            <td class="w-[25%]">FRAMEWORK / BIBLIOTHÈQUE</td>
+            <td class="w-[25%]">OUTILS</td>
         </tr>
     </thead>
     <tbody>

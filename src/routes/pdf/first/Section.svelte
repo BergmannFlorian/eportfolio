@@ -14,16 +14,10 @@
     >
         {title.toUpperCase()}
     </div>
-    <div class="flex w-[90%] {center ? 'justify-center' : ''}">
-        <hr class="border-solid border-3 w-15 mb-3 gray" />
+    <div class="flex w-[90%] mb-3 {center ? 'justify-center mt-2' : ''}">
+        <hr class="border-solid border-3 w-15 text-gray-light" />
     </div>
     <div class="w-full">
         <slot></slot>
     </div>
 </div>
-
-<style>
-    .gray {
-        color: #b4b4b4;
-    }
-</style>
