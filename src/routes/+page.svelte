@@ -1,9 +1,8 @@
 <script lang="ts">
-    import type { CV } from "./3d/interfaces.js";
+    import type { CV } from "$lib/interfaces/cv.js";
 
     const { data } = $props();
-    let cv = null;
-    if (data.cv) cv = data.cv as CV;
+    let cv = $state(data.cv ? (data.cv as CV) : null);
 </script>
 
 <nav>

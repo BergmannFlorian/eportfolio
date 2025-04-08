@@ -1,5 +1,5 @@
+import type { Font } from "$lib/interfaces/3d";
 import { Position2, Position3, Size2 } from "./helpers";
-import type { Font } from "./interfaces";
 
 export const CONTROLS = {
     mode: {

@@ -2,8 +2,8 @@ import * as THREE from "three";
 import { Font as ThreeFont, FontLoader, TextGeometry } from "three/examples/jsm/Addons.js";
 import { fillText, getBox, getBoxSize, getCenter, HelpPoint, Position2, type Position3 } from "./helpers";
 import { COLORS, FONTS } from "./const";
-import type { Font as IFont } from "./interfaces";
 import { LinesBox } from "./items";
+import type { Font } from "$lib/interfaces/3d";
 
 let threeFont: ThreeFont;
 
@@ -15,7 +15,7 @@ export async function loadFont() {
 export class Text extends THREE.Group {
     height: number = 0;
     texts: THREE.Mesh[] = [];
-    constructor(text: string, font: IFont, maxWidth: number, position: Position3, center: boolean = false, color: THREE.ColorRepresentation = COLORS.black) {
+    constructor(text: string, font: Font, maxWidth: number, position: Position3, center: boolean = false, color: THREE.ColorRepresentation = COLORS.black) {
         super();
 
         const textGeoParams = {

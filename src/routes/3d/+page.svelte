@@ -4,10 +4,10 @@
     import { Renderer, Light } from "./environnement";
     import { Experience, Floor } from "./items";
     import { Helpers, Position3 } from "./helpers";
-    import type { CV } from "./interfaces";
     import { loadFont } from "./font";
     import { Player } from "./controls";
     import { onMount } from "svelte";
+    import type { CV } from "$lib/interfaces/cv";
 
     let scInnerWidth = $state(0);
     let scOuterWidth = $state(0);

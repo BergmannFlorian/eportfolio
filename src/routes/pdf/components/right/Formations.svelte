@@ -1,5 +1,5 @@
 <script lang="ts">
-    import type { Formation } from "../../3d/interfaces";
+    import type { Formation } from "$lib/interfaces/cv";
 
     export let formations: Formation[];
 </script>

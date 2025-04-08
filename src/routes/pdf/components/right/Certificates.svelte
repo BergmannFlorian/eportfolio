@@ -1,5 +1,5 @@
 <script lang="ts">
-    import type { Certificate } from "../../3d/interfaces";
+    import type { Certificate } from "$lib/interfaces/cv";
 
     export let certificates: Certificate[];
 </script>

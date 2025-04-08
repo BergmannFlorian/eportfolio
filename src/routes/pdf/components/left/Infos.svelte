@@ -1,6 +1,6 @@
 <script lang="ts">
-    import type { Infos } from "../../3d/interfaces";
     import profil from "$lib/assets/images/florian-b.jpg";
+    import type { Infos } from "$lib/interfaces/cv";
     import Info from "./Info.svelte";
 
     export let infos: Infos;
@@ -8,7 +8,7 @@
 
 <div class="h-full flex flex-col">
     <img src={profil} alt="profil" />
-    <div class="text-2xl text-center">{infos.contact.name}</div>
+    <div class="text-[29px] text-center">{infos.contact.name}</div>
     <div class="flex flex-col pr-5 pl-5 justify-around h-full">
         <Info title="CONTACT">
             <div>{infos.contact.address}</div>
@@ -21,7 +21,7 @@
             {/each}
         </Info>
         <Info title="REFERENCES">
-            <div class="text-center w-full">Sur demande</div>
+            <div class="text-center w-full font-bold">Sur demande</div>
         </Info>
         <Info title="LANGUES">
             <table>
@@ -36,9 +36,7 @@
             </table>
         </Info>
         <Info title="CENTRES D'INTERETS">
-            {#each infos.hobbys as hobby}
-                <div>{hobby}</div>
-            {/each}
+            <div>{infos.hobbys.join(", ")}</div>
         </Info>
     </div>
 </div>

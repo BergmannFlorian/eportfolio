@@ -1,5 +1,5 @@
 <script lang="ts">
-    import type { Job } from "../../3d/interfaces";
+    import type { Job } from "$lib/interfaces/cv";
 
     export let job: Job;
 </script>

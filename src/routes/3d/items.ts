@@ -1,9 +1,9 @@
 import * as THREE from "three";
-import type { Job } from "./interfaces";
 import { getBoxSize, HelpPoint, Position3, Size2, stringToDate } from "./helpers";
 import { Text } from "./font";
 import { BUILDING, COLORS, DIRECTIONS, FONTS, PLAYER } from "./const";
 import { Building } from "./buildings";
+import type { Job } from "$lib/interfaces/cv";
 
 export class Floor extends THREE.Mesh {
     constructor(scene: THREE.Scene) {

@@ -1,14 +1,14 @@
 <script lang="ts">
-    import type { CV } from "../3d/interfaces.js";
-    import Certificates from "./components/Certificates.svelte";
-    import Formations from "./components/Formations.svelte";
-    import Infos from "./components/Infos.svelte";
-    import Job from "./components/Job.svelte";
-    import Skills from "./components/Skills.svelte";
+    import type { CV } from "$lib/interfaces/cv";
+    import Infos from "./components/left/Infos.svelte";
+    import Job from "./components/left/Job.svelte";
+    import Skills from "./components/left/Skills.svelte";
+    import Certificates from "./components/right/Certificates.svelte";
+    import Formations from "./components/right/Formations.svelte";
 
     const { data } = $props();
-    let cv = null;
-    if (data.cv) cv = data.cv as CV;
+    let cv = $state(data.cv ? (data.cv as CV) : null);
+    // if (data.cv) cv = data.cv as CV;
 </script>
 
 <nav class="no-print">
@@ -20,7 +20,7 @@
 {#if cv}
     <div class="pdf">
         <div class="page">
-            <div class="left h-full w-[40%]">
+            <div class="left h-full min-w-[7cm] w-[7cm] max-w-[7cm]">
                 <Infos infos={cv.infos} />
             </div>
             <div class="right p-5">
@@ -39,13 +39,18 @@
 {/if}
 
 <style>
+    @import url("https://fonts.googleapis.com/css2?family=Questrial&display=swap");
+
     .left {
         background-color: #3b3b3b;
         color: #b4b4b4;
     }
 
     .pdf {
-        font: 7pt "Verdana";
+        font-family: "Questrial", sans-serif;
+        font-size: 14px;
+        font-weight: 400;
+        font-style: normal;
     }
 
     * {
@@ -64,6 +69,7 @@
         box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
         display: flex;
         flex-wrap: nowrap;
+        flex-shrink: 0;
     }
 
     @page {
@@ -73,11 +79,11 @@
 
     @media print {
         .page {
-            html,
+            /* html,
             body {
                 width: 21cm;
                 height: 29.7cm;
-            }
+            } */
             margin: 0;
             border: initial;
             border-radius: initial;

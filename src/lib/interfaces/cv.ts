@@ -68,9 +68,3 @@ export interface CV {
     formations: Formation[],
     certificates: Certificate[],
 }
-
-export interface Font {
-    size: number,
-    depth: number,
-    spacing: number,
-}
