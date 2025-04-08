@@ -2,9 +2,10 @@
     import type { CV } from "$lib/interfaces/cv";
     import Infos from "./components/left/Infos.svelte";
     import Job from "./components/left/Job.svelte";
-    import Skills from "./components/left/Skills.svelte";
+    import Skills from "./components/right/Skills.svelte";
     import Certificates from "./components/right/Certificates.svelte";
     import Formations from "./components/right/Formations.svelte";
+    import Section from "./components/Section.svelte";
 
     const { data } = $props();
     let cv = $state(data.cv ? (data.cv as CV) : null);
@@ -23,11 +24,19 @@
             <div class="left h-full min-w-[7cm] w-[7cm] max-w-[7cm]">
                 <Infos infos={cv.infos} />
             </div>
-            <div class="right p-5">
-                <div class="text-2xl">{cv.infos.title}</div>
-                <Skills />
-                <Certificates certificates={cv.certificates} />
-                <Formations formations={cv.formations} />
+            <div class="right h-full flex flex-col p-5 gap-y-5">
+                <div class="text-[32px] text-gray-dark font-questrial">
+                    {cv.infos.title}
+                </div>
+                <Section title="compétence">
+                    <Skills />
+                </Section>
+                <Section title="certifications">
+                    <Certificates certificates={cv.certificates} />
+                </Section>
+                <Section title="formations">
+                    <Formations formations={cv.formations} />
+                </Section>
             </div>
         </div>
         <div class="page">
@@ -40,6 +49,21 @@
 
 <style>
     @import url("https://fonts.googleapis.com/css2?family=Questrial&display=swap");
+    @import url("https://fonts.googleapis.com/css2?family=Questrial&family=Teachers:ital,wght@0,400..800;1,400..800&display=swap");
+
+    :global(.font-questrial) {
+        font-family: "Questrial", sans-serif !important;
+    }
+
+    :global(.text-gray-light) {
+        color: #b4b4b4;
+    }
+    :global(.text-gray) {
+        color: #646464;
+    }
+    :global(.text-gray-dark) {
+        color: #3b3b3b;
+    }
 
     .left {
         background-color: #3b3b3b;
@@ -47,7 +71,7 @@
     }
 
     .pdf {
-        font-family: "Questrial", sans-serif;
+        font-family: "Teachers", sans-serif;
         font-size: 14px;
         font-weight: 400;
         font-style: normal;

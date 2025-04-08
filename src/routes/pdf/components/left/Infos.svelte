@@ -1,43 +1,46 @@
 <script lang="ts">
     import profil from "$lib/assets/images/florian-b.jpg";
     import type { Infos } from "$lib/interfaces/cv";
-    import Info from "./Info.svelte";
+    import Section from "../Section.svelte";
 
     export let infos: Infos;
 </script>
 
 <div class="h-full flex flex-col">
     <img src={profil} alt="profil" />
-    <div class="text-[29px] text-center">{infos.contact.name}</div>
+    <div class="text-[29px] text-center font-questrial">
+        {infos.contact.name}
+    </div>
     <div class="flex flex-col pr-5 pl-5 justify-around h-full">
-        <Info title="CONTACT">
+        <Section title="contact" center={true} titleLight={true}>
             <div>{infos.contact.address}</div>
             <div>{infos.contact.email}</div>
             {#each infos.socials as social}
-                <div>{social.link}</div>
+                <a href={social.link}>{social.link}</a>
             {/each}
             {#each infos.others as other}
                 <div>{other}</div>
             {/each}
-        </Info>
-        <Info title="REFERENCES">
+        </Section>
+        <Section title="références" center={true} titleLight={true}>
             <div class="text-center w-full font-bold">Sur demande</div>
-        </Info>
-        <Info title="LANGUES">
+        </Section>
+        <Section title="langues" center={true} titleLight={true}>
             <table>
                 <tbody>
                     {#each infos.langs as lang}
                         <tr>
                             <td>{lang.name}</td>
-                            <td>: {lang.level}</td>
+                            <td class="px-1">:</td>
+                            <td>{lang.level}</td>
                         </tr>
                     {/each}
                 </tbody>
             </table>
-        </Info>
-        <Info title="CENTRES D'INTERETS">
+        </Section>
+        <Section title="centres d'intérêts" center={true} titleLight={true}>
             <div>{infos.hobbys.join(", ")}</div>
-        </Info>
+        </Section>
     </div>
 </div>
 
