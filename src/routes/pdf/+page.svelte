@@ -1,5 +1,5 @@
 <script lang="ts">
-    import type { CV } from "$lib/interfaces/cv";
+    import type { CV, Skills as SkillsI } from "$lib/interfaces/cv";
     import Infos from "./first/left/Infos.svelte";
     import Skills from "./first/right/Skills.svelte";
     import Certificates from "./first/right/Certificates.svelte";
@@ -22,7 +22,7 @@
                     {cv.infos.title}
                 </div>
                 <Section title="compétence">
-                    <Skills />
+                    <Skills {data} />
                 </Section>
                 <Section title="certifications">
                     <Certificates certificates={cv.certificates} />

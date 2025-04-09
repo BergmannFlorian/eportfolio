@@ -17,13 +17,13 @@
                 "name": "Lucas Cucinotta",
                 "title": "Directeur",
                 "company": "IOMEDIA SA",
-                "phone": "0274565643"
+                "phone": "+41274565643"
             },
             {
                 "name": "Fabrice Roublot",
                 "title": "Co-fondateur et Responsable R&D",
                 "company": "WorkStreams",
-                "phone": "0223012014"
+                "phone": "+41223012014"
             }
         ],
         "langs": [
@@ -204,9 +204,17 @@
                 "Développement d'une application mobile Flutter basé sur la plateforme IntrepidKnowledge"
             ],
             "skills": {
-                "langs": [],
-                "libs": [],
-                "tools": []
+                "langs": [
+                    15
+                ],
+                "libs": [
+                    9
+                ],
+                "tools": [
+                    2,
+                    5,
+                    7
+                ]
             },
             "projects": [
                 {
@@ -231,7 +239,10 @@
             ],
             "skills": {
                 "langs": [],
-                "libs": [],
+                "libs": [
+                    10,
+                    1
+                ],
                 "tools": []
             },
             "projects": []
@@ -300,9 +311,34 @@
             ],
             "course": [],
             "skills": {
-                "langs": [],
-                "libs": [],
-                "tools": []
+                "langs": [
+                    0,
+                    1,
+                    2,
+                    3,
+                    4,
+                    5,
+                    6,
+                    10,
+                    14,
+                    15
+                ],
+                "libs": [
+                    1,
+                    6,
+                    7,
+                    8,
+                    9,
+                    11
+                ],
+                "tools": [
+                    0,
+                    1,
+                    2,
+                    3,
+                    5,
+                    6
+                ]
             },
             "projects": [
                 {
@@ -337,9 +373,26 @@
             ],
             "course": [],
             "skills": {
-                "langs": [],
-                "libs": [],
-                "tools": []
+                "langs": [
+                    0,
+                    1,
+                    2,
+                    4,
+                    5,
+                    11,
+                    12,
+                    13
+                ],
+                "libs": [
+                    6
+                ],
+                "tools": [
+                    0,
+                    1,
+                    2,
+                    5,
+                    6
+                ]
             },
             "projects": []
         },

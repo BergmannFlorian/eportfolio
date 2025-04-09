@@ -14,7 +14,8 @@
         "C",
         "C++",
         "C#",
-        "JAVA"
+        "JAVA",
+        "Dart"
     ],
     "libs": [
         "SvelteKit",
@@ -25,7 +26,10 @@
         "THREEJS",
         "LARAVEL",
         "NodeJs",
-        "NPM"
+        "NPM",
+        "Flutter",
+        "Nintex K2",
+        "VueJs"
     ],
     "tools": [
         "DOCKER",

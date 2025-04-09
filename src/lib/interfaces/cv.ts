@@ -37,9 +37,9 @@ export interface Project {
 }
 
 export interface Skills {
-    langs: string[],
-    libs: string[],
-    tools: string[],
+    langs: number[],
+    libs: number[],
+    tools: number[],
 }
 
 export interface Job {

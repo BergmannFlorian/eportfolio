@@ -2,8 +2,6 @@
     export let title: string;
     export let center: boolean = false;
     export let titleLight: boolean = false;
-
-    console.log(5, center);
 </script>
 
 <div class="w-full flex justify-center flex-wrap">

@@ -17,15 +17,19 @@
     </div>
     {#each jobs as job}
         <div class="w-full">
-            <div class="head px-5 py-2">
-                <div class="flex font-bold">
-                    <div class="w-[25%]">
+            <div class="head px-5 py-2 grid">
+                <div class="grid grid-cols-3 font-bold">
+                    <div class="justify-self-start">
                         {`${dateFormat(job.start)} - ${dateFormat(job.end)}`.toUpperCase()}
                     </div>
-                    <div class="">{job.title}</div>
+                    <div class="justify-self-center">
+                        {job.title.toUpperCase()}
+                    </div>
+                    <div class="justify-self-end text-nowrap">
+                        {job.company.toUpperCase()}
+                    </div>
                 </div>
-                <div class="">{job.company}</div>
-                <div class="flex w-[90%]">
+                <div class="flex w-[90%] justify-self-center justify-center">
                     <hr class="border-solid border-3 w-15 text-gray-light" />
                 </div>
             </div>
@@ -57,5 +61,8 @@
     .head {
         background-color: #3b3b3b;
         color: #b4b4b4;
+    }
+    .border-r-1 {
+        border-color: #d3d3d3;
     }
 </style>
