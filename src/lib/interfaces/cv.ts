@@ -36,6 +36,12 @@ export interface Project {
     details: string[],
 }
 
+export interface Skills {
+    langs: string[],
+    libs: string[],
+    tools: string[],
+}
+
 export interface Job {
     category: string,
     title: string,
@@ -43,6 +49,7 @@ export interface Job {
     start: string,
     end: string,
     tasks: string[],
+    skills: Skills,
     projects: Project[],
 }
 
@@ -53,6 +60,7 @@ export interface Formation {
     end: string,
     tasks: string[],
     course: string,
+    skills: Skills,
     projects: Project[],
 }
 

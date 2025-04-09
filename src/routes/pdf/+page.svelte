@@ -11,12 +11,6 @@
     let cv = $state(data.cv ? (data.cv as CV) : null);
 </script>
 
-<nav class="no-print">
-    <a href="/">home</a>
-    <a href="/3d">3D</a>
-    <a href="/pdf">PDF</a>
-</nav>
-
 {#if cv}
     <div class="pdf">
         <div class="page">
@@ -104,9 +98,6 @@
             box-shadow: initial;
             background: initial;
             page-break-after: always;
-        }
-        nav {
-            display: none !important;
         }
     }
 </style>

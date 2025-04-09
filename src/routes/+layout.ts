@@ -4,9 +4,11 @@ export const prerender = true
 
 export async function load() {
     if (browser) {
-        const res = await fetch("cv.json");
+        const cv = await fetch("cv.json");
+        const skills = await fetch("skills.json");
         return {
-            cv: await res.json()
+            cv: await cv.json(),
+            skills: await skills.json()
         }
     } else {
         return {};

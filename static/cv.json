@@ -71,6 +71,35 @@
                 "Création de scripts sql pour filter/récupérer/insérer des données",
                 "Documentation de fonctionnalités"
             ],
+            "skills": {
+                "langs": [
+                    0,
+                    1,
+                    2,
+                    3,
+                    4,
+                    5,
+                    6,
+                    7,
+                    8,
+                    9
+                ],
+                "libs": [
+                    1,
+                    2,
+                    3,
+                    4
+                ],
+                "tools": [
+                    0,
+                    1,
+                    2,
+                    3,
+                    4,
+                    5,
+                    6
+                ]
+            },
             "projects": [
                 {
                     "name": "Breitling",
@@ -138,6 +167,22 @@
             "tasks": [
                 "Développement d'un système scallable de notification pour la plateforme IntrepidKnowledge"
             ],
+            "skills": {
+                "langs": [
+                    3,
+                    6
+                ],
+                "libs": [
+                    7,
+                    8
+                ],
+                "tools": [
+                    1,
+                    2,
+                    5,
+                    6
+                ]
+            },
             "projects": [
                 {
                     "name": "Système de notification par Websocket",
@@ -158,6 +203,11 @@
             "tasks": [
                 "Développement d'une application mobile Flutter basé sur la plateforme IntrepidKnowledge"
             ],
+            "skills": {
+                "langs": [],
+                "libs": [],
+                "tools": []
+            },
             "projects": [
                 {
                     "name": "Application mobile IntrepidKnowledge",
@@ -179,6 +229,11 @@
                 "Implémentation de Workflow & spécification des stratégies de tests selon la méthode Agile",
                 "Documentation et génération de documents de formation"
             ],
+            "skills": {
+                "langs": [],
+                "libs": [],
+                "tools": []
+            },
             "projects": []
         },
         {
@@ -191,6 +246,11 @@
                 "Support 1er et 2ème niveau",
                 "Installation d'OS et dépannage hardware"
             ],
+            "skills": {
+                "langs": [],
+                "libs": [],
+                "tools": []
+            },
             "projects": []
         },
         {
@@ -203,6 +263,11 @@
                 "Réception et rangement des livraisons",
                 "Responsable du poste à friture"
             ],
+            "skills": {
+                "langs": [],
+                "libs": [],
+                "tools": []
+            },
             "projects": []
         },
         {
@@ -214,6 +279,11 @@
             "tasks": [
                 "Organisation et préparation des repas pour 200 personnes en cuisine ou sur le terrain"
             ],
+            "skills": {
+                "langs": [],
+                "libs": [],
+                "tools": []
+            },
             "projects": []
         }
     ],
@@ -229,6 +299,11 @@
                 "Développement d'une application en Ruby destinée à aider les CFC 1ère année à apprendre à coder"
             ],
             "course": [],
+            "skills": {
+                "langs": [],
+                "libs": [],
+                "tools": []
+            },
             "projects": [
                 {
                     "name": "Progcraft",
@@ -261,6 +336,11 @@
                 "Mise en place d'infrastructures réseaux virtuels Linux et Windows"
             ],
             "course": [],
+            "skills": {
+                "langs": [],
+                "libs": [],
+                "tools": []
+            },
             "projects": []
         },
         {
@@ -272,6 +352,11 @@
                 "Obtention d'un diplôme A1 en Anglais et A2 en Allemand"
             ],
             "course": [],
+            "skills": {
+                "langs": [],
+                "libs": [],
+                "tools": []
+            },
             "projects": []
         },
         {
@@ -283,6 +368,11 @@
                 "Formation pour acquerir les capacité d'un responsable de ligne de production de café et de céréale"
             ],
             "course": [],
+            "skills": {
+                "langs": [],
+                "libs": [],
+                "tools": []
+            },
             "projects": []
         }
     ],

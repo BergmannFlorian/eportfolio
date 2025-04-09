@@ -1,0 +1,41 @@
+{
+    "langs": [
+        "HTML",
+        "CSS/SCSS",
+        "JAVASCRIPT",
+        "TYPESCRIPT",
+        "PHP",
+        "SQL/MYSQL",
+        "BASH",
+        "TWIG",
+        "MJML",
+        "HTACCESS",
+        "RUBY",
+        "C",
+        "C++",
+        "C#",
+        "JAVA"
+    ],
+    "libs": [
+        "SvelteKit",
+        "SCRUM",
+        "NUXT2",
+        "SYMFONY5",
+        "NUXT3/BRIDGE",
+        "THREEJS",
+        "LARAVEL",
+        "NodeJs",
+        "NPM"
+    ],
+    "tools": [
+        "DOCKER",
+        "GITHUB",
+        "GIT",
+        "JIRA",
+        "SLACK",
+        "VSCODE",
+        "DBEAVER",
+        "BITBUCKET",
+        "PHPSTORM"
+    ]
+}
