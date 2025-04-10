@@ -26,8 +26,6 @@
     const long = new Date();
     long.setFullYear(long.getFullYear() - MAX);
 
-    console.log(29, short, long);
-
     function getType(jobEnd: string): number {
         const date = getDate(jobEnd);
         if (date > short) return TYPE.top;
@@ -65,13 +63,45 @@
         });
     }
 
+    function boldSkill(target: EventTarget | null) {
+        if (!target) return;
+        const elem = target as Element;
+        const parent = elem.parentElement;
+        if (!parent) return;
+        if (elem.classList.toggle("font-bold")) {
+            parent.insertBefore(elem, elem.parentElement.firstChild);
+        } else {
+            [...parent.children].forEach((child) => {
+                if (child.classList.contains("font-bold")) {
+                    child.after(elem);
+                }
+            });
+        }
+    }
+
     if (cv && skills) {
         cv.jobs;
         addSkills(cv.jobs);
         addSkills(cv.formations);
     }
 
-    langs.filter((skill) => skill.type === TYPE.top);
+    const content = {
+        row: [
+            {
+                title: `Il y a moins de ${MIN} an${MIN > 1 ? "s" : ""}`,
+                type: TYPE.top,
+            },
+            {
+                title: `Il y a entre ${MIN} et ${MAX} an${MAX > 1 ? "s" : ""}`,
+                type: TYPE.mid,
+            },
+            {
+                title: `Il y a plus de ${MAX} an${MAX > 1 ? "s" : ""}`,
+                type: TYPE.bottom,
+            },
+        ],
+        col: [langs, libs, tools],
+    };
 </script>
 
 <table class="w-full border-solid text-[9px] font-teachers">
@@ -84,66 +114,25 @@
         </tr>
     </thead>
     <tbody>
-        <tr>
-            <td class="text-[7px] font-bold border-r t-border">
-                {`Il y a moins de ${MIN} an${MIN > 1 ? "s" : ""}`.toUpperCase()}
-            </td>
-            <td>
-                {#each langs.filter((skill) => skill.type === TYPE.top) as skill}
-                    <div>{skill.name}</div>
+        {#each content.row as row}
+            <tr>
+                <td class="text-[7px] font-bold border-r t-border">
+                    {row.title.toUpperCase()}
+                </td>
+                {#each content.col as col}
+                    <td>
+                        {#each col.filter((skill) => skill.type === row.type) as skill}
+                            <button
+                                class="w-full"
+                                onclick={(event) => boldSkill(event.target)}
+                            >
+                                {skill.name.toUpperCase()}
+                            </button>
+                        {/each}
+                    </td>
                 {/each}
-            </td>
-            <td>
-                {#each libs.filter((skill) => skill.type === TYPE.top) as skill}
-                    <div>{skill.name}</div>
-                {/each}
-            </td>
-            <td>
-                {#each tools.filter((skill) => skill.type === TYPE.top) as skill}
-                    <div>{skill.name}</div>
-                {/each}
-            </td>
-        </tr>
-        <tr>
-            <td class="text-[7px] font-bold border-r t-border">
-                {`Il y a entre ${MIN} et ${MAX} an${MAX > 1 ? "s" : ""}`.toUpperCase()}
-            </td>
-            <td>
-                {#each langs.filter((skill) => skill.type === TYPE.mid) as skill}
-                    <div>{skill.name}</div>
-                {/each}
-            </td>
-            <td>
-                {#each libs.filter((skill) => skill.type === TYPE.mid) as skill}
-                    <div>{skill.name}</div>
-                {/each}
-            </td>
-            <td>
-                {#each tools.filter((skill) => skill.type === TYPE.mid) as skill}
-                    <div>{skill.name}</div>
-                {/each}
-            </td>
-        </tr>
-        <tr>
-            <td class="text-[7px] font-bold border-r t-border">
-                {`Il y a plus de ${MAX} an${MAX > 1 ? "s" : ""}`.toUpperCase()}
-            </td>
-            <td>
-                {#each langs.filter((skill) => skill.type === TYPE.bottom) as skill}
-                    <div>{skill.name}</div>
-                {/each}
-            </td>
-            <td>
-                {#each libs.filter((skill) => skill.type === TYPE.bottom) as skill}
-                    <div>{skill.name}</div>
-                {/each}
-            </td>
-            <td>
-                {#each tools.filter((skill) => skill.type === TYPE.bottom) as skill}
-                    <div>{skill.name}</div>
-                {/each}</td
-            >
-        </tr>
+            </tr>
+        {/each}
     </tbody>
 </table>
 
