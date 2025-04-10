@@ -15,7 +15,8 @@
         "C++",
         "C#",
         "JAVA",
-        "Dart"
+        "Dart",
+        "tailwind"
     ],
     "libs": [
         "SvelteKit",

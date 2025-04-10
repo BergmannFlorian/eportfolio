@@ -1,11 +1,11 @@
 <script lang="ts">
-    import type { CV, Skills as SkillsI } from "$lib/interfaces/cv";
+    import type { CV } from "$lib/interfaces/cv";
     import Infos from "./first/left/Infos.svelte";
     import Skills from "./first/right/Skills.svelte";
     import Certificates from "./first/right/Certificates.svelte";
     import Formations from "./first/right/Formations.svelte";
     import Section from "./first/Section.svelte";
-    import Jobs from "./second/jobs.svelte";
+    import Jobs from "./second/Jobs.svelte";
 
     const { data } = $props();
     let cv = $state(data.cv ? (data.cv as CV) : null);
@@ -17,7 +17,7 @@
             <div class="h-full min-w-[7cm] w-[7cm] max-w-[7cm]">
                 <Infos infos={cv.infos} />
             </div>
-            <div class="right h-full flex flex-col p-5 gap-y-5">
+            <div class="right h-full flex flex-col py-5 pr-5 pl-2 gap-y-5">
                 <div class="text-[32px] text-gray-dark font-questrial">
                     {cv.infos.title}
                 </div>
