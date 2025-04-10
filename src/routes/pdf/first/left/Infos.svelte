@@ -13,13 +13,25 @@
     </div>
     <div class="flex flex-col pr-5 pl-5 justify-around h-full">
         <Section title="contact" center={true} titleLight={true}>
-            <div>{infos.contact.address}</div>
-            <div>{infos.contact.email}</div>
+            <div class="flex content-center">
+                <span class="icon-[solar--map-point-linear] my-auto"></span>
+                <div>{infos.contact.address}</div>
+            </div>
+            <div class="flex content-center">
+                <span class="icon-[solar--letter-linear] my-auto"></span>
+                <div>{infos.contact.email}</div>
+            </div>
             {#each infos.socials as social}
-                <a href={social.link}>{social.link}</a>
+                <div class="flex content-center">
+                    <span class="icon-[solar--link-broken] my-auto"></span>
+                    <a href={social.link}>{social.link}</a>
+                </div>
             {/each}
             {#each infos.others as other}
-                <div>{other}</div>
+                <div class="flex content-center">
+                    <span class="icon-[solar--card-2-outline] my-auto"></span>
+                    <div>{other}</div>
+                </div>
             {/each}
         </Section>
         <Section title="références" center={true} titleLight={true}>
