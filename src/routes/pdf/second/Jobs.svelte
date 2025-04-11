@@ -1,5 +1,5 @@
 <script lang="ts">
-    import type { Job as JobI, Project } from "$lib/interfaces/cv";
+    import type { Job as JobI } from "$lib/interfaces/cv";
     import Job from "./Job.svelte";
 
     export let jobs: JobI[];
