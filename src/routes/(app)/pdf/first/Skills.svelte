@@ -106,8 +106,8 @@
 
 <table class="w-full border-solid text-[9px] font-teachers">
     <thead class="font-bold">
-        <tr class="border-b t-border">
-            <td class="border-r t-border w-[25%]"></td>
+        <tr class="border-b border-light">
+            <td class="border-r border-light w-[25%]"></td>
             <td class="w-[25%]">LANGUAGES</td>
             <td class="w-[25%]">FRAMEWORK / BIBLIOTHÈQUE</td>
             <td class="w-[25%]">OUTILS</td>
@@ -116,7 +116,7 @@
     <tbody>
         {#each content.row as row}
             <tr>
-                <td class="text-[7px] font-bold border-r t-border">
+                <td class="text-[7px] font-bold border-r border-light">
                     {row.title.toUpperCase()}
                 </td>
                 {#each content.col as col}
@@ -137,9 +137,6 @@
 </table>
 
 <style>
-    .t-border {
-        border-color: #d3d3d3;
-    }
     td {
         padding: 10px;
     }
