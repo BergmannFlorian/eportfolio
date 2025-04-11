@@ -11,7 +11,7 @@
 </script>
 
 <div class="w-full">
-    <div class="head px-5 py-1 grid">
+    <div class="text-dark px-5 py-1 grid bg-gray-300">
         <div class="grid grid-cols-3 font-bold">
             <div class="justify-self-start">
                 {`${dateFormat(job.start)} - ${dateFormat(job.end)}`.toUpperCase()}
@@ -27,9 +27,9 @@
     <div class="px-5 pt-1">
         <div class="flex w-full px-3 pb-3">
             <ul
-                class="list-disc {displayProjects
-                    ? 'w-[50%] border-solid border-r-1 pr-2'
-                    : 'w-full'}"
+                class="{displayProjects
+                    ? 'w-[50%] border-solid border-r-1 border-gray-300 pr-2'
+                    : 'w-full'} list-disc"
             >
                 {#each job.tasks as task}
                     <li>{task}</li>
@@ -52,11 +52,4 @@
 </div>
 
 <style>
-    .head {
-        background-color: #b4b4b4;
-        color: #3b3b3b;
-    }
-    .border-r-1 {
-        border-color: #d3d3d3;
-    }
 </style>

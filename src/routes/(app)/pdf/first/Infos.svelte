@@ -1,13 +1,13 @@
 <script lang="ts">
     import profil from "$lib/assets/images/florian-b.jpg";
     import type { Infos } from "$lib/interfaces/cv";
-    import Section from "../Section.svelte";
+    import Section from "./Section.svelte";
 
     export let infos: Infos;
 </script>
 
-<div class="h-full flex flex-col left">
-    <img src={profil} alt="profil" />
+<div class="h-full flex flex-col bg-dark text-light">
+    <img class="w-full h-[9cm] object-cover" src={profil} alt="profil" />
     <div class="text-[29px] text-center font-questrial">
         {infos.contact.name}
     </div>
@@ -57,14 +57,4 @@
 </div>
 
 <style>
-    img {
-        width: 100%;
-        height: 9cm;
-        object-fit: cover;
-    }
-
-    .left {
-        background-color: #3b3b3b;
-        color: #b4b4b4;
-    }
 </style>

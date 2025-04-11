@@ -1,6 +1,5 @@
 <script lang="ts">
     import type { Skills } from "$lib/interfaces/skills.js";
-
     const { data } = $props();
     const skills = $state(data.skills ? (data.skills as Skills) : null);
 
