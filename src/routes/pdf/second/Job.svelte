@@ -24,15 +24,12 @@
             </div>
         </div>
     </div>
-    <!-- <div class="flex justify-self-center justify-center pb-2">
-                <hr class="border-solid border-3 w-15 text-gray" />
-            </div> -->
     <div class="px-5 pt-1">
         <div class="flex w-full px-3 pb-3">
             <ul
-                class="w-{displayProjects
-                    ? '[50%]'
-                    : 'full'} list-disc border-solid border-r-1 pr-2"
+                class="list-disc {displayProjects
+                    ? 'w-[50%] border-solid border-r-1 pr-2'
+                    : 'w-full'}"
             >
                 {#each job.tasks as task}
                     <li>{task}</li>
@@ -56,8 +53,6 @@
 
 <style>
     .head {
-        /* background-color: #3b3b3b; */
-        /* color: #b4b4b4; */
         background-color: #b4b4b4;
         color: #3b3b3b;
     }

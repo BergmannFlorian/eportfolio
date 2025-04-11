@@ -1,6 +1,5 @@
 <script lang="ts">
     import * as THREE from "three";
-    import { browser } from "$app/environment";
     import { Renderer, Light } from "./environnement";
     import { Experience, Floor } from "./items";
     import { Helpers, Position3 } from "./helpers";
@@ -8,6 +7,7 @@
     import { Player } from "./controls";
     import { onMount } from "svelte";
     import type { CV } from "$lib/interfaces/cv";
+    import { base } from "$app/paths";
 
     let scInnerWidth = $state(0);
     let scOuterWidth = $state(0);
@@ -78,4 +78,8 @@
     bind:innerHeight={scInnerHeight}
     bind:outerHeight={scOuterHeight}
 />
-<div id="container"></div>
+<div id="container">
+    <nav class="fixed left-1 top-1">
+        <a class="p-1 bg-black text-white" href="{base}/">Home</a>
+    </nav>
+</div>
