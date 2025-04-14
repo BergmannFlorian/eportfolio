@@ -12,7 +12,7 @@
 </script>
 
 {#if cv}
-    <div class="pdf font-teachers text-[14px] font-normal">
+    <div class="pdf font-teachers text-[14px] font-normal pt-1">
         <div class="page">
             <div class="h-full min-w-[7cm] w-[7cm] max-w-[7cm]">
                 <Infos infos={cv.infos} />
