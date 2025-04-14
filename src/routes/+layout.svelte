@@ -50,7 +50,7 @@
     </nav>
 </header>
 
-<div class="w-full h-full mt-[50px]">
+<div class="w-full h-full pt-[50px] flex justify-center content">
     {@render children()}
 </div>
 
@@ -59,17 +59,20 @@
     @import url("https://fonts.googleapis.com/css2?family=Questrial&family=Teachers:ital,wght@0,400..800;1,400..800&display=swap");
     @import "tailwindcss";
 
-    @media print {
-        nav {
-            display: none !important;
-        }
-    }
-
     @theme {
         --color-light: #b4b4b4;
         --color-gray: #646464;
         --color-dark: #3b3b3b;
         --font-questrial: "Questrial", sans-serif;
         --font-teachers: "Teachers", sans-serif;
+    }
+
+    @media print {
+        header {
+            display: none !important;
+        }
+        .content {
+            margin: 0;
+        }
     }
 </style>

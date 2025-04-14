@@ -76,4 +76,10 @@
             page-break-after: always;
         }
     }
+
+    @media print {
+        .pdf {
+            padding: 0;
+        }
+    }
 </style>
