@@ -4,13 +4,13 @@
 
     const SPEED = {
         console: 10,
-        user: 100,
+        user: 30,
     };
 
     class Console {
         title: string;
-        text: string;
-        constructor(title: string, text: string) {
+        text: string | null;
+        constructor(title: string, text: string | null = null) {
             this.title = title;
             this.text = text;
         }
@@ -28,11 +28,6 @@
         parent: HTMLElement,
         cursor: HTMLElement,
     ) {
-        // const cursor = document.createElement("div");
-        // cursor.innerHTML = "_";
-        // cursor.id = "cursor";
-        // cursor.style.animation = "pusle 1s infinite";
-
         for (const line of lines) {
             const div = document.createElement("div");
             div.classList = "flex";
@@ -47,12 +42,14 @@
                 await timeout(SPEED.console);
                 text.innerHTML += line.title[i];
             }
-            text.innerText += ": ";
-            await timeout(1000);
-            for (let i = 0; i < line.text.length; i++) {
-                await timeout(SPEED.user);
-                text.innerHTML += line.text[i];
-            }
+            if (line.text) {
+                text.innerText += ": ";
+                await timeout(500);
+                for (let i = 0; i < line.text.length; i++) {
+                    await timeout(SPEED.user);
+                    text.innerHTML += line.text[i];
+                }
+            } else text.innerText += "...";
             await timeout(500);
         }
     }
@@ -62,8 +59,16 @@
         let cursor = document.getElementById("cursor");
         if (container && cursor && cv) {
             const lines = [
+                new Console("start print contact"),
                 new Console("name", cv.infos.contact.name),
                 new Console("title", cv.infos.title),
+                new Console("email", cv.infos.contact.email),
+                new Console("address", cv.infos.contact.address),
+                ...cv.infos.socials.map((social) => {
+                    return new Console(social.name, social.link);
+                }),
+                new Console("references", "sur demande"),
+                new Console(""),
             ];
 
             displayConsole(lines, container, cursor);
