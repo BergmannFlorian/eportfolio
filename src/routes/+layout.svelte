@@ -50,7 +50,7 @@
     </nav>
 </header>
 
-<div class="w-full h-full pt-[50px] flex justify-center content">
+<div class="w-full h-full pt-[50px] flex md:justify-center content">
     {@render children()}
 </div>
 

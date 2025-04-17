@@ -37,14 +37,13 @@
                 <div class="font-bold text-[12px] col-span-7">
                     {formation.name}
                 </div>
-            </div>
-            <div>
-                <ul class="list-disc pl-3">
+                <ul class="col-start-4 col-end-11 list-disc">
                     {#each formation.tasks as task}
                         <li>{task}</li>
                     {/each}
                 </ul>
             </div>
+            <div></div>
         </div>
     {/each}
 </div>

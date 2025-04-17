@@ -1,6 +1,7 @@
 <script lang="ts">
     import type { Job as JobI } from "$lib/interfaces/cv";
     import Job from "./Job.svelte";
+    import Job1 from "./Job1.svelte";
 
     export let jobs: JobI[];
 </script>
@@ -12,6 +13,7 @@
         {"expériences".toUpperCase()}
     </div>
     {#each jobs as job}
-        <Job {job}></Job>
+        <!-- <Job {job}></Job> -->
+        <Job1 {job}></Job1>
     {/each}
 </div>
