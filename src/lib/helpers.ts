@@ -13,3 +13,13 @@ export function getDate(date: string): Date {
         Number(split[0]),
     );
 }
+
+export function shortDate(start: string, end: string): string {
+    const startDate = getDate(start);
+    const endDate = getDate(end);
+    if (startDate.getFullYear() === endDate.getFullYear()) {
+        return `${dateFormat(start, { month: "short" })} - ${dateFormat(end, { month: "short", year: "numeric" })}`;
+    } else {
+        return `${startDate.getFullYear()} - ${endDate.getFullYear()}`;
+    }
+}

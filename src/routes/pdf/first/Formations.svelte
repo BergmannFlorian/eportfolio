@@ -19,36 +19,32 @@
     }
 </script>
 
-<table class="w-full">
-    <tbody class="w-full align-top text-[11px]">
-        {#each formations as formation}
-            <tr>
-                <td class="w-[30%]">
-                    <div class="font-bold text-nowrap flex flex-nowrap pb-1">
-                        <div class="text-gray pr-2">
-                            {formatDate(
-                                formation.start,
-                                formation.end,
-                            ).toUpperCase()}
-                        </div>
-                        <div class="font-bold">
-                            {formation.company}
-                        </div>
+<div class="w-full align-top text-[11px]">
+    {#each formations as formation}
+        <div class="mb-3">
+            <div class="w-full grid grid-cols-10">
+                <div class="col-span-3 font-bold text-nowrap flex flex-nowrap">
+                    <div class="text-gray pr-2">
+                        {formatDate(
+                            formation.start,
+                            formation.end,
+                        ).toUpperCase()}
                     </div>
-                </td>
-                <td>
-                    <div class="pb-1">
-                        <div class="font-bold text-[12px]">
-                            {formation.name}
-                        </div>
-                        <ul class="list-disc pl-3">
-                            {#each formation.tasks as task}
-                                <li>{task}</li>
-                            {/each}
-                        </ul>
+                    <div class="font-bold">
+                        {formation.company}
                     </div>
-                </td>
-            </tr>
-        {/each}
-    </tbody>
-</table>
+                </div>
+                <div class="font-bold text-[12px] col-span-7">
+                    {formation.name}
+                </div>
+            </div>
+            <div>
+                <ul class="list-disc pl-3">
+                    {#each formation.tasks as task}
+                        <li>{task}</li>
+                    {/each}
+                </ul>
+            </div>
+        </div>
+    {/each}
+</div>

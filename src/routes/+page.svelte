@@ -1,123 +1,78 @@
 <script lang="ts">
-    import type { CV } from "$lib/interfaces/cv.js";
     import { onMount } from "svelte";
+    import Console from "./Console.svelte";
 
-    const SPEED = {
-        console: 10,
-        user: 30,
-    };
-
-    class Console {
-        title: string;
-        text: string | null;
-        constructor(title: string, text: string | null = null) {
-            this.title = title;
-            this.text = text;
-        }
-    }
+    let scInnerWidth = $state(0);
+    let scOuterWidth = $state(0);
+    let scInnerHeight = $state(0);
+    let scOuterHeight = $state(0);
 
     const { data } = $props();
-    let cv = $state(data.cv ? (data.cv as CV) : null);
 
-    function timeout(ms: number) {
-        return new Promise((resolve) => setTimeout(resolve, ms));
-    }
+    const katakana =
+        "アァカサタナハマヤャラワガザダバパイィキシチニヒミリヰギジヂビピウゥクスツヌフムユュルグズブヅプエェケセテネヘメレヱゲゼデベペオォコソトノホモヨョロヲゴゾドボポヴッン";
+    const latin = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    const nums = "0123456789";
 
-    async function displayConsole(
-        lines: Console[],
-        parent: HTMLElement,
-        cursor: HTMLElement,
-    ) {
-        for (const line of lines) {
-            const div = document.createElement("div");
-            div.classList = "flex";
-            parent.appendChild(div);
+    const alphabet = katakana + latin + nums;
 
-            const text = document.createElement("div");
-            div.appendChild(text);
-
-            div.appendChild(cursor);
-
-            for (let i = 0; i < line.title.length; i++) {
-                await timeout(SPEED.console);
-                text.innerHTML += line.title[i];
-            }
-            if (line.text) {
-                text.innerText += ": ";
-                await timeout(500);
-                for (let i = 0; i < line.text.length; i++) {
-                    await timeout(SPEED.user);
-                    text.innerHTML += line.text[i];
-                }
-            } else text.innerText += "...";
-            await timeout(500);
-        }
-    }
+    const fontSize = 16;
 
     onMount(() => {
-        let container = document.getElementById("container");
-        let cursor = document.getElementById("cursor");
-        if (container && cursor && cv) {
-            const lines = [
-                new Console("start print contact"),
-                new Console("name", cv.infos.contact.name),
-                new Console("title", cv.infos.title),
-                new Console("email", cv.infos.contact.email),
-                new Console("address", cv.infos.contact.address),
-                ...cv.infos.socials.map((social) => {
-                    return new Console(social.name, social.link);
-                }),
-                new Console("references", "sur demande"),
-                new Console(""),
-            ];
+        const canvas = document.getElementById("matrix") as HTMLCanvasElement;
+        const context = canvas?.getContext("2d");
+        if (canvas && context) {
+            canvas.width = scInnerWidth;
+            canvas.height = scInnerHeight;
 
-            displayConsole(lines, container, cursor);
+            const columns = canvas.width / fontSize;
+
+            const rainDrops: number[] = [];
+            for (let x = 0; x < columns; x++) {
+                rainDrops[x] = Math.random() * canvas.height;
+            }
+
+            setInterval(() => {
+                context.fillStyle = "rgba(255, 255, 255, 0.1)";
+                context.fillRect(0, 0, canvas.width, canvas.height);
+
+                context.fillStyle = "#000";
+                context.font = fontSize + "px monospace";
+
+                for (let i = 0; i < rainDrops.length; i++) {
+                    const text = alphabet.charAt(
+                        Math.floor(Math.random() * alphabet.length),
+                    );
+                    context.fillText(
+                        text,
+                        i * fontSize,
+                        rainDrops[i] * fontSize,
+                    );
+
+                    if (
+                        rainDrops[i] * fontSize > canvas.height &&
+                        Math.random() > 0.975
+                    ) {
+                        rainDrops[i] = 0;
+                    }
+                    rainDrops[i]++;
+                }
+            }, 30);
         }
     });
 </script>
 
-<div class="font-teachers w-[80%] flex justify-center pt-10">
-    <!-- {#if cv}
-        <div>
-            <div>&#123</div>
-            <div class="flex pl-4">
-                <div class="flex justify-end">name: "</div>
-                <div class="text-4xl">{cv.infos.contact.name}</div>
-                ",
-            </div>
-            <div class="flex pl-4">
-                title: "
-                <div>{cv.infos.title}</div>
-                ",
-            </div>
-            <div>&#125</div>
-        </div>
-    {/if} -->
-    <div
-        id="container"
-        class="bg-dark text-light w-full p-5 border-3 border-light rounded-xl bg-radial from-gray to-dark font-[Inconsolata] text-shadow-[0_0_5px] text-shadow-light"
-    >
-        <div id="cursor">_</div>
-    </div>
+<svelte:window
+    bind:innerWidth={scInnerWidth}
+    bind:outerWidth={scOuterWidth}
+    bind:innerHeight={scInnerHeight}
+    bind:outerHeight={scOuterHeight}
+/>
+
+<div class="w-full flex justify-center flex-wrap">
+    <canvas id="matrix" class="w-dvw h-dvh fixed top-0 left-0 -z-10"></canvas>
+    <Console {data}></Console>
 </div>
 
 <style>
-    #cursor {
-        animation: pulse 1s infinite;
-    }
-
-    @keyframes pulse {
-        0% {
-            opacity: 0;
-        }
-        50% {
-            opacity: 0;
-        }
-        51% {
-            opacity: 1;
-        }
-        100% {
-            opacity: 1;
-        }
-    }
 </style>

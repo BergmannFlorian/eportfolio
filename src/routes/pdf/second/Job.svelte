@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { dateFormat } from "$lib/helpers";
+    import { dateFormat, shortDate } from "$lib/helpers";
     import type { Job } from "$lib/interfaces/cv";
 
     export let job: Job;

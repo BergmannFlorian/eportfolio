@@ -115,6 +115,24 @@ export class Controls extends PointerLockControls {
             },
             false,
         );
+        addEventListener(
+            "touchstart",
+            (event) => {
+                if (this.camera.isFps) {
+                    this.lock();
+                }
+            },
+            false,
+        );
+        addEventListener(
+            "touchend",
+            (event) => {
+                if (this.camera.isFps) {
+                    this.unlock();
+                }
+            },
+            false,
+        );
     }
 
     isOneOfKeysPressed(keys: string[]) {
