@@ -9,6 +9,12 @@
 
     const { data } = $props();
     let cv = $state(data.cv ? (data.cv as CV) : null);
+
+    const pagesStartIndex = $state([0]);
+
+    function addJobsPage(startIndex: number) {
+        pagesStartIndex.push(startIndex);
+    }
 </script>
 
 {#if cv}
@@ -32,9 +38,11 @@
                 </Section>
             </div>
         </div>
-        <div class="page">
-            <Jobs jobs={cv.jobs} />
-        </div>
+        {#each pagesStartIndex as start}
+            <div class="page">
+                <Jobs jobs={cv.jobs} addPage={addJobsPage} {start} />
+            </div>
+        {/each}
     </div>
 {/if}
 
@@ -74,10 +82,8 @@
             box-shadow: initial;
             background: initial;
             page-break-after: always;
+            padding-top: 0;
         }
-    }
-
-    @media print {
         .pdf {
             padding: 0;
         }

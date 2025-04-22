@@ -5,9 +5,12 @@
     export let job: Job;
 
     let displayProjects = true;
-    if (job.projects.length < 1) displayProjects = false;
-    if (job.projects.length === 1 && job.projects[0].link === "")
+    if (job.projects.length < 1) {
         displayProjects = false;
+    }
+    if (job.projects.length === 1 && job.projects[0].link === "") {
+        displayProjects = false;
+    }
 </script>
 
 <div class="w-full">
