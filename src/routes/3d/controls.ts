@@ -2,7 +2,6 @@ import * as THREE from "three";
 import { CAMERA, COLORS, CONTROLS, PLAYER } from "./const";
 import { PointerLockControls } from "three/examples/jsm/Addons.js";
 import type { Renderer } from "./environnement";
-import { Position3 } from "./helpers";
 import { LinesBox } from "./items";
 
 export class Camera extends THREE.PerspectiveCamera {

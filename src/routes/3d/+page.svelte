@@ -8,6 +8,7 @@
     import { onMount } from "svelte";
     import type { CV } from "$lib/interfaces/cv";
     import { base } from "$app/paths";
+    import TouchControls from "./controls2";
 
     let scInnerWidth = $state(0);
     let scOuterWidth = $state(0);
@@ -29,10 +30,19 @@
 
             const renderer = new Renderer(container);
             const floor = new Floor(scene);
-            const player = new Player(renderer, scene, true);
+            // const player = new Player(renderer, scene, true);
             const light = new Light(scene);
 
             const helpers = new Helpers(scene);
+
+            const camera = new THREE.PerspectiveCamera(
+                45,
+                innerWidth / innerHeight,
+                1,
+                1000,
+            );
+            const controls = new TouchControls(container, camera, scene);
+            controls.setPosition(0, 1.8, 0);
 
             let pos = new Position3(0, 0.1, 10);
 
@@ -47,24 +57,25 @@
             addEventListener(
                 "resize",
                 (event) => {
-                    player.camera.resize(innerWidth / innerHeight);
-
+                    // player.camera.resize(innerWidth / innerHeight);
+                    camera.aspect = innerWidth / innerHeight;
+                    camera.updateProjectionMatrix();
                     renderer.setSize(innerWidth, innerHeight);
                 },
                 false,
             );
 
             function animate() {
-                player.animate();
-
+                controls.update();
+                renderer.render(scene, camera);
+                // player.animate();
                 // const playerBox = new THREE.Box3().setFromObject(player);
                 // setTimeout(() => {
                 //     player.controls.switchMode(
                 //         boxs3.some((box3) => box3.intersectsBox(playerBox)),
                 //     );
                 // }, 300);
-
-                renderer.render(scene, player.camera);
+                // renderer.render(scene, player.camera);
             }
 
             renderer.setAnimationLoop(animate);
