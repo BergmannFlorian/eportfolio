@@ -5,7 +5,7 @@ import type { Renderer } from "./environnement";
 import { LinesBox } from "./items";
 
 export class Camera extends THREE.PerspectiveCamera {
-    baseY: number;
+    baseY: number = PLAYER.size.height;
     zoom: number = 1;
     isFps: boolean = true;
 
@@ -18,8 +18,6 @@ export class Camera extends THREE.PerspectiveCamera {
         );
         this.position.add(player.position);
         this.switchMode(isFps)
-
-        this.baseY = isFps ? CAMERA.fps.position.y : CAMERA.fly.position.y;
 
         addEventListener("wheel", (event) => {
             if (!this.isFps) {
@@ -39,11 +37,13 @@ export class Camera extends THREE.PerspectiveCamera {
         this.updateProjectionMatrix();
     }
 
-    switchMode(isFps: boolean | undefined = undefined) {
+    switchMode(isFps: boolean | null = null) {
         this.isFps = isFps || !this.isFps;
         if (this.isFps) {
+            this.baseY = CAMERA.fps.position.y;
             this.position.set(this.position.x, PLAYER.size.height, this.position.z);
         } else {
+            this.baseY = CAMERA.fly.position.y;
             this.position.set(this.position.x, this.baseY, this.position.z - this.baseY / this.zoom);
         }
         this.lookAt(this.getTargetPos());
