@@ -104,7 +104,7 @@
     };
 </script>
 
-<table class="w-full border-solid text-[9px] font-teachers">
+<table class="w-full border-solid text-[9px]">
     <thead class="font-bold">
         <tr class="border-b border-light">
             <td class="border-r border-light w-[25%]"></td>
