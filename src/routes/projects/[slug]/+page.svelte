@@ -32,8 +32,16 @@
             />
         {/await}
         <div class="w-[80%]">
-            <div class="font-questrial font-bold text-dark text-4xl">
-                {project.name}
+            <div class="flex justify-between content-center pt-1">
+                <div class="font-questrial font-bold text-dark text-4xl">
+                    {project.name}
+                </div>
+                {#if project.link}
+                    <a
+                        class="rounded-full px-2 pb-1 h-full bg-dark text-light hover:bg-light hover:text-dark"
+                        href={project.link}>Accès au site</a
+                    >
+                {/if}
             </div>
         </div>
     </div>

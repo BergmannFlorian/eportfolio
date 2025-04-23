@@ -8,16 +8,20 @@
 
 <a
     href="{base}/projects/{toSlug(project.name)}"
-    class="bg-dark text-light p-2 rounded-md w-[250px] flex flex-wrap"
+    class="bg-dark text-light p-2 rounded-md"
 >
-    {#if project.img}
-        {#await import(`$lib/assets/images/projects/${project.img}.jpg`) then { default: src }}
-            <img
-                {src}
-                alt={project.name}
-                class="h-[150px] w-full object-cover rounded-md"
-            />
-        {/await}
-    {/if}
-    <div class="font-bold self-end">{project.name}</div>
+    <div class="h-[250px] w-[400px] bg-light">
+        {#if project.img}
+            {#await import(`$lib/assets/images/projects/${project.img}.jpg`) then { default: src }}
+                <img
+                    {src}
+                    alt={project.name}
+                    class="w-full h-full object-cover rounded-md"
+                />
+            {/await}
+        {/if}
+    </div>
+    <div>
+        <div class="font-bold self-end text-xl">{project.name}</div>
+    </div>
 </a>

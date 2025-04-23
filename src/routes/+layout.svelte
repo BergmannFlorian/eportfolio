@@ -30,7 +30,7 @@
 <svelte:window on:scroll={checkScroll} bind:scrollY={y} />
 
 <header
-    class="bg-dark text-light h-[50px] w-full flex font-teachers border-b-[1px] border-white fixed top-0 z-10 duration-400 {hide
+    class="bg-dark text-light h-[50px] w-full flex font-teachers border-b-[0.5px] border-white fixed top-0 z-10 duration-400 {hide
         ? '-translate-y-full'
         : 'translate-y-0'}"
 >

@@ -34,18 +34,26 @@
 </script>
 
 {#if cv}
-    <div class="px-5 justify-center">
+    <div class="w-full flex flex-wrap justify-center">
         {#each groups as group}
             {#if group.projects.length > 0}
-                <div>
-                    <div class="w-full flex justify-between">
-                        <div class="font-bold text-dark">{group.title}</div>
-                        <div>{group.date}</div>
-                    </div>
-                    <div class="flex flex-wrap gap-1 place-content-between">
-                        {#each group.projects as project}
-                            <Card {project} />
-                        {/each}
+                <div class=" w-[90%]">
+                    <div class="grid grid-cols-[120px_auto] gap-2">
+                        <div class="w-full text-right pt-2 text-dark">
+                            {group.date}
+                        </div>
+                        <div
+                            class="w-full flex flex-wrap justify-between text-3xl font-bold text-dark"
+                        >
+                            <div class="w-full">
+                                {group.title}
+                            </div>
+                            <div class="flex flex-wrap gap-2">
+                                {#each group.projects as project}
+                                    <Card {project} />
+                                {/each}
+                            </div>
+                        </div>
                     </div>
                     <div
                         class="border-solid border-b-1 border-light py-1"

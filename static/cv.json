@@ -104,72 +104,80 @@
                 {
                     "name": "Breitling",
                     "link": "https://www.breitling.com",
-                    "details": [
+                    "tasks": [
                         "Responsable support dev"
                     ],
+                    "details": [],
                     "img": "breitling"
                 },
                 {
                     "name": "Lacoste UNDW3",
                     "link": "https://undw3-shop.lacoste.com",
-                    "details": [
+                    "tasks": [
                         "Conception et développement de l'applications",
                         "Support client",
                         "Production et maintenance de la documentation"
                     ],
+                    "details": [],
                     "img": "lacoste"
                 },
                 {
                     "name": "Orllati",
                     "link": "https://www.orllati.ch",
-                    "details": [
+                    "tasks": [
                         "Ajout de fonctionnalités",
                         "Support dev"
                     ],
+                    "details": [],
                     "img": "orllati"
                 },
                 {
                     "name": "Rhone FM",
                     "link": "https://www.rhonefm.ch",
-                    "details": [
+                    "tasks": [
                         "Développement du site",
                         "Support dev"
                     ],
+                    "details": [],
                     "img": "rfm"
                 },
                 {
                     "name": "Iomedia",
                     "link": "https://www.iomedia.ch",
-                    "details": [
+                    "tasks": [
                         "Développement du site",
                         "Support dev"
-                    ]
+                    ],
+                    "details": []
                 },
                 {
                     "name": "Abbaye St-Maurice",
                     "link": "https://www.abbaye-stmaurice.ch",
-                    "details": [
+                    "tasks": [
                         "Ajout de fonctionnalités",
                         "Support dev"
                     ],
+                    "details": [],
                     "img": "asm"
                 },
                 {
                     "name": "Hugo Reitzel",
                     "link": "https://www.hugoreitzel.ch",
-                    "details": [
+                    "tasks": [
                         "Support dev",
                         "Participation à la migration de PrestaShop 1.7 à 8"
                     ],
+                    "details": [],
                     "img": "reitzel"
                 },
                 {
                     "name": "Magic Pass",
                     "link": "",
-                    "details": [
+                    "tasks": [
                         "Ajout de fonctionnalités",
                         "Support dev"
                     ],
+                    "details": [],
                     "img": "magicpass"
                 }
             ]
@@ -203,8 +211,10 @@
                 {
                     "name": "Système de notification par Websocket",
                     "link": "",
+                    "tasks": [
+                        "Développement d'un système de notification scalable pour la plateforme IntrepidKnowledge"
+                    ],
                     "details": [
-                        "Développement d'un système de notification scalable pour la plateforme IntrepidKnowledge",
                         "Websockets, NodeJs, TypeScript"
                     ]
                 }
@@ -236,8 +246,10 @@
                 {
                     "name": "Application mobile IntrepidKnowledge",
                     "link": "",
+                    "tasks": [
+                        "Développement en équipe d'une application mobile basé sur la plateforme IntrepidKnowledge"
+                    ],
                     "details": [
-                        "Développement en équipe d'une application mobile basé sur la plateforme IntrepidKnowledge",
                         "Flutter, Dart"
                     ]
                 }
@@ -360,6 +372,7 @@
                 {
                     "name": "Progcraft",
                     "link": "https://github.com/Crepe-Party/ProgCraft",
+                    "tasks": [],
                     "details": [
                         "Développement d'une application à destination des apprentis de 1ère année afin de leur fournir un environnement dans lequel ils doivent déplacer un personnage à l'aide de fonctions de mouvements simples préconçu (comme walk_forward par exemple), ainsi que l'ensemble des structures de contrôles existants",
                         "Ruby, Gosu",
@@ -369,6 +382,7 @@
                 {
                     "name": "Runeo",
                     "link": "",
+                    "tasks": [],
                     "details": [
                         "Reprise du développement d'une application web de gestion de déplacement en Laravel pour le Paléo",
                         "Refactor et corrections de bugs",
