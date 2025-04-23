@@ -106,7 +106,8 @@
                     "link": "https://www.breitling.com",
                     "details": [
                         "Responsable support dev"
-                    ]
+                    ],
+                    "img": "breitling"
                 },
                 {
                     "name": "Lacoste UNDW3",
@@ -115,7 +116,8 @@
                         "Conception et développement de l'applications",
                         "Support client",
                         "Production et maintenance de la documentation"
-                    ]
+                    ],
+                    "img": "lacoste"
                 },
                 {
                     "name": "Orllati",
@@ -123,15 +125,8 @@
                     "details": [
                         "Ajout de fonctionnalités",
                         "Support dev"
-                    ]
-                },
-                {
-                    "name": "Orllati Intranet",
-                    "link": "",
-                    "details": [
-                        "Ajout de fonctionnalités",
-                        "Support dev"
-                    ]
+                    ],
+                    "img": "orllati"
                 },
                 {
                     "name": "Rhone FM",
@@ -139,7 +134,8 @@
                     "details": [
                         "Développement du site",
                         "Support dev"
-                    ]
+                    ],
+                    "img": "rfm"
                 },
                 {
                     "name": "Iomedia",
@@ -155,7 +151,26 @@
                     "details": [
                         "Ajout de fonctionnalités",
                         "Support dev"
-                    ]
+                    ],
+                    "img": "asm"
+                },
+                {
+                    "name": "Hugo Reitzel",
+                    "link": "https://www.hugoreitzel.ch",
+                    "details": [
+                        "Support dev",
+                        "Participation à la migration de PrestaShop 1.7 à 8"
+                    ],
+                    "img": "reitzel"
+                },
+                {
+                    "name": "Magic Pass",
+                    "link": "",
+                    "details": [
+                        "Ajout de fonctionnalités",
+                        "Support dev"
+                    ],
+                    "img": "magicpass"
                 }
             ]
         },

@@ -8,9 +8,9 @@
 
     const routes = [
         { path: "", name: "Home" },
+        { path: "projects", name: "Projets" },
         { path: "3d", name: "3D" },
-        { path: "pdf", name: "CV" },
-        { path: "helper", name: "Helper" },
+        { path: "pdf", name: "PDF" },
     ];
 
     routes.forEach((route) => {
@@ -30,7 +30,7 @@
 <svelte:window on:scroll={checkScroll} bind:scrollY={y} />
 
 <header
-    class="bg-dark text-light h-[50px] w-full flex font-teachers fixed top-0 z-10 duration-400 {hide
+    class="bg-dark text-light h-[50px] w-full flex font-teachers border-b-[1px] border-white fixed top-0 z-10 duration-400 {hide
         ? '-translate-y-full'
         : 'translate-y-0'}"
 >

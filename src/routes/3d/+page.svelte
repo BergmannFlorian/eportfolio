@@ -7,7 +7,6 @@
     import { Player } from "./controls";
     import { onMount } from "svelte";
     import type { CV } from "$lib/interfaces/cv";
-    import { base } from "$app/paths";
 
     let scInnerWidth = $state(0);
     let scOuterWidth = $state(0);

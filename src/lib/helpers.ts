@@ -23,3 +23,7 @@ export function shortDate(start: string, end: string): string {
         return `${startDate.getFullYear()} - ${endDate.getFullYear()}`;
     }
 }
+
+export function toSlug(name: string): string {
+    return name.toLocaleLowerCase().replace(' ', '_')
+}

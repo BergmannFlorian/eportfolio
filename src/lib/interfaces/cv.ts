@@ -34,6 +34,7 @@ export interface Project {
     name: string,
     link: string,
     details: string[],
+    img: string | undefined,
 }
 
 export interface Skills {
