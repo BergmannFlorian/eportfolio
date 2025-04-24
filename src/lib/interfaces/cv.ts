@@ -57,6 +57,7 @@ export interface Job {
 
 export interface Formation {
     name: string,
+    degree: string,
     company: string,
     start: string,
     end: string,

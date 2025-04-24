@@ -33,25 +33,25 @@
             },
             {
                 "name": "Anglais écrit",
-                "level": "Couramment utilisés"
+                "level": "Technique (B1)"
             },
             {
                 "name": "Anglais oral",
-                "level": "Occasionnelement"
+                "level": "Scolaire (B2)"
             },
             {
                 "name": "Allemand",
-                "level": "École obligatoire"
+                "level": "Scolaire (A2)"
             }
         ],
         "hobbys": [
-            "Cuisine",
-            "Lecture",
-            "Animation Japonaise",
-            "Jeux-vidéos"
+            "Cuisine (rigueur & précision)",
+            "Lecture (concentration)",
+            "Animation Japonaise (curiosité)",
+            "Jeux-vidéos (organisation et planification)"
         ],
         "others": [
-            "Permis B"
+            "Voiture (Permis B)"
         ]
     },
     "jobs": [
@@ -331,7 +331,8 @@
     ],
     "formations": [
         {
-            "name": "Technicien Informatique développement d'applications",
+            "name": "Diplôme d'école supérieur",
+            "degree": "Technicien ES Informatique (développement d'applications)",
             "company": "CPNV",
             "start": "01.08.2019",
             "end": "31.07.2021",
@@ -398,6 +399,7 @@
         },
         {
             "name": "CFC Informaticien",
+            "degree": "",
             "company": "CPNV",
             "start": "01.08.2015",
             "end": "31.07.2019",
@@ -433,6 +435,7 @@
         },
         {
             "name": "Séjour linguistique Angleterre / Allemagne",
+            "degree": "",
             "company": "",
             "start": "01.06.2013",
             "end": "31.08.2013",
@@ -449,6 +452,7 @@
         },
         {
             "name": "CFC Technologue en Denrées Alimentaires",
+            "degree": "",
             "company": "Nestlé PTC",
             "start": "01.08.2009",
             "end": "31.07.2012",

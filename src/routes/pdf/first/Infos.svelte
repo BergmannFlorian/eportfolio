@@ -33,9 +33,11 @@
                     <div>{other}</div>
                 </div>
             {/each}
-        </Section>
-        <Section title="références" center={true} titleLight={true}>
-            <div class="text-center w-full font-bold">Sur demande</div>
+            <div class="flex content-center">
+                <span class="icon-[solar--bookmark-circle-broken] my-auto"
+                ></span>
+                <div>Références sur demande</div>
+            </div>
         </Section>
         <Section title="langues" center={true} titleLight={true}>
             <table>
@@ -51,7 +53,9 @@
             </table>
         </Section>
         <Section title="centres d'intérêts" center={true} titleLight={true}>
-            <div>{infos.hobbys.join(", ")}</div>
+            {#each infos.hobbys as hobby}
+                <div>{hobby}</div>
+            {/each}
         </Section>
     </div>
 </div>
