@@ -10,7 +10,7 @@
     href="{base}/projects/{toSlug(project.name)}"
     class="bg-dark text-light p-2 rounded-md"
 >
-    <div class="h-[250px] w-[400px] bg-light">
+    <div class="h-[250px] w-[400px] bg-light rounded-md">
         {#if project.img}
             {#await import(`$lib/assets/images/projects/${project.img}.jpg`) then { default: src }}
                 <img

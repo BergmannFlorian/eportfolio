@@ -33,8 +33,9 @@ export interface Infos {
 export interface Project {
     name: string,
     link: string,
+    tasks: string[],
     details: string[],
-    img: string | undefined,
+    img: string | null,
 }
 
 export interface Skills {
@@ -60,7 +61,7 @@ export interface Formation {
     start: string,
     end: string,
     tasks: string[],
-    course: string,
+    course: string[],
     skills: Skills,
     projects: Project[],
 }

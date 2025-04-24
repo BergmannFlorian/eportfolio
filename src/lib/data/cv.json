@@ -148,7 +148,8 @@
                         "Développement du site",
                         "Support dev"
                     ],
-                    "details": []
+                    "details": [],
+                    "img": null
                 },
                 {
                     "name": "Abbaye St-Maurice",
@@ -216,7 +217,8 @@
                     ],
                     "details": [
                         "Websockets, NodeJs, TypeScript"
-                    ]
+                    ],
+                    "img": null
                 }
             ]
         },
@@ -251,7 +253,8 @@
                     ],
                     "details": [
                         "Flutter, Dart"
-                    ]
+                    ],
+                    "img": null
                 }
             ]
         },
@@ -377,7 +380,8 @@
                         "Développement d'une application à destination des apprentis de 1ère année afin de leur fournir un environnement dans lequel ils doivent déplacer un personnage à l'aide de fonctions de mouvements simples préconçu (comme walk_forward par exemple), ainsi que l'ensemble des structures de contrôles existants",
                         "Ruby, Gosu",
                         "1 semestre | ~144h"
-                    ]
+                    ],
+                    "img": null
                 },
                 {
                     "name": "Runeo",
@@ -387,7 +391,8 @@
                         "Reprise du développement d'une application web de gestion de déplacement en Laravel pour le Paléo",
                         "Refactor et corrections de bugs",
                         "Ajout d'une interface de gestion de paramètre pour les administrateur"
-                    ]
+                    ],
+                    "img": null
                 }
             ]
         },

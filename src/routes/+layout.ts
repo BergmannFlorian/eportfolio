@@ -1,16 +1,13 @@
-import { browser } from "$app/environment";
+import cvJson from "$lib/data/cv.json";
+import skillsJson from "$lib/data/skills.json"
+import type { CV } from "$lib/interfaces/cv";
+import type { Skills } from "$lib/interfaces/skills";
 
 export const prerender = true
 
 export async function load() {
-    if (browser) {
-        const cv = await fetch("cv.json");
-        const skills = await fetch("skills.json");
-        return {
-            cv: await cv.json(),
-            skills: await skills.json()
-        }
-    } else {
-        return {};
+    return {
+        cv: cvJson as CV,
+        skills: skillsJson as Skills
     }
 }
