@@ -14,16 +14,12 @@ const config = {
 		adapter: adapter({
 			pages: 'build',
 			assets: 'build',
-			fallback: undefined,
+			fallback: '404.html',
 			precompress: false,
 			strict: true
 		}),
 		prerender: {
-			handleHttpError: "warn",
-			entries: [
-				"*",
-				"/projects/breitling"
-			]
+			handleHttpError: "warn"
 		},
 		paths: {
 			base: process.argv.includes('dev') ? '' : process.env.BASE_PATH
