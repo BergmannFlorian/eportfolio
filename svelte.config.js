@@ -19,7 +19,10 @@ const config = {
 			strict: true
 		}),
 		prerender: {
-			handleHttpError: "warn"
+			handleHttpError: "warn",
+			entries: [
+				"/projects/breitling"
+			]
 		},
 		paths: {
 			base: process.argv.includes('dev') ? '' : process.env.BASE_PATH
