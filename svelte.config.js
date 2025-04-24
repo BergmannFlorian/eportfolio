@@ -28,6 +28,15 @@ const config = {
 		paths: {
 			base: process.argv.includes('dev') ? '' : process.env.BASE_PATH
 		}
+	},
+
+	onwarn: (warning, handler) => {
+		const { code, frame } = warning;
+		if (code === "css_unused_selector")
+			return;
+		if (code === "a11y_invalid_attribute")
+			return;
+		handler(warning);
 	}
 };
 

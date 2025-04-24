@@ -9,7 +9,6 @@
 
     let project: Project | null = $state(null);
     if (cv && slug) {
-        console.log(slug);
         cv.jobs.every((job) => {
             return job.projects.every((p) => {
                 if (toSlug(p.name) === slug) {
