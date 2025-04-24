@@ -21,6 +21,7 @@ const config = {
 		prerender: {
 			handleHttpError: "warn",
 			entries: [
+				"*",
 				"/projects/breitling"
 			]
 		},
