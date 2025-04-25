@@ -1,6 +1,7 @@
 <script lang="ts">
     import { dateFormat, getDate } from "$lib/helpers";
     import type { Formation } from "$lib/interfaces/cv";
+    import H3 from "../fonts/H3.svelte";
 
     export let formations: Formation[];
 
@@ -24,21 +25,19 @@
         <div class="mb-3">
             <div class="w-full grid grid-cols-10">
                 <div class="col-span-3 font-bold text-nowrap flex flex-nowrap">
-                    <div class="text-gray pr-2">
+                    <H3 style="text-dark pr-2">
                         {formatDate(
                             formation.start,
                             formation.end,
                         ).toUpperCase()}
-                    </div>
-                    <div class="font-bold">
-                        {formation.company}
-                    </div>
+                    </H3>
+                    <H3>{formation.company}</H3>
                 </div>
-                <div class="font-bold text-[12px] col-start-4 col-end-11">
-                    {formation.name}
+                <div class="col-start-4 col-end-11">
+                    <H3>{formation.name}</H3>
                 </div>
-                <div class="font-bold text-[12px] col-start-4 col-end-11">
-                    {formation.degree}
+                <div class="col-start-4 col-end-11">
+                    <H3>{formation.degree}</H3>
                 </div>
                 <ul class="col-start-4 col-end-11 list-disc">
                     {#each formation.tasks as task}

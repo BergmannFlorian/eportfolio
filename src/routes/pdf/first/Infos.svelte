@@ -12,7 +12,7 @@
         {infos.contact.name}
     </div>
     <div class="flex flex-col pr-5 pl-5 justify-around h-full">
-        <Section title="contact" center={true} titleLight={true}>
+        <Section title="contact">
             <div class="flex content-center">
                 <span class="icon-[solar--map-point-linear] my-auto"></span>
                 <div>{infos.contact.address}</div>
@@ -39,7 +39,7 @@
                 <div>Références sur demande</div>
             </div>
         </Section>
-        <Section title="langues" center={true} titleLight={true}>
+        <Section title="langues">
             <table>
                 <tbody>
                     {#each infos.langs as lang}
@@ -52,7 +52,7 @@
                 </tbody>
             </table>
         </Section>
-        <Section title="centres d'intérêts" center={true} titleLight={true}>
+        <Section title="centres d'intérêt">
             {#each infos.hobbys as hobby}
                 <div>{hobby}</div>
             {/each}

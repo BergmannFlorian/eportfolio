@@ -1,11 +1,12 @@
 <script lang="ts">
     import type { CV } from "$lib/interfaces/cv";
     import Infos from "./first/Infos.svelte";
-    import Skills from "./first/Skills.svelte";
     import Certificates from "./first/Certificates.svelte";
     import Formations from "./first/Formations.svelte";
     import Section from "./first/Section.svelte";
+    import Skills from "./first/Skills.svelte";
     import Jobs from "./second/Jobs.svelte";
+    import H1 from "./fonts/H1.svelte";
 
     const { data } = $props();
     let cv = $state(data.cv ? (data.cv as CV) : null);
@@ -24,9 +25,8 @@
                 <Infos infos={cv.infos} />
             </div>
             <div class="right h-full flex flex-col py-5 pr-5 pl-2 gap-y-5">
-                <div class="text-[32px] text-dark font-questrial">
-                    {cv.infos.title}
-                </div>
+                <H1>{cv.infos.title}</H1>
+                <div>{cv.infos.description}</div>
                 <Section title="compétence">
                     <Skills {data} />
                 </Section>

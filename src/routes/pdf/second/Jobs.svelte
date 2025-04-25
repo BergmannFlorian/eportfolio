@@ -1,10 +1,11 @@
 <script lang="ts">
     import { onMount } from "svelte";
-    import Job1 from "./Job1.svelte";
-    import type { Job } from "$lib/interfaces/cv";
+    import type { Job as JobI } from "$lib/interfaces/cv";
+    import Job from "./Job.svelte";
+    import H2 from "../fonts/H2.svelte";
 
     interface Props {
-        jobs: Job[];
+        jobs: JobI[];
         start: number;
         addPage: any;
     }
@@ -34,15 +35,10 @@
 </script>
 
 <div class="w-full h-full flex flex-col py-7">
-    <div
-        class="text-[19px] text-center w-full tracking-[5px] font-questrial text-gray-dark"
-    >
-        {"expériences".toUpperCase()}
-    </div>
+    <H2>{"expériences".toUpperCase()}</H2>
     <div id="jobs" class="w-full h-full">
         {#each jobs as job}
-            <!-- <Job {job}></Job> -->
-            <Job1 {job}></Job1>
+            <Job {job}></Job>
         {/each}
     </div>
 </div>

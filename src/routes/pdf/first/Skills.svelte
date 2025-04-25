@@ -2,6 +2,7 @@
     import { getDate } from "$lib/helpers";
     import type { CV, Formation, Job } from "$lib/interfaces/cv";
     import type { Skills } from "$lib/interfaces/skills";
+    import H3 from "../fonts/H3.svelte";
 
     interface SkillsCat {
         type: number;
@@ -106,11 +107,16 @@
 
 <table class="w-full border-solid text-[9px]">
     <thead class="font-bold">
-        <tr class="border-b border-light">
+        <tr class="border-b border-light text-center">
             <td class="border-r border-light w-[25%]"></td>
-            <td class="w-[25%]">LANGUAGES</td>
-            <td class="w-[25%]">FRAMEWORK / BIBLIOTHÈQUE</td>
-            <td class="w-[25%]">OUTILS</td>
+            <td class="w-[25%]"> <H3>{"langages".toLocaleUpperCase()}</H3></td>
+            <td class="w-[25%]"
+                ><H3>{"framework / bibliotèque".toLocaleUpperCase()}</H3></td
+            >
+            <td class="w-[25%]"><H3>{"outils".toLocaleUpperCase()}</H3></td>
+            <td class="w-[25%]"
+                ><H3>{"compétences métiers".toLocaleUpperCase()}</H3></td
+            >
         </tr>
     </thead>
     <tbody>
@@ -138,6 +144,6 @@
 
 <style>
     td {
-        padding: 10px;
+        padding: 5px;
     }
 </style>
