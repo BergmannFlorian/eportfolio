@@ -5,8 +5,19 @@
         "contact": {
             "name": "Florian Bergmann",
             "email": "florian.bergmann@ik.me",
-            "address": "Rue du Jura 13, 1450 Ste-Croix"
+            "address": "Rue du Jura 13, 1450 Ste-Croix",
+            "age": "08.07.1993"
         },
+        "others": [
+            {
+                "title": "Nationalité Suisse",
+                "icon": "solar:card-2-outline"
+            },
+            {
+                "title": "Voiture (Permis B)",
+                "icon": "solar:ufo-outline"
+            }
+        ],
         "socials": [
             {
                 "name": "linkedin",
@@ -33,12 +44,8 @@
                 "level": "Maternelle"
             },
             {
-                "name": "Anglais écrit",
+                "name": "Anglais",
                 "level": "Technique (B1)"
-            },
-            {
-                "name": "Anglais oral",
-                "level": "Scolaire (B2)"
             },
             {
                 "name": "Allemand",
@@ -50,9 +57,6 @@
             "Lecture (concentration)",
             "Animation Japonaise (curiosité)",
             "Jeux-vidéos (organisation et planification)"
-        ],
-        "others": [
-            "Voiture (Permis B)"
         ]
     },
     "jobs": [
@@ -189,8 +193,7 @@
             "start": "01.02.2021",
             "end": "30.06.2021",
             "tasks": [
-                "Développement d'une application mobile Flutter",
-                "Développement d'un système scallable de notification"
+                "Conception et développement (fonctionnalités, interfaces)"
             ],
             "skills": {
                 "langs": [
@@ -214,7 +217,7 @@
             "projects": [
                 {
                     "name": "Système de notification par Websocket",
-                    "link": "",
+                    "link": null,
                     "tasks": [
                         "Développement d'un système de notification scalable pour la plateforme IntrepidKnowledge"
                     ],
@@ -225,7 +228,7 @@
                 },
                 {
                     "name": "Application mobile IntrepidKnowledge",
-                    "link": "",
+                    "link": null,
                     "tasks": [
                         "Développement en équipe d'une application mobile basé sur la plateforme IntrepidKnowledge"
                     ],
@@ -364,7 +367,7 @@
                 },
                 {
                     "name": "Runeo",
-                    "link": "",
+                    "link": null,
                     "tasks": [],
                     "details": [
                         "Reprise du développement d'une application web de gestion de déplacement en Laravel pour le Paléo",

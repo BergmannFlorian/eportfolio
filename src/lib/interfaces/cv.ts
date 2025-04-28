@@ -22,18 +22,22 @@ export interface Infos {
         name: string,
         email: string,
         address: string,
+        age: string,
     },
     socials: Social[],
     references: Reference[],
     langs: Lang[],
     hobbys: string[],
-    others: string[],
+    others: {
+        title: string,
+        icon: string
+    }[],
 
 }
 
 export interface Project {
     name: string,
-    link: string,
+    link: string | null,
     tasks: string[],
     details: string[],
     img: string | null,

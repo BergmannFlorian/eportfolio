@@ -13,6 +13,7 @@
 	},
 	"devDependencies": {
 		"@iconify/json": "^2.2.325",
+		"@iconify/svelte": "^4.2.0",
 		"@iconify/tailwind4": "^1.0.6",
 		"@sveltejs/adapter-auto": "^4.0.0",
 		"@sveltejs/adapter-static": "^3.0.8",
