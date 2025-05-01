@@ -47,6 +47,7 @@ export interface Skills {
     langs: number[],
     libs: number[],
     tools: number[],
+    buisness: number[],
 }
 
 export interface Job {

@@ -3,10 +3,7 @@
     import type { CV } from "$lib/interfaces/cv.js";
     import { onMount } from "svelte";
 
-    const SPEED = {
-        console: 10,
-        user: 10,
-    };
+    const SPEED = 10;
 
     class Console {
         title: string | null;
@@ -41,19 +38,19 @@
 
             if (line.title) {
                 for (let i = 0; i < line.title.length; i++) {
-                    await timeout(SPEED.console);
+                    await timeout(SPEED / 2);
                     text.innerHTML += line.title[i];
                 }
                 text.innerText += ": ";
                 if (line.text) {
-                    await timeout(500);
+                    await timeout(SPEED * 20);
                     for (let i = 0; i < line.text.length; i++) {
-                        await timeout(SPEED.user);
+                        await timeout(SPEED);
                         text.innerHTML += line.text[i];
                     }
                 }
             } else text.innerText += "...";
-            await timeout(500);
+            await timeout(SPEED * 10);
         }
     }
 
@@ -69,12 +66,12 @@
                 ...cv.infos.socials.map((social) => {
                     return new Console(social.name, social.link);
                 }),
-                // new Console("references", "sur demande"),
+                new Console("references", "sur demande"),
                 new Console(),
                 new Console("jobs"),
                 ...cv.jobs.map((job) => {
                     return new Console(
-                        shortDate(job.start, job.end),
+                        shortDate(job.start, job.end).toUpperCase(),
                         `${job.title} - ${job.company}`,
                     );
                 }),
@@ -82,7 +79,7 @@
                 new Console("formations"),
                 ...cv.formations.map((formation) => {
                     return new Console(
-                        shortDate(formation.start, formation.end),
+                        shortDate(formation.start, formation.end).toUpperCase(),
                         `${formation.name} - ${formation.company}`,
                     );
                 }),
@@ -94,22 +91,6 @@
 </script>
 
 <div class="font-teachers w-[80%] flex justify-center pt-10">
-    <!-- {#if cv}
-        <div>
-            <div>&#123</div>
-            <div class="flex pl-4">
-                <div class="flex justify-end">name: "</div>
-                <div class="text-4xl">{cv.infos.contact.name}</div>
-                ",
-            </div>
-            <div class="flex pl-4">
-                title: "
-                <div>{cv.infos.title}</div>
-                ",
-            </div>
-            <div>&#125</div>
-        </div>
-    {/if} -->
     <div
         id="container"
         class="bg-dark text-light w-full p-5 border-3 border-light rounded-xl bg-radial from-gray to-dark font-[Inconsolata] text-shadow-[0_0_5px] text-shadow-light"

@@ -91,7 +91,8 @@
                     1,
                     2,
                     3,
-                    4
+                    4,
+                    11
                 ],
                 "tools": [
                     0,
@@ -101,7 +102,8 @@
                     4,
                     5,
                     6
-                ]
+                ],
+                "buisness": []
             },
             "projects": [
                 {
@@ -212,7 +214,8 @@
                     5,
                     6,
                     7
-                ]
+                ],
+                "buisness": []
             },
             "projects": [
                 {
@@ -255,7 +258,8 @@
                     10,
                     1
                 ],
-                "tools": []
+                "tools": [],
+                "buisness": []
             },
             "projects": []
         },
@@ -272,7 +276,8 @@
             "skills": {
                 "langs": [],
                 "libs": [],
-                "tools": []
+                "tools": [],
+                "buisness": []
             },
             "projects": []
         },
@@ -289,7 +294,8 @@
             "skills": {
                 "langs": [],
                 "libs": [],
-                "tools": []
+                "tools": [],
+                "buisness": []
             },
             "projects": []
         },
@@ -305,7 +311,8 @@
             "skills": {
                 "langs": [],
                 "libs": [],
-                "tools": []
+                "tools": [],
+                "buisness": []
             },
             "projects": []
         }
@@ -351,7 +358,8 @@
                     3,
                     5,
                     6
-                ]
+                ],
+                "buisness": []
             },
             "projects": [
                 {
@@ -410,7 +418,8 @@
                     2,
                     5,
                     6
-                ]
+                ],
+                "buisness": []
             },
             "projects": []
         },
@@ -427,7 +436,8 @@
             "skills": {
                 "langs": [],
                 "libs": [],
-                "tools": []
+                "tools": [],
+                "buisness": []
             },
             "projects": []
         },
@@ -444,16 +454,22 @@
             "skills": {
                 "langs": [],
                 "libs": [],
-                "tools": []
+                "tools": [],
+                "buisness": []
             },
             "projects": []
         }
     ],
     "certificates": [
         {
-            "title": "Professional Scrum Master I",
+            "title": "PSM1 - Professional Scrum Master I",
             "date": "14.03.2025",
             "link": "https://www.scrum.org/certificates/1198961"
+        },
+        {
+            "title": "JSA – Certified Associate JavaScript Programmer",
+            "date": "01.05.2025",
+            "link": ""
         }
     ]
 }

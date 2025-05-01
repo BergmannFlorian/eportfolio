@@ -12,6 +12,8 @@
         -1,
         Infinity,
         -Infinity,
+        NaN,
+        -NaN,
         // BigInt(5),
         // BigInt(0),
         // BigInt(5),

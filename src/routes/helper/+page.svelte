@@ -6,11 +6,13 @@
     let langsSelected: string[] = $state([]);
     let libsSelected: string[] = $state([]);
     let toolsSelected: string[] = $state([]);
+    let buisnessSelected: string[] = $state([]);
 
     function clear() {
         langsSelected = [];
         libsSelected = [];
         toolsSelected = [];
+        buisnessSelected = [];
     }
 </script>
 
@@ -71,6 +73,25 @@
                             class="p-1 border-1 rounded-xl"
                         >
                             {tool}
+                        </button>
+                    {/each}
+                </div>
+                <div class=" text-xl">Tools séléctionné :</div>
+                <div>{toolsSelected.join(", ")}</div>
+                <div>{Object.keys(toolsSelected).join(",")}</div>
+            </div>
+            <div>
+                <div class=" text-xl">Buisness :</div>
+                <div class="flex gap-x-2">
+                    {#each skills.buisness as buisness, index}
+                        <button
+                            onclick={() =>
+                                toolsSelected[index]
+                                    ? delete toolsSelected[index]
+                                    : (buisnessSelected[index] = buisness)}
+                            class="p-1 border-1 rounded-xl"
+                        >
+                            {buisness}
                         </button>
                     {/each}
                 </div>

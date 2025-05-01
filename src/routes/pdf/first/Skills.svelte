@@ -17,6 +17,7 @@
     const langs: SkillsCat[] = [];
     const libs: SkillsCat[] = [];
     const tools: SkillsCat[] = [];
+    const buisness: SkillsCat[] = [];
 
     const { data } = $props();
     const cv = $state(data.cv ? (data.cv as CV) : null);
@@ -61,6 +62,7 @@
             addSkill(exp.skills.langs, skills.langs, langs, type);
             addSkill(exp.skills.libs, skills.libs, libs, type);
             addSkill(exp.skills.tools, skills.tools, tools, type);
+            addSkill(exp.skills.buisness, skills.buisness, buisness, type);
         });
     }
 
@@ -87,21 +89,38 @@
     }
 
     const content = {
-        row: [
+        rows: [
             {
-                title: `Il y a moins de ${MIN} an${MIN > 1 ? "s" : ""}`,
+                title: `Experience`,
                 type: TYPE.top,
             },
             {
-                title: `Il y a entre ${MIN} et ${MAX} an${MAX > 1 ? "s" : ""}`,
+                title: `Connaissance`,
                 type: TYPE.mid,
             },
             {
-                title: `Il y a plus de ${MAX} an${MAX > 1 ? "s" : ""}`,
+                title: `Notion`,
                 type: TYPE.bottom,
             },
         ],
-        col: [langs, libs, tools],
+        cols: [
+            {
+                title: "langages",
+                skills: langs,
+            },
+            {
+                title: "framework / bibliotèque",
+                skills: libs,
+            },
+            {
+                title: "outils",
+                skills: tools,
+            },
+            // {
+            //     title: "compétences métiers",
+            //     skills: buisness
+            // }
+        ],
     };
 </script>
 
@@ -109,25 +128,22 @@
     <thead class="font-bold">
         <tr class="border-b border-light text-center">
             <td class="border-r border-light w-[25%]"></td>
-            <td class="w-[25%]"> <H3>{"langages".toLocaleUpperCase()}</H3></td>
-            <td class="w-[25%]"
-                ><H3>{"framework / bibliotèque".toLocaleUpperCase()}</H3></td
-            >
-            <td class="w-[25%]"><H3>{"outils".toLocaleUpperCase()}</H3></td>
-            <td class="w-[25%]"
-                ><H3>{"compétences métiers".toLocaleUpperCase()}</H3></td
-            >
+            {#each content.cols as col}
+                <td class="w-[25%]">
+                    <H3>{col.title.toLocaleUpperCase()}</H3></td
+                >
+            {/each}
         </tr>
     </thead>
     <tbody>
-        {#each content.row as row}
+        {#each content.rows as row}
             <tr>
                 <td class="text-[7px] font-bold border-r border-light">
                     {row.title.toUpperCase()}
                 </td>
-                {#each content.col as col}
+                {#each content.cols as col}
                     <td>
-                        {#each col.filter((skill) => skill.type === row.type) as skill}
+                        {#each col.skills.filter((skill) => skill.type === row.type) as skill}
                             <button
                                 class="w-full"
                                 onclick={(event) => boldSkill(event.target)}
