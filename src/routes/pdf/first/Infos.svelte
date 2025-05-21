@@ -8,8 +8,8 @@
     export let infos: Infos;
 
     const birthdate = getDate(infos.contact.age);
-    const now = new Date();
-    const age = now.getFullYear() - birthdate.getFullYear();
+    const diff = new Date(Date.now() - birthdate.getTime());
+    const age = diff.getFullYear() - 1970;
 </script>
 
 <div class="h-full flex flex-col bg-dark text-light">
@@ -18,7 +18,7 @@
         {infos.contact.name}
     </div>
     <div class="flex flex-col pr-5 pl-5 justify-around h-full">
-        <Section title="contact">
+        <Section title="contact" center={true}>
             <Info icon="solar:map-point-linear">
                 <div>{infos.contact.address}</div>
             </Info>
@@ -42,7 +42,7 @@
                 <div>Références sur demande</div>
             </Info>
         </Section>
-        <Section title="langues">
+        <Section title="langues" center={true}>
             <table>
                 <tbody>
                     {#each infos.langs as lang}
@@ -55,7 +55,7 @@
                 </tbody>
             </table>
         </Section>
-        <Section title="centres d'intérêt">
+        <Section title="centres d'intérêt" center={true}>
             {#each infos.hobbys as hobby}
                 <div>{hobby}</div>
             {/each}

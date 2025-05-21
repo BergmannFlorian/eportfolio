@@ -7,6 +7,7 @@
     import Skills from "./first/Skills.svelte";
     import Jobs from "./second/Jobs.svelte";
     import H1 from "./fonts/H1.svelte";
+    import PageNumber from "./PageNumber.svelte";
 
     const { data } = $props();
     let cv = $state(data.cv ? (data.cv as CV) : null);
@@ -25,8 +26,8 @@
                 <Infos infos={cv.infos} />
             </div>
             <div class="right h-full flex flex-col py-5 pr-5 pl-2 gap-y-5">
-                <H1>{cv.infos.title}</H1>
-                <div>{cv.infos.description}</div>
+                <H1><div class="whitespace-pre-line">{cv.infos.title}</div></H1>
+                <!-- <div>{cv.infos.description}</div> -->
                 <Section title="compétence">
                     <Skills {data} />
                 </Section>
@@ -37,10 +38,12 @@
                     <Formations formations={cv.formations} />
                 </Section>
             </div>
+            <PageNumber page={1} total={pagesStartIndex.length+1} />
         </div>
-        {#each pagesStartIndex as start}
+        {#each pagesStartIndex as start, index}
             <div class="page">
                 <Jobs jobs={cv.jobs} addPage={addJobsPage} {start} />
+                <PageNumber page={index+2} total={pagesStartIndex.length+1} />
             </div>
         {/each}
     </div>
@@ -63,6 +66,7 @@
         display: flex;
         flex-wrap: nowrap;
         flex-shrink: 0;
+        position: relative;
     }
 
     @page {

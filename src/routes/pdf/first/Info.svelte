@@ -6,7 +6,7 @@
 
 <div class="flex content-center">
     {#if icon}
-        <Icon {icon} class="my-auto"></Icon>
+        <Icon {icon} class="my-auto pr-0.5"></Icon>
     {/if}
     <slot></slot>
 </div>
