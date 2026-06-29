@@ -28,18 +28,14 @@ jobs:
       - name: Build
         run: npm run build
 
-      # ── 3. Deploy via FTP ──────────────────────────────────────────
-      # Uploads only changed files (incremental), skips .env and sensitive files
-      - name: Deploy via FTP
-        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+      # ── 3. Deploy via SFTP (password auth) ────────────────────────
+      - name: Deploy via SFTP
+        uses: wlixcc/SFTP-Deploy-Action@v1.2.5
         with:
           server: ${{ secrets.FTP_SERVER }}
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
-          server-dir: /sites/bergmann-florian.ch/    # ← adapt this path
-          local-dir: ./build/                # ← adapter-node outputs to ./build
-          exclude: |
-            **/.git*
-            **/.git*/**
-            **/node_modules/**
-            **/.env
+          local_path: './build/*'
+          remote_path: '/sites/monsite.com/'  # ← adapt this path
+          sftp_only: true
+          delete_remote_files: true
