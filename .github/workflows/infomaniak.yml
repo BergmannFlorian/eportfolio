@@ -28,14 +28,30 @@ jobs:
       - name: Build
         run: npm run build
 
-      # ── 3. Deploy via SFTP (password auth) ────────────────────────
+      # ── 3. Ensure remote folder exists ──────────────────────────────
+      - name: Ensure remote folder exists
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y sshpass
+          sshpass -p "${{ secrets.FTP_PASSWORD }}" ssh -o StrictHostKeyChecking=no \
+            ${{ secrets.FTP_USERNAME }}@${{ secrets.FTP_SERVER }} \
+            "mkdir -p ${{ vars.REMOTE_PATH }}"
+
+      # ── 4. Clean remote folder content via SSH (password auth) ────
+      # Removes only the CONTENT of the folder, not the folder itself
+      - name: Clean remote folder
+        run: |
+          sshpass -p "${{ secrets.FTP_PASSWORD }}" ssh -o StrictHostKeyChecking=no \
+            ${{ secrets.FTP_USERNAME }}@${{ secrets.FTP_SERVER }} \
+            "rm -rf ${{ vars.REMOTE_PATH }}/*"
+
+      # ── 5. Deploy via SFTP (password auth) ─────────────────────────
       - name: Deploy via SFTP
-        uses: wlixcc/SFTP-Deploy-Action@v1.2.5
+        uses: wlixcc/SFTP-Deploy-Action@v1.2.6
         with:
           server: ${{ secrets.FTP_SERVER }}
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
           local_path: './build/*'
-          remote_path: 'sites/bergmann-florian.ch/'  # ← adapt this path
+          remote_path: ${{ vars.REMOTE_PATH }}/
           sftp_only: true
-          delete_remote_files: true
