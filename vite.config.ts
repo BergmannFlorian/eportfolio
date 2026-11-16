@@ -21,7 +21,9 @@ export default defineConfig({
 						['fr', '/:path(.*)?']
 					]
 				}
-			]
+			],
+			// The JSON API picks its locale from ?lang / Accept-Language, not from the URL
+			routeStrategies: [{ match: '/api/:path(.*)?', exclude: true }]
 		}),
 		sveltekit({
 			compilerOptions: {

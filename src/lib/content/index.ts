@@ -1,4 +1,5 @@
 import { m } from '#lib/paraglide/messages.js';
+import type { Locale } from '#lib/paraglide/runtime.js';
 
 /**
  * Home page content.
@@ -6,7 +7,11 @@ import { m } from '#lib/paraglide/messages.js';
  * follow the request locale); proper names and URLs are locale-independent.
  */
 
-type Text = () => string;
+/** A message function: `text()` uses the current locale, `text(undefined, { locale })` forces one. */
+export type Text = (inputs?: undefined, options?: { locale?: Locale }) => string;
+
+/** Resolves a text in the given locale. */
+export const t = (text: Text, locale: Locale) => text(undefined, { locale });
 
 export const contact = {
 	email: 'florian.bergmann@ik.me',
