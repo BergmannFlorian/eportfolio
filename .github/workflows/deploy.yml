@@ -28,14 +28,14 @@ jobs:
       - name: Build
         run: npm run build
 
-      # Upload bundle: package.json (type module + start script) and build/
-      # → on the server: REMOTE_PATH/package.json and REMOTE_PATH/build/index.js
+      # Upload bundle: build/ contents at the root (Infomaniak runs `node index.js`
+      # from REMOTE_PATH) plus a minimal package.json (ESM + start script)
       - name: Prepare deploy bundle
         run: |
           test -f build/index.js || { echo "build/index.js missing, deployment aborted"; exit 1; }
           mkdir -p dist
-          cp package.json dist/
-          cp -r build dist/build
+          cp -r build/. dist/
+          echo '{ "name": "eportfolio", "private": true, "type": "module", "scripts": { "start": "node index.js" } }' > dist/package.json
 
       # ── 3. Ensure remote folder exists ──────────────────────────────
       - name: Ensure remote folder exists
