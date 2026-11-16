@@ -30,3 +30,6 @@ vite.config.ts.timestamp-*
 
 # Deploy bundle (CI)
 /dist
+
+# inlang plugin cache (downloaded at build time)
+/project.inlang/cache
