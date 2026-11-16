@@ -28,14 +28,17 @@ jobs:
       - name: Build
         run: npm run build
 
-      # Upload bundle: build/ contents at the root (Infomaniak runs `node index.js`
-      # from REMOTE_PATH) plus a minimal package.json (ESM + start script)
+      # Upload bundle (Infomaniak runs `node index.js` from REMOTE_PATH):
+      #   index.js      self-reloading launcher (deploy/launcher.js)
+      #   package.json  minimal ESM package (deploy/package.json)
+      #   app/          SvelteKit adapter-node output
       - name: Prepare deploy bundle
         run: |
           test -f build/index.js || { echo "build/index.js missing, deployment aborted"; exit 1; }
-          mkdir -p dist
-          cp -r build/. dist/
-          echo '{ "name": "eportfolio", "private": true, "type": "module", "scripts": { "start": "node index.js" } }' > dist/package.json
+          mkdir -p dist/app
+          cp -r build/. dist/app/
+          cp deploy/launcher.js dist/index.js
+          cp deploy/package.json dist/package.json
 
       # ── 3. Ensure remote folder exists ──────────────────────────────
       - name: Ensure remote folder exists
@@ -64,3 +67,12 @@ jobs:
           local_path: './dist/*'
           remote_path: ${{ vars.REMOTE_PATH }}/
           sftp_only: true
+
+      # ── 6. Restart the app ─────────────────────────────────────────
+      # Infomaniak has no restart API: the launcher (index.js) watches this
+      # marker and restarts the server once all files are uploaded.
+      - name: Restart app
+        run: |
+          sshpass -p "${{ secrets.FTP_PASSWORD }}" ssh -o StrictHostKeyChecking=no \
+            ${{ secrets.FTP_USERNAME }}@${{ secrets.FTP_SERVER }} \
+            "date -u +%FT%TZ > ${{ vars.REMOTE_PATH }}/.deploy-version"

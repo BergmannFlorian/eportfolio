@@ -55,6 +55,20 @@ You can preview the production build with `npm run preview`.
 
 > To deploy your app, you may need to install an [adapter](https://svelte.dev/docs/kit/adapters) for your target environment.
 
+## Deployment
+
+Pushing to the `deploy` branch runs [`.github/workflows/deploy.yml`](.github/workflows/deploy.yml): it builds with `@sveltejs/adapter-node` and uploads to the Infomaniak Node.js hosting over SFTP.
+
+```
+REMOTE_PATH/
+  index.js         launcher, started by Infomaniak with `node index.js` (deploy/launcher.js)
+  package.json     minimal ESM package (deploy/package.json)
+  app/             adapter-node build
+  .deploy-version  marker written by the workflow after the upload
+```
+
+Infomaniak has no API to restart a Node.js site, so `index.js` is a small launcher: it runs `app/index.js` as a child process, restarts it when `.deploy-version` changes (last workflow step), and restarts it if it crashes. The server needs the `ORIGIN` (public URL) and `PORT` environment variables, set in the Infomaniak Node.js configuration.
+
 ## API
 
 Public, read-only JSON API served by the same Node server, under `/api/v1`. All endpoints answer `GET` only.
