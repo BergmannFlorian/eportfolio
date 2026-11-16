@@ -1,0 +1,87 @@
+@import 'tailwindcss';
+
+/* Thèmes : un fichier par thème (voir src/lib/theme/themes.ts) */
+@import './lib/theme/themes/light.css';
+@import './lib/theme/themes/dark.css';
+
+/* Tokens sémantiques → utilitaires Tailwind (bg-bg, text-fg-subtle, border-border…) */
+@theme inline {
+	--color-bg: var(--bg);
+	--color-surface: var(--surface);
+	--color-fg: var(--fg);
+	--color-fg-strong: var(--fg-strong);
+	--color-fg-muted: var(--fg-muted);
+	--color-fg-subtle: var(--fg-subtle);
+	--color-border: var(--border);
+	--color-border-strong: var(--border-strong);
+	--color-chip-border: var(--chip-border);
+	--color-inverse: var(--inverse);
+	--color-inverse-fg: var(--inverse-fg);
+	--color-inverse-subtle: var(--inverse-subtle);
+	--color-accent: var(--accent);
+	--color-accent-fg: var(--accent-fg);
+}
+
+@theme {
+	--font-display: 'Questrial', ui-sans-serif, system-ui, sans-serif;
+	--font-sans: 'Inter Variable', ui-sans-serif, system-ui, sans-serif;
+	--font-mono: 'JetBrains Mono Variable', ui-monospace, monospace;
+
+	/* CV imprimable (/cv) — style de l'ancien projet, indépendant des thèmes du site */
+	--color-cv-dark: #2e2e2e;
+	--color-cv-light: #b5b5b5;
+	--font-cv: 'Teachers', ui-sans-serif, system-ui, sans-serif;
+}
+
+@layer base {
+	html {
+		scroll-behavior: smooth;
+		scroll-padding-top: 1.5rem;
+	}
+
+	body {
+		@apply bg-bg font-sans text-fg antialiased;
+	}
+
+	:focus-visible {
+		outline: 2px solid var(--accent);
+		outline-offset: 3px;
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		html {
+			scroll-behavior: auto;
+		}
+	}
+}
+
+@layer components {
+	.container-page {
+		@apply mx-auto w-full max-w-[1240px] px-4 sm:px-8;
+	}
+
+	.kicker {
+		@apply m-0 font-mono text-sm text-accent;
+	}
+
+	.section-title {
+		@apply m-0 font-display text-[clamp(36px,5vw,56px)] leading-[1.05] font-normal tracking-[-1px] text-fg-strong;
+	}
+
+	.label-caps {
+		@apply m-0 font-mono text-sm font-medium tracking-[1px] uppercase;
+	}
+
+	.btn-primary,
+	.btn-outline {
+		@apply inline-flex min-h-11 items-center gap-3 font-medium no-underline transition-colors;
+	}
+
+	.btn-primary {
+		@apply bg-inverse text-inverse-fg hover:bg-accent hover:text-accent-fg;
+	}
+
+	.btn-outline {
+		@apply border-[1.5px] border-border-strong text-fg hover:bg-inverse hover:text-inverse-fg;
+	}
+}

@@ -1,0 +1,20 @@
+[data-theme='dark'] {
+	color-scheme: dark;
+
+	--bg: #111111;
+	--surface: #1a1a1a;
+	--fg: #edebe6;
+	--fg-strong: #ffffff;
+	--fg-muted: #c9c6bf;
+	--fg-subtle: #a3a09a;
+	--border: #2a2a2a;
+	--border-strong: #edebe6;
+	--chip-border: #3a3a3a;
+
+	--inverse: #edebe6;
+	--inverse-fg: #111111;
+	--inverse-subtle: #5c5a55;
+
+	--accent: #e8875f;
+	--accent-fg: #111111;
+}
