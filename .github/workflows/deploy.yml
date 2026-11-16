@@ -25,6 +25,10 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      # Stops the deploy before anything is touched on the server
+      - name: Test
+        run: npm test
+
       - name: Build
         run: npm run build
 

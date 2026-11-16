@@ -96,4 +96,6 @@ curl "https://bergmann-florian.ch/api/v1/profile?lang=en"
 curl -H "Accept-Language: en" "https://bergmann-florian.ch/api/v1/experiences?kind=job"
 ```
 
+Tests: `npm test` runs [`src/routes/api/v1/api.test.ts`](src/routes/api/v1/api.test.ts) (Vitest, handlers called directly, no server needed): status codes, headers, locale resolution, filters, stable ids, links between resources and absence of private data. The deploy workflow runs them before building.
+
 Response types: [`src/lib/api/types.ts`](src/lib/api/types.ts). Data access: [`src/lib/server/content/index.ts`](src/lib/server/content/index.ts) (the only module to change when the content moves to the database in [`db/`](db/)).

@@ -248,7 +248,30 @@
                 "tools": [0, 1, 2, 3, 5, 6],
                 "buisness": []
             },
-            "projects": []
+            "projects": [
+                {
+                    "name": "Progcraft",
+                    "link": "https://github.com/Crepe-Party/ProgCraft",
+                    "tasks": [],
+                    "details": [
+                        "Application for first-year apprentices: they move a character with simple predefined movement functions (such as walk_forward) and all the usual control structures",
+                        "Ruby, Gosu",
+                        "1 semester | ~144h"
+                    ],
+                    "img": null
+                },
+                {
+                    "name": "Runeo",
+                    "link": null,
+                    "tasks": [],
+                    "details": [
+                        "Took over development of a Laravel travel-management web app for the Paléo festival",
+                        "Refactoring and bug fixes",
+                        "Added a settings management interface for administrators"
+                    ],
+                    "img": null
+                }
+            ]
         },
         {
             "name": "Federal VET diploma (CFC) — IT specialist",
