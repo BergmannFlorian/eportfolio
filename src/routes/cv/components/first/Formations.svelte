@@ -5,7 +5,7 @@
 
 	let { formations }: { formations: Formation[] } = $props();
 
-	// Copie triée (la plus récente en premier) sans modifier la prop
+	// Sorted copy (most recent first) without mutating the prop
 	const sorted = $derived(
 		[...formations].sort((a, b) => getDate(b.start).getTime() - getDate(a.start).getTime())
 	);

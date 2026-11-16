@@ -4,7 +4,7 @@
 
 	let { icon = null, children }: { icon?: string | null; children: Snippet } = $props();
 
-	// « solar:map-point-linear » → contenu SVG embarqué (voir src/lib/cv/icons.ts)
+	// "solar:map-point-linear" → embedded SVG body (see src/lib/cv/icons.ts)
 	const body = $derived(icon ? solarIcons[icon.replace(/^solar:/, '')] : undefined);
 </script>
 

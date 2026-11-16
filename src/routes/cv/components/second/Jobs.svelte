@@ -7,16 +7,16 @@
 
 	interface Props {
 		jobs: JobData[];
-		/** Index du premier poste affiché sur cette page */
+		/** Index of the first job shown on this page */
 		start: number;
-		/** Appelé avec l'index du premier poste qui ne tient pas, pour créer une page suivante */
+		/** Called with the index of the first job that does not fit, to create the next page */
 		addPage: (startIndex: number) => void;
 	}
 
 	let { jobs, start, addPage }: Props = $props();
 
 	let container: HTMLDivElement;
-	// Nombre de postes affichés sur cette page (tous au départ, réduit après mesure)
+	// Number of jobs shown on this page (all at first, reduced after measuring)
 	let count = $state<number | null>(null);
 
 	const visible = $derived(jobs.slice(start, count === null ? undefined : start + count));
@@ -26,7 +26,7 @@
 		const bottom = container.offsetTop + container.offsetHeight;
 		const children = [...container.children] as HTMLElement[];
 		const overflow = children.findIndex((el) => el.offsetTop + el.offsetHeight > bottom);
-		// Au moins un poste par page, pour éviter une boucle infinie si un poste est trop long
+		// At least one job per page, to avoid an infinite loop when a single job is too long
 		if (overflow > 0) {
 			count = overflow;
 			addPage(start + overflow);

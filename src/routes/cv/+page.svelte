@@ -19,7 +19,7 @@
 	const cv = $derived(data.cv);
 	const current = getLocale();
 
-	// Index du premier poste de chaque page « Expériences » (pagination côté client)
+	// Index of the first job on each "Experience" page (client-side pagination)
 	const pagesStartIndex = $state([0]);
 
 	function addJobsPage(startIndex: number) {
@@ -33,7 +33,7 @@
 </svelte:head>
 
 <div class="cv-screen min-h-screen bg-neutral-200 text-black">
-	<!-- Barre d'outils (non imprimée) -->
+	<!-- Toolbar (hidden when printing) -->
 	<div
 		class="toolbar sticky top-0 z-10 flex flex-wrap items-center justify-between gap-3 bg-cv-dark px-4 py-3 font-sans text-sm text-white"
 	>

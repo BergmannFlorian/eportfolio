@@ -1,13 +1,13 @@
 import { m } from '#lib/paraglide/messages.js';
 
 /**
- * Registre des thèmes.
+ * Theme registry.
  *
- * Pour ajouter un thème :
- * 1. créer `src/lib/theme/themes/<id>.css` avec un bloc `[data-theme='<id>'] { … }`
- *    qui définit toutes les variables (copier light.css comme base) ;
- * 2. l'importer dans `src/app.css` ;
- * 3. ajouter une entrée ci-dessous et son libellé dans `messages/*.json`.
+ * To add a theme:
+ * 1. create `src/lib/theme/themes/<id>.css` with a `[data-theme='<id>'] { … }` block
+ *    defining every variable (use light.css as a starting point);
+ * 2. import it in `src/app.css`;
+ * 3. add an entry below and its label in `messages/*.json`.
  */
 export const themes = [
 	{ id: 'light', label: () => m.theme_light(), scheme: 'light' },
@@ -23,7 +23,7 @@ interface ThemeDefinition {
 export type ThemeId = (typeof themes)[number]['id'];
 export type ThemePreference = 'system' | ThemeId;
 
-/** Thème appliqué quand la préférence est « Système », selon le réglage de l'OS. */
+/** Theme applied when the preference is "System", based on the OS setting. */
 export const systemThemes: Record<'light' | 'dark', ThemeId> = {
 	light: 'light',
 	dark: 'dark'

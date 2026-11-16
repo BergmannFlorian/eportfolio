@@ -7,10 +7,10 @@
 		lines,
 		children
 	}: {
-		/** id du titre, à référencer par aria-labelledby sur la section */
+		/** Heading id, referenced by aria-labelledby on the section */
 		id: string;
 		kicker: string;
-		/** Lignes du titre, séparées par un retour à la ligne */
+		/** Heading lines, separated by a line break */
 		lines: string[];
 		children?: Snippet;
 	} = $props();

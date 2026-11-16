@@ -1,10 +1,10 @@
 @import 'tailwindcss';
 
-/* Thèmes : un fichier par thème (voir src/lib/theme/themes.ts) */
+/* Themes: one file per theme (see src/lib/theme/themes.ts) */
 @import './lib/theme/themes/light.css';
 @import './lib/theme/themes/dark.css';
 
-/* Tokens sémantiques → utilitaires Tailwind (bg-bg, text-fg-subtle, border-border…) */
+/* Semantic tokens → Tailwind utilities (bg-bg, text-fg-subtle, border-border…) */
 @theme inline {
 	--color-bg: var(--bg);
 	--color-surface: var(--surface);
@@ -27,7 +27,7 @@
 	--font-sans: 'Inter Variable', ui-sans-serif, system-ui, sans-serif;
 	--font-mono: 'JetBrains Mono Variable', ui-monospace, monospace;
 
-	/* CV imprimable (/cv) — style de l'ancien projet, indépendant des thèmes du site */
+	/* Printable CV (/cv) — legacy project style, independent from the site themes */
 	--color-cv-dark: #2e2e2e;
 	--color-cv-light: #b5b5b5;
 	--font-cv: 'Teachers', ui-sans-serif, system-ui, sans-serif;

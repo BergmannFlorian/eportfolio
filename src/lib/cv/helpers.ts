@@ -2,7 +2,7 @@ import { getLocale } from '#lib/paraglide/runtime.js';
 
 const dateLocales: Record<string, string> = { fr: 'fr-FR', en: 'en-GB' };
 
-/** Convertit une date « JJ.MM.AAAA » en Date. */
+/** Parses a "DD.MM.YYYY" date into a Date. */
 export function getDate(date: string): Date {
 	const [day, month, year] = date.split('.').map(Number);
 	return new Date(year, month - 1, day);
@@ -15,7 +15,7 @@ export function dateFormat(
 	return getDate(date).toLocaleDateString(dateLocales[getLocale()] ?? 'fr-FR', options);
 }
 
-/** « janv. - juin 2021 » si même année, sinon « 2019 - 2021 ». */
+/** "Jan - Jun 2021" within the same year, otherwise "2019 - 2021". */
 export function shortDate(start: string, end: string): string {
 	const startDate = getDate(start);
 	const endDate = getDate(end);
@@ -25,7 +25,7 @@ export function shortDate(start: string, end: string): string {
 	return `${startDate.getFullYear()} - ${endDate.getFullYear()}`;
 }
 
-/** Âge en années révolues à la date du jour. */
+/** Age in completed years as of today. */
 export function ageFrom(birthdate: string, now = new Date()): number {
 	const birth = getDate(birthdate);
 	let age = now.getFullYear() - birth.getFullYear();

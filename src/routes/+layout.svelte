@@ -11,9 +11,9 @@
 	import { theme, themeInitScript } from '#lib/theme/theme.svelte.js';
 	import type { LayoutProps } from './$types';
 
-	// Layout racine commun : polices, styles, thème, liens hreflang.
-	// Le site (bandeau, header, footer) est dans (site)/+layout.svelte ;
-	// le CV imprimable (cv/) a sa propre mise en page.
+	// Shared root layout: fonts, styles, theme, hreflang links.
+	// The site chrome (banner, header, footer) lives in (site)/+layout.svelte;
+	// the printable CV (cv/) has its own layout.
 
 	let { children }: LayoutProps = $props();
 
@@ -23,7 +23,7 @@
 </script>
 
 <svelte:head>
-	<!-- Pose data-theme avant le premier rendu pour éviter un flash de thème -->
+	<!-- Sets data-theme before first paint to avoid a theme flash -->
 	{@html `<script>${themeInitScript()}</script>`}
 	<link rel="icon" href={favicon} />
 	{#each locales as locale (locale)}

@@ -1,6 +1,6 @@
 /**
- * Types du CV (repris de l'ancien projet).
- * Les dates sont au format suisse « JJ.MM.AAAA ».
+ * CV types (ported from the legacy project).
+ * Dates use the Swiss "DD.MM.YYYY" format.
  */
 
 export interface Social {
@@ -45,7 +45,7 @@ export interface Project {
 	img: string | null;
 }
 
-/** Index dans les listes de `SkillCatalog`. */
+/** Indexes into the `SkillCatalog` lists. */
 export interface SkillRefs {
 	langs: number[];
 	libs: number[];
@@ -97,8 +97,8 @@ export interface SkillCatalog {
 }
 
 /**
- * Version publique envoyée au navigateur : sans adresse, sans date de naissance
- * (remplacée par l'âge calculé) et sans références (coordonnées de tiers).
+ * Public version sent to the browser: no address, no birthdate (replaced by
+ * the computed age) and no references (third-party contact details).
  */
 export interface PublicCV extends Omit<CV, 'infos'> {
 	infos: Omit<Infos, 'contact' | 'references'> & {

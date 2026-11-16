@@ -1,4 +1,4 @@
-/* Thème clair — aussi le thème par défaut tant qu'aucun data-theme n'est posé. */
+/* Light theme — also the default until a data-theme attribute is set. */
 :root,
 [data-theme='light'] {
 	color-scheme: light;
@@ -13,7 +13,7 @@
 	--border-strong: #141414;
 	--chip-border: #c9c6be;
 
-	/* Zones inversées : bandeau stack, section contact, survol des cartes */
+	/* Inverted areas: stack band, contact section, card hover */
 	--inverse: #141414;
 	--inverse-fg: #f7f6f3;
 	--inverse-subtle: #bdbdbd;

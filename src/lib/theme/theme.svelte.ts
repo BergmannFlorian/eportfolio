@@ -14,7 +14,7 @@ function readStored(): ThemePreference {
 		const value = localStorage.getItem(THEME_STORAGE_KEY);
 		if (isThemeId(value)) return value;
 	} catch {
-		// stockage indisponible (navigation privée, cookies bloqués…)
+		// storage unavailable (private browsing, blocked cookies…)
 	}
 	return 'system';
 }
@@ -24,7 +24,7 @@ function writeStored(preference: ThemePreference) {
 		if (preference === 'system') localStorage.removeItem(THEME_STORAGE_KEY);
 		else localStorage.setItem(THEME_STORAGE_KEY, preference);
 	} catch {
-		// ignoré : le choix vaut pour la session en cours
+		// ignored: the choice only lasts for the current session
 	}
 }
 
@@ -37,7 +37,7 @@ class ThemeState {
 	preference = $state<ThemePreference>('system');
 	#started = false;
 
-	/** À appeler une fois côté client (onMount du layout). */
+	/** Call once on the client (layout onMount). */
 	start() {
 		if (this.#started) return;
 		this.#started = true;
@@ -62,8 +62,8 @@ class ThemeState {
 export const theme = new ThemeState();
 
 /**
- * Script inline exécuté avant le premier rendu pour éviter un flash de thème.
- * Il reprend la logique de `resolve()` sans dépendance.
+ * Inline script run before first paint to avoid a theme flash.
+ * Mirrors the `resolve()` logic without dependencies.
  */
 export function themeInitScript(): string {
 	const config = JSON.stringify({ key: THEME_STORAGE_KEY, ids: themeIds, system: systemThemes });

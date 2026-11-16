@@ -14,7 +14,7 @@
 
 	const TYPE = { top: 1, mid: 0, bottom: -1 };
 
-	/** Utilisé il y a moins de MIN ans → « Experience », plus de MAX ans → « Notion ». */
+	/** Used less than MIN years ago → top level, more than MAX years ago → bottom level. */
 	const MIN = 2;
 	const MAX = 5;
 
@@ -68,7 +68,7 @@
 		{ title: m.cv_col_tools(), skills: categories.tools }
 	]);
 
-	// Compétences mises en avant (en gras et remontées en tête de cellule) avant impression
+	// Skills highlighted before printing (bold and moved to the top of their cell)
 	const highlighted = new SvelteSet<string>();
 
 	function toggle(name: string) {

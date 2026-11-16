@@ -4,8 +4,8 @@ import en from './en.json';
 import fr from './fr.json';
 import skillsData from './skills.json';
 
-// Données du CV : lues uniquement côté serveur (src/lib/server ne peut pas être
-// importé côté client). Seule la version publique est envoyée au navigateur.
+// CV data: read server-side only (src/lib/server cannot be imported from client
+// code). Only the public version is sent to the browser.
 const sources: Record<string, CV> = { fr: fr as CV, en: en as CV };
 
 export const skills: SkillCatalog = skillsData;

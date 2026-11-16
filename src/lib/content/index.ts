@@ -1,9 +1,9 @@
 import { m } from '#lib/paraglide/messages.js';
 
 /**
- * Contenu de la page d'accueil.
- * Les textes traduisibles sont des fonctions de message (appelées au rendu,
- * pour respecter la langue de la requête) ; noms propres et URL sont invariants.
+ * Home page content.
+ * Translatable texts are message functions (called at render time so they
+ * follow the request locale); proper names and URLs are locale-independent.
  */
 
 type Text = () => string;
@@ -92,7 +92,7 @@ export const facts: Fact[] = [
 export interface SpokenLanguage {
 	name: Text;
 	level: Text;
-	/** Niveau affiché par la barre, en pourcentage */
+	/** Level shown by the bar, in percent */
 	percent: number;
 }
 
@@ -114,5 +114,5 @@ export const hobbies: Hobby[] = [
 	{ name: m.hobby_games, why: m.hobby_games_why }
 ];
 
-/** Numérotation « 01 », « 02 »… utilisée dans les grilles. */
+/** "01", "02"… numbering used in the grids. */
 export const pad = (index: number) => String(index + 1).padStart(2, '0');
