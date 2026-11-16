@@ -1,4 +1,4 @@
-import adapter from '@sveltejs/adapter-auto';
+import adapter from '@sveltejs/adapter-node';
 import { sveltekit } from '@sveltejs/kit/vite';
 import tailwindcss from '@tailwindcss/vite';
 import { paraglideVitePlugin } from '@inlang/paraglide-js';
@@ -12,7 +12,7 @@ export default defineConfig({
 			outdir: './src/lib/paraglide',
 			emitTsDeclarations: true,
 			strategy: ['url', 'cookie', 'preferredLanguage', 'baseLocale'],
-			// Français sans préfixe (/), anglais sous /en
+			// French without prefix (/), English under /en
 			urlPatterns: [
 				{
 					pattern: '/:path(.*)?',
@@ -30,10 +30,9 @@ export default defineConfig({
 					filename.split(/[/\\]/).includes('node_modules') ? undefined : true
 			},
 
-			// adapter-auto only supports some environments, see https://svelte.dev/docs/kit/adapter-auto for a list.
-			// If your environment is not supported, or you settled on a specific environment, switch out the adapter.
-			// See https://svelte.dev/docs/kit/adapters for more information about adapters.
-			adapter: adapter()
+			// Node server (Infomaniak): `npm start` → node build/index.js
+			// Environment variables to set on the server: ORIGIN (public URL) and PORT.
+			adapter: adapter({ out: 'build' })
 		})
 	]
 });

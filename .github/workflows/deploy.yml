@@ -1,0 +1,66 @@
+name: Build & Deploy to Infomaniak
+
+on:
+  push:
+    branches:
+      - deploy
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    environment: infomaniak
+
+    steps:
+      # ── 1. Checkout ────────────────────────────────────────────────
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # ── 2. Build ───────────────────────────────────────────────────
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build
+        run: npm run build
+
+      # Upload bundle: package.json (type module + start script) and build/
+      # → on the server: REMOTE_PATH/package.json and REMOTE_PATH/build/index.js
+      - name: Prepare deploy bundle
+        run: |
+          test -f build/index.js || { echo "build/index.js missing, deployment aborted"; exit 1; }
+          mkdir -p dist
+          cp package.json dist/
+          cp -r build dist/build
+
+      # ── 3. Ensure remote folder exists ──────────────────────────────
+      - name: Ensure remote folder exists
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y sshpass
+          sshpass -p "${{ secrets.FTP_PASSWORD }}" ssh -o StrictHostKeyChecking=no \
+            ${{ secrets.FTP_USERNAME }}@${{ secrets.FTP_SERVER }} \
+            "mkdir -p ${{ vars.REMOTE_PATH }}"
+
+      # ── 4. Clean remote folder content via SSH (password auth) ────
+      # Removes only the CONTENT of the folder, not the folder itself
+      - name: Clean remote folder
+        run: |
+          sshpass -p "${{ secrets.FTP_PASSWORD }}" ssh -o StrictHostKeyChecking=no \
+            ${{ secrets.FTP_USERNAME }}@${{ secrets.FTP_SERVER }} \
+            "rm -rf ${{ vars.REMOTE_PATH }}/*"
+
+      # ── 5. Deploy via SFTP (password auth) ─────────────────────────
+      - name: Deploy via SFTP
+        uses: wlixcc/SFTP-Deploy-Action@v1.2.6
+        with:
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          local_path: './dist/*'
+          remote_path: ${{ vars.REMOTE_PATH }}/
+          sftp_only: true
