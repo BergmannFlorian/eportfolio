@@ -33,3 +33,6 @@ vite.config.ts.timestamp-*
 
 # inlang plugin cache (downloaded at build time)
 /project.inlang/cache
+
+# data
+seed.sql
