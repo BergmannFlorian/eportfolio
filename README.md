@@ -55,6 +55,23 @@ You can preview the production build with `npm run preview`.
 
 > To deploy your app, you may need to install an [adapter](https://svelte.dev/docs/kit/adapters) for your target environment.
 
+## Database
+
+All content (home page, `/cv`, API) is read from MariaDB through [`src/lib/server/content/`](src/lib/server/content/) (in-memory cache of 60 s per locale).
+
+- Schema: [`db/schema.sql`](db/schema.sql). Content import: `db/seed.sql` (not committed: contains private data).
+- Connection: copy [`.env.example`](.env.example) to `.env` and fill in `DB_HOST`, `DB_PORT`, `DB_USER`, `DB_PASSWORD`, `DB_NAME`. The dev server and the tests load it through `vite.config.ts`.
+- Private columns (address, birthdate, references) are never selected, except the birthdate turned into an age.
+
+## Tests
+
+`npm test` runs Vitest against a **test database** described in [`.env.test`](.env.test) (override locally in `.env.test.local`). Before the run, [`db/test/setup.ts`](db/test/setup.ts) drops every table of that database (its name must end with `_test`), then loads `db/schema.sql` and the fictitious data of [`db/test/fixtures.sql`](db/test/fixtures.sql).
+
+- [`src/routes/api/v1/api.test.ts`](src/routes/api/v1/api.test.ts): status codes, headers, locale resolution and fallback, filters, stable ids, links between resources, absence of private data, JSON 500 when the database is down.
+- [`src/lib/server/content/content.test.ts`](src/lib/server/content/content.test.ts): home page data and the CV page format.
+
+The deploy workflow starts a MariaDB service and runs the tests before building.
+
 ## Deployment
 
 Pushing to the `deploy` branch runs [`.github/workflows/deploy.yml`](.github/workflows/deploy.yml): it builds with `@sveltejs/adapter-node` and uploads to the Infomaniak Node.js hosting over SFTP.
@@ -65,9 +82,10 @@ REMOTE_PATH/
   package.json     minimal ESM package (deploy/package.json)
   app/             adapter-node build
   .deploy-version  marker written by the workflow after the upload
+  .env             DB_*, ORIGIN, PORT — created by hand, kept across deployments
 ```
 
-Infomaniak has no API to restart a Node.js site, so `index.js` is a small launcher: it runs `app/index.js` as a child process, restarts it when `.deploy-version` changes (last workflow step), and restarts it if it crashes. The server needs the `ORIGIN` (public URL) and `PORT` environment variables, set in the Infomaniak Node.js configuration.
+Infomaniak has no API to restart a Node.js site, so `index.js` is a small launcher: it runs `app/index.js` as a child process, restarts it when `.deploy-version` changes (last workflow step), and restarts it if it crashes. It passes the variables of `REMOTE_PATH/.env` to the server (variables set in the Infomaniak Manager win); the file is read at every restart and is not removed by deployments (hidden files are kept).
 
 ## API
 
@@ -96,6 +114,6 @@ curl "https://bergmann-florian.ch/api/v1/profile?lang=en"
 curl -H "Accept-Language: en" "https://bergmann-florian.ch/api/v1/experiences?kind=job"
 ```
 
-Tests: `npm test` runs [`src/routes/api/v1/api.test.ts`](src/routes/api/v1/api.test.ts) (Vitest, handlers called directly, no server needed): status codes, headers, locale resolution, filters, stable ids, links between resources and absence of private data. The deploy workflow runs them before building.
+Tests: see [Tests](#tests).
 
-Response types: [`src/lib/api/types.ts`](src/lib/api/types.ts). Data access: [`src/lib/server/content/index.ts`](src/lib/server/content/index.ts) (the only module to change when the content moves to the database in [`db/`](db/)).
+Response types: [`src/lib/api/types.ts`](src/lib/api/types.ts). Data access: [`src/lib/server/content/`](src/lib/server/content/) (MariaDB, see [Database](#database)).

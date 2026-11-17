@@ -5,7 +5,7 @@ import type { RequestHandler } from './$types';
 // Same payload as the /cv page loader: dates stay in the "DD.MM.YYYY" format
 // and skills reference the catalog by index.
 export const GET: RequestHandler = ({ url, request }) =>
-	handleApi(() => {
+	handleApi(async () => {
 		const locale = resolveLocale(url, request);
-		return apiJson(getCV(locale), locale);
+		return apiJson(await getCV(locale), locale);
 	});

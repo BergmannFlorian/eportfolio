@@ -3,7 +3,7 @@ import { getSkills } from '#lib/server/content/index.js';
 import type { RequestHandler } from './$types';
 
 export const GET: RequestHandler = ({ url, request }) =>
-	handleApi(() => {
+	handleApi(async () => {
 		const locale = resolveLocale(url, request);
-		return apiJson(getSkills(locale), locale);
+		return apiJson(await getSkills(locale), locale);
 	});

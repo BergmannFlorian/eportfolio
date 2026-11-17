@@ -1,6 +1,6 @@
 <script lang="ts">
-	import { stack } from '#lib/content/index.js';
-	import { m } from '#lib/paraglide/messages.js';
+		import { m } from '#lib/paraglide/messages.js';
+	let { stack }: { stack: string[] } = $props();
 </script>
 
 <div class="bg-inverse text-inverse-fg">

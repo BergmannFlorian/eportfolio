@@ -58,10 +58,13 @@ export function apiError(status: number, message: string): Response {
 	return apiJson(body, undefined, status);
 }
 
-/** Wraps an endpoint so that thrown `ApiHttpError`s become JSON error responses. */
-export function handleApi(run: () => Response): Response {
+/**
+ * Wraps an endpoint: thrown `ApiHttpError`s become JSON error responses, any
+ * other failure (e.g. the database is unreachable) a JSON 500.
+ */
+export async function handleApi(run: () => Response | Promise<Response>): Promise<Response> {
 	try {
-		return run();
+		return await run();
 	} catch (error) {
 		if (error instanceof ApiHttpError) return apiError(error.status, error.message);
 		console.error(error);

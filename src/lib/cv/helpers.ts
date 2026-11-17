@@ -24,14 +24,3 @@ export function shortDate(start: string, end: string): string {
 	}
 	return `${startDate.getFullYear()} - ${endDate.getFullYear()}`;
 }
-
-/** Age in completed years as of today. */
-export function ageFrom(birthdate: string, now = new Date()): number {
-	const birth = getDate(birthdate);
-	let age = now.getFullYear() - birth.getFullYear();
-	const hadBirthday =
-		now.getMonth() > birth.getMonth() ||
-		(now.getMonth() === birth.getMonth() && now.getDate() >= birth.getDate());
-	if (!hadBirthday) age--;
-	return age;
-}

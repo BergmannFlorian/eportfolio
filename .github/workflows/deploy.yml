@@ -10,6 +10,21 @@ jobs:
     runs-on: ubuntu-latest
     environment: infomaniak
 
+    # Throwaway database for the tests (credentials match .env.test)
+    services:
+      mariadb:
+        image: mariadb:11.4
+        env:
+          MARIADB_ROOT_PASSWORD: test
+          MARIADB_DATABASE: eportfolio_test
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="healthcheck.sh --connect --innodb_initialized"
+          --health-interval=5s
+          --health-timeout=5s
+          --health-retries=20
+
     steps:
       # ── 1. Checkout ────────────────────────────────────────────────
       - name: Checkout code
@@ -28,6 +43,12 @@ jobs:
       # Stops the deploy before anything is touched on the server
       - name: Test
         run: npm test
+        env:
+          DB_HOST: 127.0.0.1
+          DB_PORT: 3306
+          DB_USER: root
+          DB_PASSWORD: test
+          DB_NAME: eportfolio_test
 
       - name: Build
         run: npm run build

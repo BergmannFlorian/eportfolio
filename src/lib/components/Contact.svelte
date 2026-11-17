@@ -1,7 +1,7 @@
 <script lang="ts">
-	import { contact } from '#lib/content/index.js';
-	import { m } from '#lib/paraglide/messages.js';
+		import { m } from '#lib/paraglide/messages.js';
 	import ArrowRight from './icons/ArrowRight.svelte';
+	let { email }: { email: string } = $props();
 </script>
 
 <section
@@ -22,10 +22,10 @@
 			</h2>
 		</div>
 		<a
-			href="mailto:{contact.email}"
+			href="mailto:{email}"
 			class="inline-flex min-h-11 max-w-full items-center gap-3 bg-bg px-6 py-[18px] text-[17px] font-medium break-all text-fg no-underline transition-colors hover:bg-accent hover:text-accent-fg sm:px-8"
 		>
-			{contact.email}
+			{email}
 			<ArrowRight />
 		</a>
 	</div>

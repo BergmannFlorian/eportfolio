@@ -5,7 +5,7 @@
 	import { m } from '#lib/paraglide/messages.js';
 	import type { LayoutProps } from './$types';
 
-	let { children }: LayoutProps = $props();
+	let { children, data }: LayoutProps = $props();
 </script>
 
 <svelte:head>
@@ -25,5 +25,5 @@
 	<main id="contenu" class="flex-1">
 		{@render children()}
 	</main>
-	<SiteFooter />
+	<SiteFooter contact={data.contact} />
 </div>

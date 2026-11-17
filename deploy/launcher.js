@@ -6,16 +6,22 @@
 // when the deploy workflow writes the `.deploy-version` marker, i.e. once all
 // new files are uploaded. It also restarts the server if it exits on its own.
 //
+// Environment: variables from `.env` next to this file (DB_*, ORIGIN, PORT…)
+// are passed to the server; variables set in the Infomaniak Manager win.
+// The file is read at every (re)start, so a change applies on the next deploy.
+//
 // No dependencies: runs on plain Node.js.
 
 import { spawn } from 'node:child_process';
-import { existsSync, watchFile } from 'node:fs';
+import { existsSync, readFileSync, watchFile } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { parseEnv } from 'node:util';
 
 const root = dirname(fileURLToPath(import.meta.url));
 const entry = join(root, 'app', 'index.js');
 const marker = join(root, '.deploy-version');
+const envFile = join(root, '.env');
 
 const POLL_INTERVAL_MS = 2_000;
 const STOP_TIMEOUT_MS = 10_000;
@@ -30,6 +36,16 @@ let retryTimer = null;
 
 const log = (message) => console.log(`[launcher] ${new Date().toISOString()} ${message}`);
 
+function serverEnv() {
+	if (!existsSync(envFile)) return process.env;
+	try {
+		return { ...parseEnv(readFileSync(envFile, 'utf8')), ...process.env };
+	} catch (error) {
+		log(`cannot read ${envFile}: ${error.message}`);
+		return process.env;
+	}
+}
+
 function start() {
 	retryTimer = null;
 	if (shuttingDown || child) return;
@@ -40,7 +56,7 @@ function start() {
 	}
 
 	const startedAt = Date.now();
-	child = spawn(process.execPath, [entry], { cwd: root, env: process.env, stdio: 'inherit' });
+	child = spawn(process.execPath, [entry], { cwd: root, env: serverEnv(), stdio: 'inherit' });
 	log(`server started (pid ${child.pid})`);
 
 	child.on('exit', (code, signal) => {

@@ -1,7 +1,9 @@
 <script lang="ts">
-	import { facts, hobbies, pad, spokenLanguages } from '#lib/content/index.js';
+	import { pad, type HomeContent } from '#lib/content/types.js';
 	import { m } from '#lib/paraglide/messages.js';
 	import SectionIntro from './SectionIntro.svelte';
+	let { about, facts, languages, hobbies }: Pick<HomeContent, 'about' | 'facts' | 'languages' | 'hobbies'> =
+		$props();
 </script>
 
 <section
@@ -18,7 +20,7 @@
 			/>
 		</div>
 		<p class="m-0 min-w-0 flex-[999_1_560px] text-xl leading-[1.6] text-fg-muted">
-			{m.about_text()}
+			{about}
 		</p>
 	</div>
 
@@ -28,8 +30,8 @@
 			<dl class="m-0 flex flex-col">
 				{#each facts as fact (fact.label)}
 					<div class="flex justify-between gap-4 border-b border-border py-3 text-[15px]">
-						<dt class="text-fg-subtle">{fact.label()}</dt>
-						<dd class="m-0 text-right font-medium">{fact.value()}</dd>
+						<dt class="text-fg-subtle">{fact.label}</dt>
+						<dd class="m-0 text-right font-medium">{fact.value}</dd>
 					</div>
 				{/each}
 			</dl>
@@ -38,11 +40,11 @@
 		<div class="flex flex-col gap-4 border-t-2 border-border-strong pt-5">
 			<h3 class="label-caps">{m.about_languages()}</h3>
 			<ul class="m-0 flex list-none flex-col gap-5 p-0">
-				{#each spokenLanguages as language (language.name)}
+				{#each languages as language (language.name)}
 					<li class="flex flex-col gap-2">
 						<div class="flex justify-between gap-4 text-[15px]">
-							<span class="font-medium">{language.name()}</span>
-							<span class="font-mono text-[13px] text-fg-subtle">{language.level()}</span>
+							<span class="font-medium">{language.name}</span>
+							<span class="font-mono text-[13px] text-fg-subtle">{language.level}</span>
 						</div>
 						<div aria-hidden="true" class="h-1 bg-border">
 							<div class="h-1 bg-accent" style:width="{language.percent}%"></div>
@@ -64,8 +66,8 @@
 				>
 					<span class="font-mono text-[13px] text-fg-subtle">{pad(i)}</span>
 					<span class="flex flex-col gap-1.5">
-						<span class="font-display text-[26px] leading-[1.15]">{hobby.name()}</span>
-						<span class="text-sm text-fg-subtle">{hobby.why()}</span>
+						<span class="font-display text-[26px] leading-[1.15]">{hobby.name}</span>
+						<span class="text-sm text-fg-subtle">{hobby.why}</span>
 					</span>
 				</li>
 			{/each}

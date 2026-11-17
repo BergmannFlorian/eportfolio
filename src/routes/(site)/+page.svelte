@@ -6,12 +6,17 @@
 	import Skills from '#lib/components/Skills.svelte';
 	import StackBand from '#lib/components/StackBand.svelte';
 	import Works from '#lib/components/Works.svelte';
+	import type { PageProps } from './$types';
+
+	let { data }: PageProps = $props();
+
+	const home = $derived(data.home);
 </script>
 
-<Hero />
-<StackBand />
-<Works />
-<Skills />
-<Journey />
-<About />
-<Contact />
+<Hero headline={home.headline} bio={home.bio} email={home.email} />
+<StackBand stack={home.stack} />
+<Works works={home.works} />
+<Skills skills={home.skills} />
+<Journey jobs={home.jobs} />
+<About about={home.about} facts={home.facts} languages={home.languages} hobbies={home.hobbies} />
+<Contact email={home.email} />

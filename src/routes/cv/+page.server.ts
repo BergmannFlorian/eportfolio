@@ -1,8 +1,8 @@
 import { getLocale } from '#lib/paraglide/runtime.js';
-import { getPublicCV, skills } from '#lib/server/cv/index.js';
+import { getCV } from '#lib/server/content/index.js';
 import type { PageServerLoad } from './$types';
 
-export const load: PageServerLoad = () => ({
-	cv: getPublicCV(getLocale()),
-	skills
-});
+export const load: PageServerLoad = async () => {
+	const { cv, skills } = await getCV(getLocale());
+	return { cv, skills };
+};

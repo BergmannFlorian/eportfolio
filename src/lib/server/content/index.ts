@@ -1,11 +1,10 @@
 /**
- * Content access layer used by the JSON API.
+ * Content access layer: every read of portfolio content (API, home page, CV page)
+ * goes through these functions, which shape the data loaded by loadPortfolio()
+ * from MariaDB.
  *
- * Every read of portfolio content for the API goes through these functions.
- * Today they read the JSON files and message catalogs; when the data moves to
- * MariaDB (db/schema.sql), only this module needs to change.
- *
- * Private fields (address, birthdate, references) never leave getPublicCV().
+ * Private fields (address, birthdate, references) are never loaded, except the
+ * birthdate turned into an age inside loadPortfolio().
  */
 
 import type {
@@ -15,18 +14,25 @@ import type {
 	ApiProject,
 	ApiSkills
 } from '#lib/api/types.js';
-import { facts, hobbies, spokenLanguages, stack, t, works } from '#lib/content/index.js';
-import { getDate } from '#lib/cv/helpers.js';
-import { rateSkills, SKILL_CATEGORIES } from '#lib/cv/skills.js';
-import type { Formation, Job, PublicCV } from '#lib/cv/types.js';
+import type { HomeContent, SiteContact } from '#lib/content/types.js';
+import { rateSkills, SKILL_CATEGORIES, type SkillCategoryCode } from '#lib/cv/skills.js';
+import type { Formation, Job, Project as CvProject, PublicCV, SkillCatalog, SkillRefs } from '#lib/cv/types.js';
 import { m } from '#lib/paraglide/messages.js';
 import type { Locale } from '#lib/paraglide/runtime.js';
-import { getPublicCV, skills as catalog } from '#lib/server/cv/index.js';
+import { loadPortfolio, type Experience, type Portfolio } from './portfolio.js';
 
-/** "DD.MM.YYYY" → "YYYY-MM-DD" */
-function isoDate(date: string): string {
-	const [day, month, year] = date.split('.');
-	return `${year}-${month}-${day}`;
+export { clearContentCache } from './portfolio.js';
+
+const dateLocales: Record<string, string> = { fr: 'fr-CH', en: 'en-GB' };
+
+/** "YYYY-MM-DD" → "DD.MM.YYYY" (format used by the CV components) */
+function toSwissDate(iso: string): string {
+	const [year, month, day] = iso.split('-');
+	return `${day}.${month}.${year}`;
+}
+
+function todayIso(): string {
+	return new Date().toISOString().slice(0, 10);
 }
 
 function slug(value: string): string {
@@ -38,131 +44,285 @@ function slug(value: string): string {
 		.replace(/^-|-$/g, '');
 }
 
-/** Stable id that does not depend on the locale (built from the French data). */
-function experienceId(kind: 'job' | 'education', entry: Job | Formation): string {
-	const owner = entry.company || ('name' in entry ? entry.name : entry.title);
-	const start = getDate(entry.start);
-	return `${kind}-${slug(owner)}-${start.getFullYear()}-${String(start.getMonth() + 1).padStart(2, '0')}`;
+/** Locale-independent id, e.g. "job-iomedia-sa-2021-12" */
+function experienceSlug(experience: Experience): string {
+	const kind = experience.kind === 'job' ? 'job' : 'education';
+	const owner = experience.organization || experience.baseTitle;
+	return `${kind}-${slug(owner)}-${experience.start.slice(0, 7)}`;
 }
 
-interface Entry {
-	id: string;
-	kind: 'job' | 'education';
-	data: Job | Formation;
-	/** Same entry in the base locale, for locale-independent ids */
-	base: Job | Formation;
+function cityLine(portfolio: Portfolio): string {
+	return [portfolio.person.postalCode, portfolio.person.city].filter(Boolean).join(' ');
 }
 
-function entries(cv: PublicCV, base: PublicCV): Entry[] {
-	return [
-		...cv.jobs.map((job, i) => ({ kind: 'job' as const, data: job, base: base.jobs[i] })),
-		...cv.formations.map((formation, i) => ({
-			kind: 'education' as const,
-			data: formation,
-			base: base.formations[i]
+function skillName(portfolio: Portfolio, id: number): string | undefined {
+	return portfolio.skills.find((skill) => skill.id === id)?.name;
+}
+
+function categoryCode(portfolio: Portfolio, categoryId: number): string | undefined {
+	return portfolio.categories.find((category) => category.id === categoryId)?.code;
+}
+
+// ─── Legacy CV format (src/routes/cv components) ────────────────────────────
+
+function toLegacyCV(portfolio: Portfolio): { cv: PublicCV; skills: SkillCatalog } {
+	// Catalog: skill names per category, in display order; experiences reference them by index
+	const catalog: Required<SkillCatalog> = { langs: [], libs: [], tools: [], buisness: [] };
+	const refOf = new Map<number, { category: keyof SkillRefs; index: number }>();
+	for (const skill of portfolio.skills) {
+		const code = categoryCode(portfolio, skill.categoryId);
+		const category = (code === 'business' ? 'buisness' : code) as keyof SkillRefs | undefined;
+		if (!category || !(category in catalog)) continue;
+		refOf.set(skill.id, { category, index: catalog[category].length });
+		catalog[category].push(skill.name);
+	}
+
+	const refs = (skillIds: number[]): SkillRefs => {
+		const result: SkillRefs = { langs: [], libs: [], tools: [], buisness: [] };
+		for (const id of skillIds) {
+			const ref = refOf.get(id);
+			if (ref) result[ref.category].push(ref.index);
+		}
+		return result;
+	};
+
+	const projects = (experience: Experience): CvProject[] =>
+		experience.projects.map((project) => ({
+			name: project.name,
+			link: project.url,
+			tasks: project.tasks,
+			details: project.details,
+			img: project.image
+		}));
+
+	const common = (experience: Experience) => ({
+		company: experience.organization ?? '',
+		start: toSwissDate(experience.start),
+		end: toSwissDate(experience.end ?? todayIso()),
+		tasks: experience.tasks,
+		skills: refs(experience.skillIds),
+		projects: projects(experience)
+	});
+
+	const jobs: Job[] = portfolio.experiences
+		.filter((experience) => experience.kind === 'job')
+		.map((experience) => ({ category: experience.category, title: experience.title, ...common(experience) }));
+
+	const formations: Formation[] = portfolio.experiences
+		.filter((experience) => experience.kind !== 'job')
+		.map((experience) => ({
+			name: experience.title,
+			degree: experience.degree ?? '',
+			course: [],
+			...common(experience)
+		}));
+
+	const { person } = portfolio;
+	const lowerFirst = (text: string) => text.charAt(0).toLowerCase() + text.slice(1);
+
+	const cv: PublicCV = {
+		infos: {
+			title: person.cvTitle,
+			description: '',
+			contact: { name: person.name, email: person.email, city: cityLine(portfolio), age: person.age ?? 0 },
+			socials: portfolio.socials.map((social) => ({
+				name: social.network,
+				link: social.url.replace(/^https?:\/\//, '')
+			})),
+			langs: portfolio.languages.map((language) => ({ name: language.name, level: language.level })),
+			hobbys: portfolio.hobbies.map((hobby) =>
+				hobby.reason ? `${hobby.name} (${lowerFirst(hobby.reason)})` : hobby.name
+			),
+			others: portfolio.facts
+				.filter((fact) => fact.onCv)
+				.map((fact) => ({ title: `${fact.label} ${fact.value}`, icon: fact.icon ?? '' }))
+		},
+		jobs,
+		formations,
+		certificates: portfolio.certificates.map((certificate) => ({
+			title: certificate.title,
+			date: toSwissDate(certificate.issuedOn),
+			link: certificate.url ?? ''
 		}))
-	].map((entry) => ({ ...entry, id: experienceId(entry.kind, entry.base) }));
+	};
+
+	return { cv, skills: catalog };
 }
 
-const featuredUrls = new Set(works.map((work) => work.url));
-
-function projectId(name: string): string {
-	return slug(name);
+/** Public CV in the format of the /cv page (same payload as /api/v1/cv). */
+export async function getCV(locale: Locale) {
+	return toLegacyCV(await loadPortfolio(locale));
 }
 
-export function getCV(locale: Locale) {
-	return { cv: getPublicCV(locale), skills: catalog };
-}
+// ─── API ────────────────────────────────────────────────────────────────────
 
-export function getProfile(locale: Locale): ApiProfile {
-	const { infos } = getPublicCV(locale);
+export async function getProfile(locale: Locale): Promise<ApiProfile> {
+	const portfolio = await loadPortfolio(locale);
+	const { person } = portfolio;
 	return {
-		name: infos.contact.name,
-		email: infos.contact.email,
-		city: infos.contact.city,
-		age: infos.contact.age,
-		headline: m.hero_eyebrow(undefined, { locale }),
-		bio: m.hero_lead(undefined, { locale }),
-		about: m.about_text(undefined, { locale }),
-		title: infos.title,
-		socials: infos.socials.map((social) => ({
-			network: social.name,
-			url: /^https?:\/\//.test(social.link) ? social.link : `https://${social.link}`
-		})),
-		facts: facts.map((fact) => ({ label: t(fact.label, locale), value: t(fact.value, locale) })),
-		languages: spokenLanguages.map((language) => ({
-			name: t(language.name, locale),
-			level: t(language.level, locale),
+		name: person.name,
+		email: person.email,
+		city: cityLine(portfolio),
+		age: person.age ?? 0,
+		headline: person.headline,
+		bio: person.bio,
+		about: person.about,
+		title: person.cvTitle,
+		socials: portfolio.socials,
+		facts: portfolio.facts
+			.filter((fact) => fact.onSite)
+			.map((fact) => ({ label: fact.label, value: fact.value })),
+		languages: portfolio.languages.map((language) => ({
+			name: language.name,
+			level: language.level,
 			percent: language.percent
 		})),
-		hobbies: hobbies.map((hobby) => ({ name: t(hobby.name, locale), reason: t(hobby.why, locale) }))
+		hobbies: portfolio.hobbies
 	};
 }
 
-export function getExperiences(locale: Locale, kind?: 'job' | 'education'): ApiExperience[] {
-	const all = entries(getPublicCV(locale), getPublicCV('fr'));
-	return all
-		.filter((entry) => !kind || entry.kind === kind)
-		.map(({ id, kind, data, base }) => ({
-			id,
-			kind,
-			title: 'title' in data ? data.title : data.name,
-			degree: 'degree' in data && data.degree ? data.degree : null,
-			organization: data.company || null,
-			start: isoDate(data.start),
-			end: isoDate(data.end),
-			tasks: data.tasks,
-			skills: SKILL_CATEGORIES.flatMap((category) =>
-				data.skills[category].map((ref) => catalog[category][ref]).filter(Boolean)
-			),
-			projectIds: base.projects.map((project) => projectId(project.name))
+export async function getExperiences(locale: Locale, kind?: 'job' | 'education'): Promise<ApiExperience[]> {
+	const portfolio = await loadPortfolio(locale);
+	return portfolio.experiences
+		.map((experience) => ({ experience, apiKind: experience.kind === 'job' ? 'job' : 'education' }) as const)
+		.filter(({ apiKind }) => !kind || apiKind === kind)
+		.map(({ experience, apiKind }) => ({
+			id: experienceSlug(experience),
+			kind: apiKind,
+			title: experience.title,
+			degree: experience.degree,
+			organization: experience.organization,
+			start: experience.start,
+			end: experience.end,
+			tasks: experience.tasks,
+			skills: experience.skillIds
+				.map((id) => skillName(portfolio, id))
+				.filter((name): name is string => !!name),
+			projectIds: experience.projects.map((project) => slug(project.name))
 		}));
 }
 
-export function getProjects(locale: Locale, featuredOnly = false): ApiProject[] {
-	const all = entries(getPublicCV(locale), getPublicCV('fr'));
-	return all.flatMap(({ id: experienceId, data, base }) =>
-		data.projects
-			.map((project, i) => {
-				const baseName = base.projects[i]?.name ?? project.name;
-				return {
-					id: projectId(baseName),
-					name: project.name,
-					url: project.link,
-					image: project.img,
-					// Shown in the home page "Work" grid
-					featured: !!project.link && featuredUrls.has(project.link),
-					experienceId,
-					tasks: project.tasks,
-					details: project.details
-				};
-			})
-			.filter((project) => !featuredOnly || project.featured)
-	);
+export async function getProjects(locale: Locale, featuredOnly = false): Promise<ApiProject[]> {
+	const portfolio = await loadPortfolio(locale);
+	const experienceIds = new Map(portfolio.experiences.map((e) => [e.id, experienceSlug(e)]));
+	return portfolio.projects
+		.filter((project) => !featuredOnly || project.featured)
+		.map((project) => ({
+			id: slug(project.name),
+			name: project.name,
+			url: project.url,
+			image: project.image,
+			featured: project.featured,
+			experienceId: project.experienceId === null ? null : (experienceIds.get(project.experienceId) ?? null),
+			tasks: project.tasks,
+			details: project.details
+		}));
 }
 
-export function getSkills(locale: Locale): ApiSkills {
-	const cv = getPublicCV(locale);
+export async function getSkills(locale: Locale): Promise<ApiSkills> {
+	const portfolio = await loadPortfolio(locale);
+	const { cv, skills: catalog } = toLegacyCV(portfolio);
 	const rated = rateSkills([...cv.jobs, ...cv.formations], catalog);
-	const names = {
-		langs: m.skills_languages,
-		libs: m.skills_frameworks,
-		tools: m.skills_tools
-	};
+	const nameOf = (code: SkillCategoryCode) =>
+		portfolio.categories.find((category) => category.code === code)?.name ?? code;
 	return {
-		stack,
-		categories: SKILL_CATEGORIES.map((code) => ({
-			code,
-			name: names[code](undefined, { locale }),
-			skills: rated[code]
-		}))
+		stack: portfolio.skills.filter((skill) => skill.inStack).map((skill) => skill.name),
+		categories: SKILL_CATEGORIES.map((code) => ({ code, name: nameOf(code), skills: rated[code] }))
 	};
 }
 
-export function getCertificates(locale: Locale): ApiCertificate[] {
-	return getPublicCV(locale).certificates.map((certificate) => ({
+export async function getCertificates(locale: Locale): Promise<ApiCertificate[]> {
+	const portfolio = await loadPortfolio(locale);
+	return portfolio.certificates.map((certificate) => ({
 		title: certificate.title,
-		date: isoDate(certificate.date),
-		url: certificate.link || null
+		date: certificate.issuedOn,
+		url: certificate.url
 	}));
+}
+
+// ─── Site pages ─────────────────────────────────────────────────────────────
+
+export async function getSiteContact(locale: Locale): Promise<SiteContact> {
+	const portfolio = await loadPortfolio(locale);
+	return {
+		email: portfolio.person.email,
+		linkedin: portfolio.socials.find((social) => social.network === 'linkedin')?.url ?? null
+	};
+}
+
+/** "Déc. 2021 – Juil. 2024", "Févr. – Juin 2021", "2019 – 2021" */
+function periodLabel(experience: Experience, locale: Locale): string {
+	const intl = dateLocales[locale] ?? locale;
+	const parse = (iso: string) => new Date(`${iso}T12:00:00Z`);
+	const month = (iso: string) => {
+		const text = parse(iso).toLocaleDateString(intl, { month: 'short', timeZone: 'UTC' });
+		return text.charAt(0).toUpperCase() + text.slice(1);
+	};
+	const year = (iso: string) => iso.slice(0, 4);
+	const present = m.date_present(undefined, { locale });
+
+	if (experience.kind !== 'job') {
+		const end = experience.end ? year(experience.end) : present;
+		return year(experience.start) === end ? end : `${year(experience.start)} – ${end}`;
+	}
+	if (!experience.end) return `${month(experience.start)} ${year(experience.start)} – ${present}`;
+	if (year(experience.start) === year(experience.end)) {
+		return `${month(experience.start)} – ${month(experience.end)} ${year(experience.end)}`;
+	}
+	return `${month(experience.start)} ${year(experience.start)} – ${month(experience.end)} ${year(experience.end)}`;
+}
+
+function hostname(url: string): string {
+	try {
+		return new URL(url).hostname.replace(/^www\./, '');
+	} catch {
+		return url;
+	}
+}
+
+export async function getHomeContent(locale: Locale): Promise<HomeContent> {
+	const portfolio = await loadPortfolio(locale);
+	const { person } = portfolio;
+
+	const ageFact =
+		person.age === null
+			? []
+			: [{ label: m.fact_age(undefined, { locale }), value: m.cv_age({ age: person.age }, { locale }) }];
+
+	return {
+		headline: person.headline,
+		bio: person.bio,
+		about: person.about,
+		email: person.email,
+		stack: portfolio.skills.filter((skill) => skill.inStack).map((skill) => skill.name),
+		works: portfolio.projects
+			.filter((project) => project.featured && project.url)
+			.map((project) => ({ name: project.name, domain: hostname(project.url!), url: project.url! })),
+		skills: portfolio.categories
+			.map((category) => ({
+				title: category.name,
+				items: portfolio.skills
+					.filter((skill) => skill.categoryId === category.id && skill.onSite)
+					.map((skill) => skill.name)
+			}))
+			.filter((group) => group.items.length > 0),
+		jobs: portfolio.experiences
+			.filter((experience) => experience.onSite)
+			.sort((a, b) => b.start.localeCompare(a.start))
+			.map((experience) => ({
+				date: periodLabel(experience, locale),
+				role: experience.title,
+				org: experience.organization ?? ''
+			})),
+		facts: [
+			...ageFact,
+			...portfolio.facts.filter((fact) => fact.onSite).map((fact) => ({ label: fact.label, value: fact.value }))
+		],
+		languages: portfolio.languages.map((language) => ({
+			name: language.name,
+			level: language.level,
+			percent: language.percent
+		})),
+		hobbies: portfolio.hobbies.map((hobby) => ({ name: hobby.name, why: hobby.reason }))
+	};
 }

@@ -42,7 +42,8 @@ export interface ApiExperience {
 	degree: string | null;
 	organization: string | null;
 	start: string;
-	end: string;
+	/** null while ongoing */
+	end: string | null;
 	tasks: string[];
 	skills: string[];
 	projectIds: string[];
@@ -55,7 +56,8 @@ export interface ApiProject {
 	url: string | null;
 	image: string | null;
 	featured: boolean;
-	experienceId: string;
+	/** null for a personal project */
+	experienceId: string | null;
 	tasks: string[];
 	details: string[];
 }

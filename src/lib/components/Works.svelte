@@ -1,8 +1,9 @@
 <script lang="ts">
-	import { pad, works } from '#lib/content/index.js';
+	import { pad, type HomeWork } from '#lib/content/types.js';
 	import { m } from '#lib/paraglide/messages.js';
 	import ArrowUpRight from './icons/ArrowUpRight.svelte';
 	import SectionIntro from './SectionIntro.svelte';
+	let { works }: { works: HomeWork[] } = $props();
 </script>
 
 <section

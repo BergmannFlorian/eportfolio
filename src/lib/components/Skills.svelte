@@ -1,7 +1,8 @@
 <script lang="ts">
-	import { skills } from '#lib/content/index.js';
+	import type { HomeSkillGroup } from '#lib/content/types.js';
 	import { m } from '#lib/paraglide/messages.js';
 	import SectionIntro from './SectionIntro.svelte';
+	let { skills }: { skills: HomeSkillGroup[] } = $props();
 </script>
 
 <section
@@ -22,7 +23,7 @@
 	<div class="grid min-w-0 flex-[999_1_560px] grid-cols-[repeat(auto-fit,minmax(220px,1fr))] gap-10">
 		{#each skills as group (group.title)}
 			<div class="flex flex-col gap-4 border-t-2 border-border-strong pt-5">
-				<h3 class="label-caps">{group.title()}</h3>
+				<h3 class="label-caps">{group.title}</h3>
 				<ul class="m-0 flex list-none flex-wrap gap-2 p-0">
 					{#each group.items as item (item)}
 						<li class="border border-chip-border bg-surface px-3 py-1.5 text-sm">{item}</li>
