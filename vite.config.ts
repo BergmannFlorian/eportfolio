@@ -5,7 +5,7 @@ import tailwindcss from '@tailwindcss/vite';
 import { paraglideVitePlugin } from '@inlang/paraglide-js';
 import { defineConfig, loadEnv } from 'vite';
 
-export default defineConfig(({ mode }) => {
+export default defineConfig(({ mode, command }) => {
 	// Database settings for the dev server and the tests: DB_* from .env
 	// (+ .env.test in test mode). Variables already set (e.g. in CI) win.
 	for (const [key, value] of Object.entries(loadEnv(mode, process.cwd(), 'DB_'))) {
@@ -45,6 +45,9 @@ export default defineConfig(({ mode }) => {
 				adapter: adapter({ out: 'build' })
 			})
 		],
+		// Bundle the DB driver into the server build so the deployment needs no
+		// node_modules (SFTP uploads files one by one). Dev and tests keep it external.
+		ssr: command === 'build' ? { noExternal: ['mariadb'] } : undefined,
 		test: {
 			// Recreates the test database (db/schema.sql + db/test/fixtures.sql) once per run
 			globalSetup: ['./db/test/setup.ts'],

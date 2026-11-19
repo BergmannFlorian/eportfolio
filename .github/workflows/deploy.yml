@@ -56,7 +56,7 @@ jobs:
       # Upload bundle (Infomaniak runs `node index.js` from REMOTE_PATH):
       #   index.js      self-reloading launcher (deploy/launcher.js)
       #   package.json  minimal ESM package (deploy/package.json)
-      #   app/          SvelteKit adapter-node output + production node_modules
+      #   app/          SvelteKit adapter-node output (mariadb bundled in, no node_modules)
       - name: Prepare deploy bundle
         run: |
           test -f build/index.js || { echo "build/index.js missing, deployment aborted"; exit 1; }
@@ -64,9 +64,6 @@ jobs:
           cp -r build/. dist/app/
           cp deploy/launcher.js dist/index.js
           cp deploy/package.json dist/package.json
-          # adapter-node leaves `dependencies` (mariadb) external: ship them
-          cp package.json package-lock.json dist/app/
-          (cd dist/app && npm ci --omit=dev --ignore-scripts)
 
       # ── 3. Ensure remote folder exists ──────────────────────────────
       - name: Ensure remote folder exists
