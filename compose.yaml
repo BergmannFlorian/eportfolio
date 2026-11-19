@@ -1,0 +1,23 @@
+# Local MariaDB for development and tests (`npm run db:up`).
+# Credentials are local-only and match .env.test; production uses the
+# Infomaniak database configured in the server's .env.
+services:
+  db:
+    image: mariadb:11.4
+    environment:
+      MARIADB_ROOT_PASSWORD: test
+      MARIADB_DATABASE: eportfolio
+    ports:
+      - '3306:3306'
+    volumes:
+      - db-data:/var/lib/mysql
+      - ./db:/db:ro
+      - ./db/docker/init.sh:/docker-entrypoint-initdb.d/init.sh:ro
+    healthcheck:
+      test: ['CMD', 'healthcheck.sh', '--connect', '--innodb_initialized']
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+volumes:
+  db-data:

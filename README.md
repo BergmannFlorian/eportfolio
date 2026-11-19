@@ -61,11 +61,23 @@ All content (home page, `/cv`, API) is read from MariaDB through [`src/lib/serve
 
 - Schema: [`db/schema.sql`](db/schema.sql). Content import: `db/seed.sql` (not committed: contains private data).
 - Connection: copy [`.env.example`](.env.example) to `.env` and fill in `DB_HOST`, `DB_PORT`, `DB_USER`, `DB_PASSWORD`, `DB_NAME`. The dev server and the tests load it through `vite.config.ts`.
+
+### Local database (Docker)
+
+The Infomaniak database is only reachable from their network, so development uses a local MariaDB described in [`compose.yaml`](compose.yaml) (requires [Docker Desktop](https://www.docker.com/products/docker-desktop/)). The default values of `.env.example` point to it.
+
+```sh
+npm run db:up     # start MariaDB on 127.0.0.1:3306 (root / test)
+npm run db:down   # stop it (data is kept in the db-data volume)
+npm run db:reset  # drop the volume and reload schema + data
+```
+
+On the first start, [`db/docker/init.sh`](db/docker/init.sh) loads `db/schema.sql` into the `eportfolio` database, then `db/seed.sql` if present, otherwise the fictitious data of `db/test/fixtures.sql`. Run `npm run db:reset` after changing one of these files.
 - Private columns (address, birthdate, references) are never selected, except the birthdate turned into an age.
 
 ## Tests
 
-`npm test` runs Vitest against a **test database** described in [`.env.test`](.env.test) (override locally in `.env.test.local`). Before the run, [`db/test/setup.ts`](db/test/setup.ts) drops every table of that database (its name must end with `_test`), then loads `db/schema.sql` and the fictitious data of [`db/test/fixtures.sql`](db/test/fixtures.sql).
+`npm test` runs Vitest against a **test database** described in [`.env.test`](.env.test) (override locally in `.env.test.local`). Locally, the Docker database (`npm run db:up`) serves both: the tests use their own `eportfolio_test` database in the same container. Before the run, [`db/test/setup.ts`](db/test/setup.ts) drops every table of that database (its name must end with `_test`), then loads `db/schema.sql` and the fictitious data of [`db/test/fixtures.sql`](db/test/fixtures.sql).
 
 - [`src/routes/api/v1/api.test.ts`](src/routes/api/v1/api.test.ts): status codes, headers, locale resolution and fallback, filters, stable ids, links between resources, absence of private data, JSON 500 when the database is down.
 - [`src/lib/server/content/content.test.ts`](src/lib/server/content/content.test.ts): home page data and the CV page format.
