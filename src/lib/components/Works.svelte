@@ -88,7 +88,9 @@
 							<span class="flex flex-col gap-3">
 								<span class="font-display text-[26px] leading-[1.15]">{work.name}</span>
 								{#if work.description}
-									<span class="text-[15px] leading-[1.6] text-fg-muted group-hover:text-inverse-fg"
+									<span class="text-[15px] leading-[1.6] text-fg-muted {work.url
+										? 'group-hover:text-inverse-fg'
+										: ''}"
 										>{work.description}</span
 									>
 								{/if}
@@ -96,14 +98,18 @@
 									<span class="flex flex-wrap gap-2 pt-1">
 										{#each work.skills as skill (skill)}
 											<span
-												class="border border-chip-border px-2 py-0.5 font-mono text-xs group-hover:border-inverse-subtle"
+												class="border border-chip-border px-2 py-0.5 font-mono text-xs {work.url
+													? 'group-hover:border-inverse-subtle'
+													: ''}"
 												>{skill}</span
 											>
 										{/each}
 									</span>
 								{/if}
 								{#if work.domain}
-									<span class="text-sm break-all text-fg-subtle group-hover:text-inverse-subtle"
+									<span class="text-sm break-all text-fg-subtle {work.url
+										? 'group-hover:text-inverse-subtle'
+										: ''}"
 										>{work.domain}</span
 									>
 								{/if}
