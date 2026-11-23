@@ -14,7 +14,7 @@ import type {
 	ApiProject,
 	ApiSkills
 } from '#lib/api/types.js';
-import type { HomeContent, SiteContact } from '#lib/content/types.js';
+import type { HomeContent, PersonalProject, SiteContact } from '#lib/content/types.js';
 import { rateSkills, SKILL_CATEGORIES, type SkillCategoryCode } from '#lib/cv/skills.js';
 import type { Formation, Job, Project as CvProject, PublicCV, SkillCatalog, SkillRefs } from '#lib/cv/types.js';
 import { m } from '#lib/paraglide/messages.js';
@@ -216,7 +216,12 @@ export async function getProjects(locale: Locale, featuredOnly = false): Promise
 			experienceId: project.experienceId === null ? null : (experienceIds.get(project.experienceId) ?? null),
 			tasks: project.tasks,
 			details: project.details,
-			skills: project.skills
+			skills: project.skills,
+			kind: project.kind,
+			year: project.year,
+			status: project.status,
+			hosting: project.hosting,
+			snippet: project.snippet
 		}));
 }
 
@@ -242,6 +247,58 @@ export async function getCertificates(locale: Locale): Promise<ApiCertificate[]>
 }
 
 // ─── Site pages ─────────────────────────────────────────────────────────────
+
+/** Every personal project (not tied to an experience), for the personal projects page. */
+export async function getPersonalProjects(locale: Locale): Promise<PersonalProject[]> {
+	const portfolio = await loadPortfolio(locale);
+	const options = { locale };
+	const kindLabels = {
+		website: m.project_kind_website(undefined, options),
+		script: m.project_kind_script(undefined, options),
+		app: m.project_kind_app(undefined, options)
+	};
+	const statusLabels = {
+		online: m.project_status_online(undefined, options),
+		in_progress: m.project_status_in_progress(undefined, options),
+		archived: m.project_status_archived(undefined, options)
+	};
+
+	return portfolio.projects
+		.filter((project) => project.experienceId === null)
+		.map((project) => {
+			const kindLabel = project.kind ? kindLabels[project.kind] : null;
+			// Facts beyond the type, which the card already shows as a badge
+			const extraFacts = [
+				project.year === null ? null : { label: m.project_fact_year(undefined, options), value: String(project.year) },
+				project.status === null
+					? null
+					: { label: m.project_fact_status(undefined, options), value: statusLabels[project.status] },
+				project.hosting === null
+					? null
+					: { label: m.project_fact_hosting(undefined, options), value: project.hosting }
+			].filter((fact) => fact !== null);
+			const typeFact = kindLabel ? [{ label: m.project_fact_type(undefined, options), value: kindLabel }] : [];
+
+			return {
+				id: slug(project.name),
+				kind: project.kind,
+				kindLabel,
+				name: project.name,
+				description: project.tasks.join(' '),
+				skills: project.skills,
+				url: project.url,
+				domain: project.url ? displayUrl(project.url) : null,
+				visitLabel:
+					project.kind === 'website'
+						? m.project_visit_site(undefined, options)
+						: m.project_visit(undefined, options),
+				highlights: project.details,
+				snippet: project.snippet,
+				facts: [...typeFact, ...extraFacts],
+				hasMore: project.details.length > 0 || !!project.snippet || extraFacts.length > 0
+			};
+		});
+}
 
 export async function getSiteContact(locale: Locale): Promise<SiteContact> {
 	const portfolio = await loadPortfolio(locale);

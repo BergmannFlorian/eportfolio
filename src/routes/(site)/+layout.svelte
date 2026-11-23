@@ -8,11 +8,6 @@
 	let { children, data }: LayoutProps = $props();
 </script>
 
-<svelte:head>
-	<title>{m.meta_title()}</title>
-	<meta name="description" content={m.meta_description()} />
-</svelte:head>
-
 <a
 	href="#contenu"
 	class="sr-only z-50 bg-inverse px-4 py-3 text-inverse-fg focus:not-sr-only focus:fixed focus:top-2 focus:left-2"

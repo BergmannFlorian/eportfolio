@@ -6,12 +6,18 @@
 	import Skills from '#lib/components/Skills.svelte';
 	import StackBand from '#lib/components/StackBand.svelte';
 	import Works from '#lib/components/Works.svelte';
+	import { m } from '#lib/paraglide/messages.js';
 	import type { PageProps } from './$types';
 
 	let { data }: PageProps = $props();
 
 	const home = $derived(data.home);
 </script>
+
+<svelte:head>
+	<title>{m.meta_title()}</title>
+	<meta name="description" content={m.meta_description()} />
+</svelte:head>
 
 <Hero headline={home.headline} bio={home.bio} email={home.email} />
 <StackBand stack={home.stack} />

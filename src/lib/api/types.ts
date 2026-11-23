@@ -62,6 +62,12 @@ export interface ApiProject {
 	details: string[];
 	/** Technologies used */
 	skills: string[];
+	kind: 'website' | 'script' | 'app' | null;
+	year: number | null;
+	status: 'online' | 'in_progress' | 'archived' | null;
+	hosting: string | null;
+	/** Usage example (shell command…) */
+	snippet: string | null;
 }
 
 export interface ApiSkills {

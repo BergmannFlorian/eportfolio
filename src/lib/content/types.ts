@@ -60,6 +60,27 @@ export interface HomeContent {
 	hobbies: HomeHobby[];
 }
 
+/** One block of the personal projects page, loaded by src/routes/(site)/projets/+page.server.ts. */
+export interface PersonalProject {
+	/** Stable identifier (same as the API project id) */
+	id: string;
+	kind: 'website' | 'script' | 'app' | null;
+	kindLabel: string | null;
+	name: string;
+	description: string;
+	skills: string[];
+	url: string | null;
+	domain: string | null;
+	/** "Visit the website" for a website, "View the project" otherwise */
+	visitLabel: string;
+	highlights: string[];
+	snippet: string | null;
+	/** Type, year, status, hosting: only the known ones */
+	facts: { label: string; value: string }[];
+	/** false when the card already shows everything: the "More info" button is hidden */
+	hasMore: boolean;
+}
+
 /** Contact links shown in the site header and footer. */
 export interface SiteContact {
 	email: string;

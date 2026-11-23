@@ -1,7 +1,7 @@
 // Home page and CV page data built from the test database (db/test/fixtures.sql).
 import { afterAll, describe, expect, it } from 'vitest';
 import { resetPool } from '#lib/server/db/index.js';
-import { getCV, getHomeContent, getSiteContact } from './index.js';
+import { getCV, getHomeContent, getPersonalProjects, getSiteContact } from './index.js';
 import { ageFromIso } from './portfolio.js';
 
 afterAll(async () => {
@@ -68,6 +68,38 @@ describe('getHomeContent', () => {
 		]);
 		const en = await getHomeContent('en');
 		expect(en.jobs[0].date).toBe('Jan 2023 – present');
+	});
+});
+
+describe('getPersonalProjects', () => {
+	it('lists every personal project with its details, featured or not', async () => {
+		const fr = await getPersonalProjects('fr');
+		expect(fr.map((project) => project.id)).toEqual(['side-project', 'tiny-app']);
+		expect(fr[0]).toEqual({
+			id: 'side-project',
+			kind: 'script',
+			kindLabel: 'Script',
+			name: 'Side Project',
+			description: 'Application de test',
+			skills: ['TypeScript', 'SvelteKit'],
+			url: 'https://side.example.com',
+			domain: 'side.example.com',
+			visitLabel: 'Voir le projet',
+			highlights: ['Point clé'],
+			snippet: '$ side --help',
+			facts: [
+				{ label: 'Type', value: 'Script' },
+				{ label: 'Année', value: '2024' },
+				{ label: 'Statut', value: 'Archivé' },
+				{ label: 'Hébergement', value: 'GitHub' }
+			],
+			hasMore: true
+		});
+	});
+
+	it('hides the "More info" button when the card already shows everything', async () => {
+		const [, tinyApp] = await getPersonalProjects('en');
+		expect(tinyApp).toMatchObject({ kindLabel: 'App', url: null, facts: [{ label: 'Type', value: 'App' }], hasMore: false });
 	});
 });
 

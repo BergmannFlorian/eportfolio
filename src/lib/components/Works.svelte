@@ -1,6 +1,8 @@
 <script lang="ts">
 	import { pad, type HomePersonalWork, type HomeWork } from '#lib/content/types.js';
 	import { m } from '#lib/paraglide/messages.js';
+	import { localizeHref } from '#lib/paraglide/runtime.js';
+	import ArrowRight from './icons/ArrowRight.svelte';
 	import ArrowUpRight from './icons/ArrowUpRight.svelte';
 	import SectionIntro from './SectionIntro.svelte';
 	let { works, personalWorks }: { works: HomeWork[]; personalWorks: HomePersonalWork[] } = $props();
@@ -55,10 +57,16 @@
 	{#if personalWorks.length > 0}
 		<div class="flex flex-col gap-6 pt-4">
 			<div class="flex flex-wrap items-end justify-between gap-x-6 gap-y-2">
-				<h3 class="label-caps">{m.works_personal_title()}</h3>
-				<p class="m-0 max-w-[380px] text-[15px] leading-[1.6] text-fg-subtle">
-					{m.works_personal_desc()}
-				</p>
+				<div class="flex flex-col gap-2">
+					<h3 class="label-caps">{m.works_personal_title()}</h3>
+					<p class="m-0 max-w-[380px] text-[15px] leading-[1.6] text-fg-subtle">
+						{m.works_personal_desc()}
+					</p>
+				</div>
+				<a href={localizeHref('/projets')} class="btn-outline px-5 text-[15px]">
+					{m.works_personal_all()}
+					<ArrowRight size={16} />
+				</a>
 			</div>
 
 			<ul

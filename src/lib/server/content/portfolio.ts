@@ -51,12 +51,21 @@ export interface Experience {
 	projects: Project[];
 }
 
+export type ProjectKind = 'website' | 'script' | 'app';
+export type ProjectStatus = 'online' | 'in_progress' | 'archived';
+
 export interface Project {
 	id: number;
 	name: string;
 	url: string | null;
 	image: string | null;
 	featured: boolean;
+	kind: ProjectKind | null;
+	year: number | null;
+	status: ProjectStatus | null;
+	hosting: string | null;
+	/** Usage example (shell command…), shown as code */
+	snippet: string | null;
 	position: number;
 	tasks: string[];
 	details: string[];
@@ -181,8 +190,16 @@ async function fetchPortfolio(locale: Locale): Promise<Portfolio> {
 			url: string | null;
 			image: string | null;
 			featured: number;
+			kind: ProjectKind | null;
+			year: number | null;
+			status: ProjectStatus | null;
+			hosting: string | null;
+			snippet: string | null;
 			position: number;
-		}>(`SELECT id, experience_id, name, url, image, featured, position FROM project ORDER BY position, id`),
+		}>(
+			`SELECT id, experience_id, name, url, image, featured, kind, year, status, hosting, snippet, position
+			FROM project ORDER BY position, id`
+		),
 		query<{ project_id: number; kind: 'task' | 'detail'; text: string }>(
 			`SELECT i.project_id, i.kind, ${tr('text')}
 			FROM project_item i
@@ -208,6 +225,11 @@ async function fetchPortfolio(locale: Locale): Promise<Portfolio> {
 		url: p.url,
 		image: p.image,
 		featured: bool(p.featured),
+		kind: p.kind,
+		year: p.year,
+		status: p.status,
+		hosting: p.hosting,
+		snippet: p.snippet,
 		position: p.position,
 		tasks: items.filter((i) => i.project_id === p.id && i.kind === 'task').map((i) => i.text),
 		details: items.filter((i) => i.project_id === p.id && i.kind === 'detail').map((i) => i.text),

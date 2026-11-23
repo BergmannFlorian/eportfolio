@@ -98,13 +98,19 @@ INSERT INTO project (id, experience_id, name, url, image, featured, position) VA
 	(2, 3, 'School App', NULL, NULL, 0, 1),
 	(3, NULL, 'Side Project', 'https://side.example.com', NULL, 1, 2);
 
+-- Personal projects page details: a script with every field, an app with none
+UPDATE project SET kind = 'script', year = 2024, status = 'archived', hosting = 'GitHub', snippet = '$ side --help' WHERE id = 3;
+INSERT INTO project (id, experience_id, name, url, image, featured, kind, position) VALUES
+	(4, NULL, 'Tiny App', NULL, NULL, 0, 'app', 3);
+
 INSERT INTO project_item (id, project_id, kind, position) VALUES
-	(1, 1, 'task', 1), (2, 1, 'detail', 1), (3, 2, 'detail', 1), (4, 3, 'task', 1);
+	(1, 1, 'task', 1), (2, 1, 'detail', 1), (3, 2, 'detail', 1), (4, 3, 'task', 1), (5, 3, 'detail', 1);
 
 INSERT INTO project_item_i18n (project_item_id, locale, text) VALUES
 	(1, 'fr', 'Développement'), (1, 'en', 'Development'),
 	(2, 'fr', 'SvelteKit, TypeScript'), (2, 'en', 'SvelteKit, TypeScript'),
 	(3, 'fr', 'Application interne'), (3, 'en', 'Internal app'),
-	(4, 'fr', 'Application de test'), (4, 'en', 'Test app');
+	(4, 'fr', 'Application de test'), (4, 'en', 'Test app'),
+	(5, 'fr', 'Point clé'), (5, 'en', 'Highlight');
 
 INSERT INTO project_skill (project_id, skill_id) VALUES (1, 4), (3, 4), (3, 1);

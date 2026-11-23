@@ -198,7 +198,7 @@ describe('/api/v1/experiences', () => {
 describe('/api/v1/projects', () => {
 	it('returns every project, personal ones without experience', async () => {
 		const { body } = await call<ApiProject[]>(getProjects, '/api/v1/projects?lang=en');
-		expect(body.map((p) => p.id)).toEqual(['acme-shop', 'school-app', 'side-project']);
+		expect(body.map((p) => p.id)).toEqual(['acme-shop', 'school-app', 'side-project', 'tiny-app']);
 		expect(body.find((p) => p.id === 'side-project')?.experienceId).toBeNull();
 		expect(body.find((p) => p.id === 'acme-shop')).toMatchObject({
 			experienceId: 'job-acme-sa-2023-01',
@@ -207,7 +207,15 @@ describe('/api/v1/projects', () => {
 			skills: ['SvelteKit']
 		});
 		// Technologies ordered by category, then position
-		expect(body.find((p) => p.id === 'side-project')?.skills).toEqual(['TypeScript', 'SvelteKit']);
+		expect(body.find((p) => p.id === 'side-project')).toMatchObject({
+			skills: ['TypeScript', 'SvelteKit'],
+			kind: 'script',
+			year: 2024,
+			status: 'archived',
+			hosting: 'GitHub',
+			snippet: '$ side --help'
+		});
+		expect(body.find((p) => p.id === 'acme-shop')).toMatchObject({ kind: null, year: null, snippet: null });
 	});
 
 	it('featured=true returns only the home page projects', async () => {

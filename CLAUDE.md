@@ -12,12 +12,12 @@ Personal portfolio and CV of the owner, live at https://bergmann-florian.ch. Tal
 
 ## Layout
 
-- `src/routes/(site)/`: home page (sections in `src/lib/components/`, data from `+page.server.ts`).
+- `src/routes/(site)/`: home page (sections in `src/lib/components/`, data from `+page.server.ts`) and `projets/`, the personal projects page (`/projets`, `/en/projects`: translated slugs are declared in `urlPatterns` in `vite.config.ts`).
 - `src/routes/cv/`: printable CV page, ported from an older project (own components in `cv/components/`, helpers in `src/lib/cv/`).
 - `src/routes/api/v1/`: public read-only JSON API (`+server.ts`), meant for a future mobile app. Documented in the README; response types in `src/lib/api/types.ts`.
 - `src/lib/server/db/`: connection pool. `src/lib/server/content/`: every DB query and the derived shapes for the home page, `/cv` and the API (60 s cache per locale).
 - `src/lib/theme/`: multi-theme system. See below.
-- `db/schema.sql`: schema. `db/seed.sql`: real content, **never committed**. `db/test/`: fixtures and the Vitest global setup.
+- `db/schema.sql`: schema. `db/migrations/`: ALTER scripts to run once on the production database when the schema changes. `db/seed.sql`: real content, **never committed**. `db/test/`: fixtures and the Vitest global setup.
 - `deploy/`: launcher and package.json uploaded to the server. `design/`: git-ignored design exports.
 
 ## Conventions

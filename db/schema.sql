@@ -227,6 +227,12 @@ CREATE TABLE IF NOT EXISTS project (
 	url           VARCHAR(500) NULL,
 	image         VARCHAR(255) NULL,
 	featured      BOOLEAN      NOT NULL DEFAULT FALSE, -- home page "Work" grid
+	-- Details shown on the personal projects page (all optional)
+	kind          ENUM('website', 'script', 'app') NULL,
+	year          SMALLINT     NULL,
+	status        ENUM('online', 'in_progress', 'archived') NULL,
+	hosting       VARCHAR(100) NULL,                -- 'Infomaniak'
+	snippet       TEXT         NULL,                -- usage example, e.g. a shell command
 	position      SMALLINT     NOT NULL DEFAULT 0,
 	PRIMARY KEY (id),
 	KEY idx_project_experience (experience_id, position),

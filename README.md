@@ -60,6 +60,7 @@ You can preview the production build with `npm run preview`.
 All content (home page, `/cv`, API) is read from MariaDB through [`src/lib/server/content/`](src/lib/server/content/) (in-memory cache of 60 s per locale).
 
 - Schema: [`db/schema.sql`](db/schema.sql). Content import: `db/seed.sql` (not committed: contains private data).
+- Schema changes for an existing database (production): one script per change in [`db/migrations/`](db/migrations/), to run once.
 - Connection: copy [`.env.example`](.env.example) to `.env` and fill in `DB_HOST`, `DB_PORT`, `DB_USER`, `DB_PASSWORD`, `DB_NAME`. The dev server and the tests load it through `vite.config.ts`.
 
 ### Local database (Docker)
@@ -108,7 +109,7 @@ Public, read-only JSON API served by the same Node server, under `/api/v1`. All 
 | `/api/v1` | | API index: version, locales, endpoint list |
 | `/api/v1/profile` | | Contact, age, bio, about, social links, facts, spoken languages, hobbies |
 | `/api/v1/experiences` | `kind=job\|education` | Jobs and education with ISO dates, tasks, skills and linked project ids |
-| `/api/v1/projects` | `featured=true\|false` | Projects with tasks, details and technologies (`featured` = shown on the home page; personal projects have `experienceId: null`) |
+| `/api/v1/projects` | `featured=true\|false` | Projects with tasks, details, technologies, `kind` (`website`, `script`, `app`), `year`, `status`, `hosting` and `snippet` (`featured` = shown on the home page; personal projects have `experienceId: null`) |
 | `/api/v1/skills` | | Skills by category with a recency level (`top`, `mid`, `bottom`) and the "Stack" list |
 | `/api/v1/certificates` | | Certifications with ISO dates |
 | `/api/v1/cv` | | Full public CV in one call (same data as the `/cv` page) |

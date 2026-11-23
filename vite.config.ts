@@ -22,6 +22,14 @@ export default defineConfig(({ mode, command }) => {
 				strategy: ['url', 'cookie', 'preferredLanguage', 'baseLocale'],
 				// French without prefix (/), English under /en
 				urlPatterns: [
+					// Translated slugs first: the generic pattern below catches everything
+					{
+						pattern: '/projets',
+						localized: [
+							['en', '/en/projects'],
+							['fr', '/projets']
+						]
+					},
 					{
 						pattern: '/:path(.*)?',
 						localized: [
