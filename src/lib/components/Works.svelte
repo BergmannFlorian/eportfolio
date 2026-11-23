@@ -29,7 +29,7 @@
 			<li class="border-r border-b border-border">
 				<a
 					href={work.url}
-					class="group flex h-full min-h-42 flex-col justify-between gap-6 p-7 text-fg no-underline transition-colors hover:bg-inverse hover:text-inverse-fg"
+					class="group flex h-full min-h-42 flex-col gap-6 p-7 text-fg no-underline transition-colors hover:bg-inverse hover:text-inverse-fg"
 				>
 					<span class="flex items-start justify-between gap-3">
 						<span class="font-mono text-[13px]">{pad(i)}</span>
@@ -77,7 +77,7 @@
 						<svelte:element
 							this={work.url ? 'a' : 'div'}
 							href={work.url ?? undefined}
-							class="group flex h-full min-h-56 flex-col justify-between gap-6 bg-surface p-7 text-fg no-underline transition-colors {work.url
+							class="group flex h-full min-h-56 flex-col gap-6 bg-surface p-7 text-fg no-underline transition-colors {work.url
 								? 'hover:bg-inverse hover:text-inverse-fg'
 								: ''}"
 						>
