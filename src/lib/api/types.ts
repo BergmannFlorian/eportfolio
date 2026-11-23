@@ -60,6 +60,8 @@ export interface ApiProject {
 	experienceId: string | null;
 	tasks: string[];
 	details: string[];
+	/** Technologies used */
+	skills: string[];
 }
 
 export interface ApiSkills {

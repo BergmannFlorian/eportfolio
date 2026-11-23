@@ -60,6 +60,8 @@ export interface Project {
 	position: number;
 	tasks: string[];
 	details: string[];
+	/** Technologies used (project_skill), by category then position */
+	skills: string[];
 }
 
 /** Age in completed years at `now` from a "YYYY-MM-DD" birthdate. */
@@ -137,7 +139,7 @@ async function fetchPortfolio(locale: Locale): Promise<Portfolio> {
 			)
 		]);
 
-	const [experiences, tasks, experienceSkills, projects, items] = await Promise.all([
+	const [experiences, tasks, experienceSkills, projects, items, projectSkills] = await Promise.all([
 		query<{
 			id: number;
 			kind: Experience['kind'];
@@ -188,6 +190,11 @@ async function fetchPortfolio(locale: Locale): Promise<Portfolio> {
 			LEFT JOIN project_item_i18n b ON b.project_item_id = i.id AND b.locale = ?
 			ORDER BY i.project_id, i.kind, i.position, i.id`,
 			l
+		),
+		query<{ project_id: number; name: string }>(
+			`SELECT ps.project_id, s.name
+			FROM project_skill ps JOIN skill s ON s.id = ps.skill_id
+			ORDER BY ps.project_id, s.category_id, s.position, s.id`
 		)
 	]);
 
@@ -203,7 +210,8 @@ async function fetchPortfolio(locale: Locale): Promise<Portfolio> {
 		featured: bool(p.featured),
 		position: p.position,
 		tasks: items.filter((i) => i.project_id === p.id && i.kind === 'task').map((i) => i.text),
-		details: items.filter((i) => i.project_id === p.id && i.kind === 'detail').map((i) => i.text)
+		details: items.filter((i) => i.project_id === p.id && i.kind === 'detail').map((i) => i.text),
+		skills: projectSkills.filter((ps) => ps.project_id === p.id).map((ps) => ps.name)
 	}));
 
 	return {

@@ -215,7 +215,8 @@ export async function getProjects(locale: Locale, featuredOnly = false): Promise
 			featured: project.featured,
 			experienceId: project.experienceId === null ? null : (experienceIds.get(project.experienceId) ?? null),
 			tasks: project.tasks,
-			details: project.details
+			details: project.details,
+			skills: project.skills
 		}));
 }
 
@@ -272,6 +273,16 @@ function periodLabel(experience: Experience, locale: Locale): string {
 	return `${month(experience.start)} ${year(experience.start)} – ${month(experience.end)} ${year(experience.end)}`;
 }
 
+/** Host and path without protocol, "www." or trailing slash: "github.com/user/repo". */
+function displayUrl(url: string): string {
+	try {
+		const { hostname: host, pathname } = new URL(url);
+		return (host.replace(/^www\./, '') + pathname).replace(/\/$/, '');
+	} catch {
+		return url;
+	}
+}
+
 function hostname(url: string): string {
 	try {
 		return new URL(url).hostname.replace(/^www\./, '');
@@ -296,8 +307,17 @@ export async function getHomeContent(locale: Locale): Promise<HomeContent> {
 		email: person.email,
 		stack: portfolio.skills.filter((skill) => skill.inStack).map((skill) => skill.name),
 		works: portfolio.projects
-			.filter((project) => project.featured && project.url)
+			.filter((project) => project.featured && project.experienceId !== null && project.url)
 			.map((project) => ({ name: project.name, domain: hostname(project.url!), url: project.url! })),
+		personalWorks: portfolio.projects
+			.filter((project) => project.featured && project.experienceId === null)
+			.map((project) => ({
+				name: project.name,
+				description: project.tasks.join(' '),
+				skills: project.skills,
+				url: project.url,
+				domain: project.url ? displayUrl(project.url) : null
+			})),
 		skills: portfolio.categories
 			.map((category) => ({
 				title: category.name,

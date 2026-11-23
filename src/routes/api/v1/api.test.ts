@@ -203,13 +203,16 @@ describe('/api/v1/projects', () => {
 		expect(body.find((p) => p.id === 'acme-shop')).toMatchObject({
 			experienceId: 'job-acme-sa-2023-01',
 			tasks: ['Development'],
-			details: ['SvelteKit, TypeScript']
+			details: ['SvelteKit, TypeScript'],
+			skills: ['SvelteKit']
 		});
+		// Technologies ordered by category, then position
+		expect(body.find((p) => p.id === 'side-project')?.skills).toEqual(['TypeScript', 'SvelteKit']);
 	});
 
 	it('featured=true returns only the home page projects', async () => {
 		const { body } = await call<ApiProject[]>(getProjects, '/api/v1/projects?featured=true');
-		expect(body.map((p) => p.id)).toEqual(['acme-shop']);
+		expect(body.map((p) => p.id)).toEqual(['acme-shop', 'side-project']);
 	});
 
 	it('rejects an invalid featured value', async () => {

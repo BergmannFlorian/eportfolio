@@ -92,18 +92,19 @@ INSERT INTO experience_task_i18n (experience_task_id, locale, text) VALUES
 INSERT INTO experience_skill (experience_id, skill_id) VALUES
 	(1, 1), (1, 4), (1, 5), (2, 3), (3, 1), (3, 2);
 
--- Featured client project, non-featured project, personal project (no experience)
+-- Featured client project, non-featured project, featured personal project (no experience)
 INSERT INTO project (id, experience_id, name, url, image, featured, position) VALUES
 	(1, 1, 'Acme Shop', 'https://www.acme-shop.example.com', 'acme', 1, 1),
 	(2, 3, 'School App', NULL, NULL, 0, 1),
-	(3, NULL, 'Side Project', 'https://side.example.com', NULL, 0, 2);
+	(3, NULL, 'Side Project', 'https://side.example.com', NULL, 1, 2);
 
 INSERT INTO project_item (id, project_id, kind, position) VALUES
-	(1, 1, 'task', 1), (2, 1, 'detail', 1), (3, 2, 'detail', 1);
+	(1, 1, 'task', 1), (2, 1, 'detail', 1), (3, 2, 'detail', 1), (4, 3, 'task', 1);
 
 INSERT INTO project_item_i18n (project_item_id, locale, text) VALUES
 	(1, 'fr', 'Développement'), (1, 'en', 'Development'),
 	(2, 'fr', 'SvelteKit, TypeScript'), (2, 'en', 'SvelteKit, TypeScript'),
-	(3, 'fr', 'Application interne'), (3, 'en', 'Internal app');
+	(3, 'fr', 'Application interne'), (3, 'en', 'Internal app'),
+	(4, 'fr', 'Application de test'), (4, 'en', 'Test app');
 
-INSERT INTO project_skill (project_id, skill_id) VALUES (1, 4);
+INSERT INTO project_skill (project_id, skill_id) VALUES (1, 4), (3, 4), (3, 1);

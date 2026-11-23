@@ -108,7 +108,7 @@ Public, read-only JSON API served by the same Node server, under `/api/v1`. All 
 | `/api/v1` | | API index: version, locales, endpoint list |
 | `/api/v1/profile` | | Contact, age, bio, about, social links, facts, spoken languages, hobbies |
 | `/api/v1/experiences` | `kind=job\|education` | Jobs and education with ISO dates, tasks, skills and linked project ids |
-| `/api/v1/projects` | `featured=true\|false` | Projects with tasks and details (`featured` = home page "Work" grid) |
+| `/api/v1/projects` | `featured=true\|false` | Projects with tasks, details and technologies (`featured` = shown on the home page; personal projects have `experienceId: null`) |
 | `/api/v1/skills` | | Skills by category with a recency level (`top`, `mid`, `bottom`) and the "Stack" list |
 | `/api/v1/certificates` | | Certifications with ISO dates |
 | `/api/v1/cv` | | Full public CV in one call (same data as the `/cv` page) |

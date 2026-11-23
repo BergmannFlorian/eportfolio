@@ -15,7 +15,7 @@
 
 <Hero headline={home.headline} bio={home.bio} email={home.email} />
 <StackBand stack={home.stack} />
-<Works works={home.works} />
+<Works works={home.works} personalWorks={home.personalWorks} />
 <Skills skills={home.skills} />
 <Journey jobs={home.jobs} />
 <About about={home.about} facts={home.facts} languages={home.languages} hobbies={home.hobbies} />

@@ -6,6 +6,16 @@ export interface HomeWork {
 	url: string;
 }
 
+/** Personal project (no experience), shown as a detailed card. */
+export interface HomePersonalWork {
+	name: string;
+	/** Project tasks, joined */
+	description: string;
+	skills: string[];
+	url: string | null;
+	domain: string | null;
+}
+
 export interface HomeSkillGroup {
 	title: string;
 	items: string[];
@@ -41,6 +51,7 @@ export interface HomeContent {
 	email: string;
 	stack: string[];
 	works: HomeWork[];
+	personalWorks: HomePersonalWork[];
 	skills: HomeSkillGroup[];
 	jobs: HomeJob[];
 	facts: HomeFact[];

@@ -1,7 +1,7 @@
 {
 	"$schema": "https://inlang.com/schema/inlang-message-format",
-	"meta_title": "Florian Bergmann — Web developer",
-	"meta_description": "Full-stack web developer in western Switzerland: APIs, features and interfaces with Nuxt, Vue, Symfony and Laravel.",
+	"meta_title": "Florian Bergmann — developer",
+	"meta_description": "Full-stack developer in western Switzerland: APIs, features and interfaces with Nuxt, Vue, Symfony and Laravel.",
 	"construction_banner": "Site under construction — some sections may still change.",
 	"skip_link": "Skip to content",
 	"nav_label": "Main navigation",
@@ -26,6 +26,8 @@
 	"works_title_1": "Websites in production,",
 	"works_title_2": "for demanding brands.",
 	"works_desc": "Built at IOMEDIA SA (2021 – 2024): design, design integration, APIs, testing and maintenance.",
+	"works_personal_title": "Personal projects",
+	"works_personal_desc": "What I build outside work, to learn and experiment.",
 	"skills_kicker": "02 — Skills",
 	"skills_title_1": "Full-stack,",
 	"skills_title_2": "web-focused.",

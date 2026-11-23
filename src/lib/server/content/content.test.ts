@@ -36,6 +36,23 @@ describe('getHomeContent', () => {
 		]);
 	});
 
+	it('splits client works from personal projects', async () => {
+		const fr = await getHomeContent('fr');
+		// Client grid: featured projects tied to an experience only
+		expect(fr.works.map((work) => work.name)).toEqual(['Acme Shop']);
+		expect(fr.personalWorks).toEqual([
+			{
+				name: 'Side Project',
+				description: 'Application de test',
+				skills: ['TypeScript', 'SvelteKit'],
+				url: 'https://side.example.com',
+				domain: 'side.example.com'
+			}
+		]);
+		const en = await getHomeContent('en');
+		expect(en.personalWorks[0].description).toBe('Test app');
+	});
+
 	it('lists the experiences shown on the site, most recent first, with readable periods', async () => {
 		const fr = await getHomeContent('fr');
 		expect(fr.jobs).toEqual([
