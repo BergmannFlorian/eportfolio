@@ -308,7 +308,12 @@ export async function getHomeContent(locale: Locale): Promise<HomeContent> {
 		stack: portfolio.skills.filter((skill) => skill.inStack).map((skill) => skill.name),
 		works: portfolio.projects
 			.filter((project) => project.featured && project.experienceId !== null && project.url)
-			.map((project) => ({ name: project.name, domain: hostname(project.url!), url: project.url! })),
+			.map((project) => ({
+				name: project.name,
+				domain: hostname(project.url!),
+				url: project.url!,
+				skills: project.skills
+			})),
 		personalWorks: portfolio.projects
 			.filter((project) => project.featured && project.experienceId === null)
 			.map((project) => ({

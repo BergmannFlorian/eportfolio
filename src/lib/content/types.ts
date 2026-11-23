@@ -4,6 +4,7 @@ export interface HomeWork {
 	name: string;
 	domain: string;
 	url: string;
+	skills: string[];
 }
 
 /** Personal project (no experience), shown as a detailed card. */

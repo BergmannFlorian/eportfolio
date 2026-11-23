@@ -39,7 +39,14 @@ describe('getHomeContent', () => {
 	it('splits client works from personal projects', async () => {
 		const fr = await getHomeContent('fr');
 		// Client grid: featured projects tied to an experience only
-		expect(fr.works.map((work) => work.name)).toEqual(['Acme Shop']);
+		expect(fr.works).toEqual([
+			{
+				name: 'Acme Shop',
+				domain: 'acme-shop.example.com',
+				url: 'https://www.acme-shop.example.com',
+				skills: ['SvelteKit']
+			}
+		]);
 		expect(fr.personalWorks).toEqual([
 			{
 				name: 'Side Project',

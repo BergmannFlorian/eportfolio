@@ -35,6 +35,16 @@
 					</span>
 					<span class="flex flex-col gap-1.5">
 						<span class="font-display text-[26px] leading-[1.15]">{work.name}</span>
+						{#if work.skills.length > 0}
+							<span class="flex flex-wrap gap-2 py-1.5">
+								{#each work.skills as skill (skill)}
+									<span
+										class="border border-chip-border px-2 py-0.5 font-mono text-xs group-hover:border-inverse-subtle"
+										>{skill}</span
+									>
+								{/each}
+							</span>
+						{/if}
 						<span class="text-sm text-fg-subtle group-hover:text-inverse-subtle">{work.domain}</span>
 					</span>
 				</a>
