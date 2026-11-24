@@ -95,7 +95,7 @@
 	<div class="pdf pt-1 font-cv text-[14px] font-normal">
 		<div class="page">
 			<div class="h-full w-[7cm] max-w-[7cm] min-w-[7cm]">
-				<Infos infos={cv.infos} />
+				<Infos infos={cv.infos} site={data.site} />
 			</div>
 			<div class="right flex h-full flex-col gap-y-5 py-5 pr-5 pl-2">
 				<H1><div class="whitespace-pre-line">{cv.infos.title}</div></H1>

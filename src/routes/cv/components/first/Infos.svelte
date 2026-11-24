@@ -5,7 +5,10 @@
 	import Info from './Info.svelte';
 	import Section from './Section.svelte';
 
-	let { infos }: { infos: PublicCV['infos'] } = $props();
+	let {
+		infos,
+		site
+	}: { infos: PublicCV['infos']; site: { url: string; label: string; qr: string } } = $props();
 </script>
 
 <div class="flex h-full flex-col bg-cv-dark text-cv-light">
@@ -55,6 +58,15 @@
 			{#each infos.hobbys as hobby (hobby)}
 				<div>{hobby}</div>
 			{/each}
+		</Section>
+		<Section title={m.cv_section_portfolio()} center={true}>
+			<a href={site.url} class="flex flex-col items-center gap-2 text-inherit no-underline">
+				<!-- Server-generated SVG (qrcode), dark modules on a white square for reliable scanning -->
+				<span class="block size-[2.4cm] bg-white p-1.5 text-cv-dark" aria-hidden="true"
+					>{@html site.qr}</span
+				>
+				<span class="text-[13px]">{site.label}</span>
+			</a>
 		</Section>
 	</div>
 </div>
