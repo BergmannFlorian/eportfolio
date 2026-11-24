@@ -19,7 +19,7 @@ import { SKILL_CATEGORIES, type RatedSkills, type SkillCategoryCode } from '#lib
 import type { Formation, Job, Project as CvProject, PublicCV, SkillCatalog, SkillRefs } from '#lib/cv/types.js';
 import { m } from '#lib/paraglide/messages.js';
 import type { Locale } from '#lib/paraglide/runtime.js';
-import { loadPortfolio, type Experience, type Portfolio } from './portfolio.js';
+import { loadPortfolio, type Experience, type Portfolio, type ProjectKind } from './portfolio.js';
 import { rateSkills, type RatableSkill } from './skills.js';
 
 export { clearContentCache } from './portfolio.js';
@@ -93,6 +93,15 @@ function rateAllSkills(portfolio: Portfolio, now = new Date()): RatedSkills {
 	return rateSkills([...experiences, ...projects], skills, now);
 }
 
+function projectKindLabels(locale: Locale): Record<ProjectKind, string> {
+	const options = { locale };
+	return {
+		website: m.project_kind_website(undefined, options),
+		script: m.project_kind_script(undefined, options),
+		app: m.project_kind_app(undefined, options)
+	};
+}
+
 // ─── Legacy CV format (src/routes/cv components) ────────────────────────────
 
 function toLegacyCV(portfolio: Portfolio): { cv: PublicCV; skills: SkillCatalog; levels: RatedSkills } {
@@ -148,6 +157,7 @@ function toLegacyCV(portfolio: Portfolio): { cv: PublicCV; skills: SkillCatalog;
 		}));
 
 	const { person } = portfolio;
+	const kindLabels = projectKindLabels(portfolio.locale);
 	const lowerFirst = (text: string) => text.charAt(0).toLowerCase() + text.slice(1);
 
 	const cv: PublicCV = {
@@ -169,6 +179,16 @@ function toLegacyCV(portfolio: Portfolio): { cv: PublicCV; skills: SkillCatalog;
 		},
 		jobs,
 		formations,
+		personalProjects: portfolio.projects
+			.filter((project) => project.experienceId === null)
+			.map((project) => ({
+				name: project.name,
+				kind: project.kind ? kindLabels[project.kind] : null,
+				description: project.tasks.join(' '),
+				skills: project.skills,
+				link: project.url,
+				linkLabel: project.url ? displayUrl(project.url) : null
+			})),
 		certificates: portfolio.certificates.map((certificate) => ({
 			title: certificate.title,
 			date: toSwissDate(certificate.issuedOn),
@@ -282,11 +302,7 @@ export async function getCertificates(locale: Locale): Promise<ApiCertificate[]>
 export async function getPersonalProjects(locale: Locale): Promise<PersonalProject[]> {
 	const portfolio = await loadPortfolio(locale);
 	const options = { locale };
-	const kindLabels = {
-		website: m.project_kind_website(undefined, options),
-		script: m.project_kind_script(undefined, options),
-		app: m.project_kind_app(undefined, options)
-	};
+	const kindLabels = projectKindLabels(locale);
 	const statusLabels = {
 		online: m.project_status_online(undefined, options),
 		in_progress: m.project_status_in_progress(undefined, options),

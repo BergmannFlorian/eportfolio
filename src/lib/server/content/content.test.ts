@@ -139,4 +139,26 @@ describe('getCV', () => {
 			{ title: 'Test Certificate', date: '14.03.2024', link: 'https://example.com/cert' }
 		]);
 	});
+
+	it('lists every personal project, featured or not', async () => {
+		const { cv } = await getCV('en');
+		expect(cv.personalProjects).toEqual([
+			{
+				name: 'Side Project',
+				kind: 'Script',
+				description: 'Test app',
+				skills: ['TypeScript', 'SvelteKit'],
+				link: 'https://side.example.com',
+				linkLabel: 'side.example.com'
+			},
+			{
+				name: 'Tiny App',
+				kind: 'App',
+				description: '',
+				skills: [],
+				link: null,
+				linkLabel: null
+			}
+		]);
+	});
 });

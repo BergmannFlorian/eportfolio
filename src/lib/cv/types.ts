@@ -96,6 +96,18 @@ export interface SkillCatalog {
 	buisness?: string[];
 }
 
+/** Personal project (not tied to a job), shown on the first page. */
+export interface PersonalProject {
+	name: string;
+	/** Localized type label ("Site web", "Script"…) */
+	kind: string | null;
+	description: string;
+	skills: string[];
+	link: string | null;
+	/** Link without protocol, e.g. "bergmann-florian.ch" */
+	linkLabel: string | null;
+}
+
 /**
  * Public version sent to the browser: no address, no birthdate (replaced by
  * the computed age) and no references (third-party contact details).
@@ -104,4 +116,5 @@ export interface PublicCV extends Omit<CV, 'infos'> {
 	infos: Omit<Infos, 'contact' | 'references'> & {
 		contact: { name: string; email: string; city: string; age: number };
 	};
+	personalProjects: PersonalProject[];
 }

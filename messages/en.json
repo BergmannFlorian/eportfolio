@@ -59,6 +59,7 @@
 	"cv_section_skills": "skills",
 	"cv_section_certificates": "certifications",
 	"cv_section_formations": "education",
+	"cv_section_personal_projects": "personal projects",
 	"cv_section_jobs": "experience",
 	"cv_age": "{age} years old",
 	"cv_references": "References available on request",
