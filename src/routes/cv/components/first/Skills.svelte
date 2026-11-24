@@ -1,14 +1,14 @@
 <script lang="ts">
 	import { SvelteSet } from 'svelte/reactivity';
-	import { rateSkills, type RatedSkill, type SkillLevel } from '#lib/cv/skills.js';
-	import type { Formation, Job, PublicCV, SkillCatalog } from '#lib/cv/types.js';
+	import type { RatedSkill, RatedSkills, SkillLevel } from '#lib/cv/skills.js';
 	import { m } from '#lib/paraglide/messages.js';
 	import H3 from '../fonts/H3.svelte';
 
-	let { cv, skills }: { cv: PublicCV; skills: SkillCatalog } = $props();
+	// Levels are computed server-side (same as /api/v1/skills)
+	let { levels: categories }: { levels: RatedSkills } = $props();
 
-	const categories = $derived(
-		rateSkills([...(cv.jobs as Job[]), ...(cv.formations as Formation[])], skills)
+	const hasPersonalOnly = $derived(
+		Object.values(categories).some((list) => list.some((skill) => skill.personalOnly))
 	);
 
 	const rows = $derived<{ title: string; level: SkillLevel }[]>([
@@ -66,7 +66,7 @@
 								aria-pressed={highlighted.has(skill.name)}
 								onclick={() => toggle(skill.name)}
 							>
-								{skill.name.toUpperCase()}
+								{skill.name.toUpperCase()}{skill.personalOnly ? '*' : ''}
 							</button>
 						{/each}
 					</td>
@@ -75,6 +75,9 @@
 		{/each}
 	</tbody>
 </table>
+{#if hasPersonalOnly}
+	<p class="m-0 pt-1 text-right text-[7px]">{m.cv_skill_personal_note()}</p>
+{/if}
 
 <style>
 	td {

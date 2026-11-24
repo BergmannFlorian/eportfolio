@@ -69,6 +69,7 @@
 	"cv_col_langs": "languages",
 	"cv_col_libs": "frameworks / libraries",
 	"cv_col_tools": "tools",
+	"cv_skill_personal_note": "* Only used in personal projects",
 	"date_present": "present",
 	"works_personal_all": "All projects",
 	"projects_meta_title": "Personal projects — Florian Bergmann",

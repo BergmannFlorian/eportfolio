@@ -258,7 +258,9 @@ describe('/api/v1/cv', () => {
 		const { body } = await call<{
 			cv: { infos: Record<string, unknown> & { contact: Record<string, unknown> }; jobs: { start: string }[] };
 			skills: { langs: string[] };
+			levels: { langs: { name: string; level: string }[] };
 		}>(getCv, '/api/v1/cv');
+		expect(body.levels.langs.find((s) => s.name === 'TypeScript')?.level).toBe('top');
 		expect(body.cv.infos).not.toHaveProperty('references');
 		expect(body.cv.infos.contact).not.toHaveProperty('address');
 		expect(body.cv.infos.contact.age).toBe(ageFromIso(FIXTURE.birthdate));

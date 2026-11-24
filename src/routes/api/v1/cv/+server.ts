@@ -3,7 +3,7 @@ import { getCV } from '#lib/server/content/index.js';
 import type { RequestHandler } from './$types';
 
 // Same payload as the /cv page loader: dates stay in the "DD.MM.YYYY" format
-// and skills reference the catalog by index.
+// and skills reference the catalog by index; `levels` holds the rated skills.
 export const GET: RequestHandler = ({ url, request }) =>
 	handleApi(async () => {
 		const locale = resolveLocale(url, request);

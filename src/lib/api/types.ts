@@ -78,7 +78,8 @@ export interface ApiSkills {
 	categories: {
 		code: SkillCategoryCode;
 		name: string;
-		skills: { name: string; level: SkillLevel }[];
+		/** personalOnly: only used in personal projects */
+		skills: { name: string; level: SkillLevel; personalOnly: boolean }[];
 	}[];
 }
 

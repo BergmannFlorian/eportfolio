@@ -15,11 +15,12 @@ import type {
 	ApiSkills
 } from '#lib/api/types.js';
 import type { HomeContent, PersonalProject, SiteContact } from '#lib/content/types.js';
-import { rateSkills, SKILL_CATEGORIES, type SkillCategoryCode } from '#lib/cv/skills.js';
+import { SKILL_CATEGORIES, type RatedSkills, type SkillCategoryCode } from '#lib/cv/skills.js';
 import type { Formation, Job, Project as CvProject, PublicCV, SkillCatalog, SkillRefs } from '#lib/cv/types.js';
 import { m } from '#lib/paraglide/messages.js';
 import type { Locale } from '#lib/paraglide/runtime.js';
 import { loadPortfolio, type Experience, type Portfolio } from './portfolio.js';
+import { rateSkills, type RatableSkill } from './skills.js';
 
 export { clearContentCache } from './portfolio.js';
 
@@ -63,9 +64,38 @@ function categoryCode(portfolio: Portfolio, categoryId: number): string | undefi
 	return portfolio.categories.find((category) => category.id === categoryId)?.code;
 }
 
+// ─── Skill levels ───────────────────────────────────────────────────────────
+
+/**
+ * Recency level of every skill used in an experience (jobs first, then education).
+ * Personal projects come last: an online or in-progress project counts as used
+ * today, an archived one until the end of its year.
+ */
+function rateAllSkills(portfolio: Portfolio, now = new Date()): RatedSkills {
+	const today = now.toISOString().slice(0, 10);
+	const skills: RatableSkill[] = portfolio.skills.flatMap((skill) => {
+		const code = categoryCode(portfolio, skill.categoryId);
+		return SKILL_CATEGORIES.includes(code as SkillCategoryCode)
+			? [{ id: skill.id, name: skill.name, category: code as SkillCategoryCode }]
+			: [];
+	});
+	const experiences = [
+		...portfolio.experiences.filter((experience) => experience.kind === 'job'),
+		...portfolio.experiences.filter((experience) => experience.kind !== 'job')
+	].map((experience) => ({ end: experience.end ?? today, skillIds: experience.skillIds, personal: false }));
+	const projects = portfolio.projects
+		.filter((project) => project.experienceId === null)
+		.flatMap((project) => {
+			const current = project.status === 'online' || project.status === 'in_progress';
+			const end = current ? today : project.year ? `${project.year}-12-31` : null;
+			return end ? [{ end, skillIds: project.skillIds, personal: true }] : [];
+		});
+	return rateSkills([...experiences, ...projects], skills, now);
+}
+
 // ─── Legacy CV format (src/routes/cv components) ────────────────────────────
 
-function toLegacyCV(portfolio: Portfolio): { cv: PublicCV; skills: SkillCatalog } {
+function toLegacyCV(portfolio: Portfolio): { cv: PublicCV; skills: SkillCatalog; levels: RatedSkills } {
 	// Catalog: skill names per category, in display order; experiences reference them by index
 	const catalog: Required<SkillCatalog> = { langs: [], libs: [], tools: [], buisness: [] };
 	const refOf = new Map<number, { category: keyof SkillRefs; index: number }>();
@@ -146,7 +176,7 @@ function toLegacyCV(portfolio: Portfolio): { cv: PublicCV; skills: SkillCatalog 
 		}))
 	};
 
-	return { cv, skills: catalog };
+	return { cv, skills: catalog, levels: rateAllSkills(portfolio) };
 }
 
 /** Public CV in the format of the /cv page (same payload as /api/v1/cv). */
@@ -228,8 +258,7 @@ export async function getProjects(locale: Locale, featuredOnly = false): Promise
 
 export async function getSkills(locale: Locale): Promise<ApiSkills> {
 	const portfolio = await loadPortfolio(locale);
-	const { cv, skills: catalog } = toLegacyCV(portfolio);
-	const rated = rateSkills([...cv.jobs, ...cv.formations], catalog);
+	const rated = rateAllSkills(portfolio);
 	const nameOf = (code: SkillCategoryCode) =>
 		portfolio.categories.find((category) => category.code === code)?.name ?? code;
 	return {

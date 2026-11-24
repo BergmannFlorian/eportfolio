@@ -82,6 +82,7 @@ On the first start, [`db/docker/init.sh`](db/docker/init.sh) loads `db/schema.sq
 
 - [`src/routes/api/v1/api.test.ts`](src/routes/api/v1/api.test.ts): status codes, headers, locale resolution and fallback, filters, stable ids, links between resources, absence of private data, JSON 500 when the database is down.
 - [`src/lib/server/content/content.test.ts`](src/lib/server/content/content.test.ts): home page data and the CV page format.
+- [`src/lib/server/content/skills.test.ts`](src/lib/server/content/skills.test.ts): skill recency levels.
 
 The deploy workflow starts a MariaDB service and runs the tests before building.
 
@@ -110,7 +111,7 @@ Public, read-only JSON API served by the same Node server, under `/api/v1`. All 
 | `/api/v1/profile` | | Contact, age, bio, about, social links, facts, spoken languages, hobbies |
 | `/api/v1/experiences` | `kind=job\|education` | Jobs and education with ISO dates, tasks, skills and linked project ids |
 | `/api/v1/projects` | `featured=true\|false` | Projects sorted by `position` (display order, 1 = first), with tasks, details, technologies, `kind` (`website`, `script`, `app`), `year`, `status`, `hosting` and `snippet` (`featured` = shown on the home page; personal projects have `experienceId: null`) |
-| `/api/v1/skills` | | Skills by category with a recency level (`top`, `mid`, `bottom`) and the "Stack" list |
+| `/api/v1/skills` | | Skills by category with a recency level (`top` < 2 years, `mid`, `bottom` > 5 years; computed from experiences and personal projects, `personalOnly` when only used in personal projects) and the "Stack" list |
 | `/api/v1/certificates` | | Certifications with ISO dates |
 | `/api/v1/cv` | | Full public CV in one call (same data as the `/cv` page) |
 

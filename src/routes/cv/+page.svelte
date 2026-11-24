@@ -70,7 +70,7 @@
 			<div class="right flex h-full flex-col gap-y-5 py-5 pr-5 pl-2">
 				<H1><div class="whitespace-pre-line">{cv.infos.title}</div></H1>
 				<Section title={m.cv_section_skills()}>
-					<Skills {cv} skills={data.skills} />
+					<Skills levels={data.levels} />
 				</Section>
 				<Section title={m.cv_section_certificates()}>
 					<Certificates certificates={cv.certificates} />

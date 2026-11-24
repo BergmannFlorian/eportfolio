@@ -71,6 +71,7 @@ export interface Project {
 	details: string[];
 	/** Technologies used (project_skill), by category then position */
 	skills: string[];
+	skillIds: number[];
 }
 
 /** Age in completed years at `now` from a "YYYY-MM-DD" birthdate. */
@@ -208,8 +209,8 @@ async function fetchPortfolio(locale: Locale): Promise<Portfolio> {
 			ORDER BY i.project_id, i.kind, i.position, i.id`,
 			l
 		),
-		query<{ project_id: number; name: string }>(
-			`SELECT ps.project_id, s.name
+		query<{ project_id: number; skill_id: number; name: string }>(
+			`SELECT ps.project_id, ps.skill_id, s.name
 			FROM project_skill ps JOIN skill s ON s.id = ps.skill_id
 			ORDER BY ps.project_id, s.category_id, s.position, s.id`
 		)
@@ -233,7 +234,8 @@ async function fetchPortfolio(locale: Locale): Promise<Portfolio> {
 		position: p.position,
 		tasks: items.filter((i) => i.project_id === p.id && i.kind === 'task').map((i) => i.text),
 		details: items.filter((i) => i.project_id === p.id && i.kind === 'detail').map((i) => i.text),
-		skills: projectSkills.filter((ps) => ps.project_id === p.id).map((ps) => ps.name)
+		skills: projectSkills.filter((ps) => ps.project_id === p.id).map((ps) => ps.name),
+		skillIds: projectSkills.filter((ps) => ps.project_id === p.id).map((ps) => ps.skill_id)
 	}));
 
 	return {

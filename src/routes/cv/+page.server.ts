@@ -3,6 +3,6 @@ import { getCV } from '#lib/server/content/index.js';
 import type { PageServerLoad } from './$types';
 
 export const load: PageServerLoad = async () => {
-	const { cv, skills } = await getCV(getLocale());
-	return { cv, skills };
+	const { cv, levels } = await getCV(getLocale());
+	return { cv, levels };
 };
