@@ -21,7 +21,7 @@
 
 <div class="w-full">
 	<!-- Same width on both sides so the title is centered on the page -->
-	<div class="grid grid-cols-[170px_1fr_170px] items-center gap-x-3 pb-2">
+	<div class="grid grid-cols-[200px_1fr_200px] items-center gap-x-3 pb-2">
 		<H3 style="bg-cv-dark text-cv-light px-2.5 whitespace-nowrap">{entry.date.toUpperCase()}</H3>
 		<H3 style="text-center">{entry.title.toUpperCase()}</H3>
 		<div class="pr-5 text-right">
