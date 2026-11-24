@@ -213,6 +213,7 @@ export async function getProjects(locale: Locale, featuredOnly = false): Promise
 			url: project.url,
 			image: project.image,
 			featured: project.featured,
+			position: project.position,
 			experienceId: project.experienceId === null ? null : (experienceIds.get(project.experienceId) ?? null),
 			tasks: project.tasks,
 			details: project.details,

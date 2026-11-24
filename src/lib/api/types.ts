@@ -56,6 +56,8 @@ export interface ApiProject {
 	url: string | null;
 	image: string | null;
 	featured: boolean;
+	/** Display order (1 = first); projects are returned sorted by it */
+	position: number;
 	/** null for a personal project */
 	experienceId: string | null;
 	tasks: string[];
