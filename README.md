@@ -61,7 +61,7 @@ All content (home page, `/cv`, API) is read from MariaDB through [`src/lib/serve
 
 - Schema: [`db/schema.sql`](db/schema.sql). Content import: `db/seed.sql` (not committed: contains private data).
 - Schema changes for an existing database (production): one script per change in [`db/migrations/`](db/migrations/), to run once.
-- Connection: copy [`.env.example`](.env.example) to `.env` and fill in `DB_HOST`, `DB_PORT`, `DB_USER`, `DB_PASSWORD`, `DB_NAME`. The dev server and the tests load it through `vite.config.ts`.
+- Connection: copy [`.env.example`](.env.example) to `.env` and fill in `DB_HOST`, `DB_PORT`, `DB_USER`, `DB_PASSWORD`, `DB_NAME` (plus `DB_WRITE_USER` / `DB_WRITE_PASSWORD` in production, see [Database accounts](#database-accounts)). The dev server and the tests load it through `vite.config.ts`.
 
 ### Local database (Docker)
 
@@ -83,6 +83,7 @@ On the first start, [`db/docker/init.sh`](db/docker/init.sh) loads `db/schema.sq
 - [`src/routes/api/v1/api.test.ts`](src/routes/api/v1/api.test.ts): status codes, headers, locale resolution and fallback, filters, stable ids, links between resources, absence of private data, JSON 500 when the database is down.
 - [`src/lib/server/content/content.test.ts`](src/lib/server/content/content.test.ts): home page data and the CV page format.
 - [`src/lib/server/content/skills.test.ts`](src/lib/server/content/skills.test.ts): skill recency levels.
+- [`src/lib/server/auth/auth.test.ts`](src/lib/server/auth/auth.test.ts): password hashing, TOTP (RFC 6238 vectors, drift, replay), login flow, lockout, hashed session ids.
 
 The deploy workflow starts a MariaDB service and runs the tests before building.
 
@@ -100,6 +101,36 @@ REMOTE_PATH/
 ```
 
 Infomaniak has no API to restart a Node.js site, so `index.js` is a small launcher: it runs `app/index.js` as a child process, restarts it when `.deploy-version` changes (last workflow step), and restarts it if it crashes. It passes the variables of `REMOTE_PATH/.env` to the server (variables set in the Infomaniak Manager win); the file is read at every restart and is not removed by deployments (hidden files are kept).
+
+## Administration
+
+Owner login, reached from the "Edit" button of the site header. Content will be edited directly on the site pages (coming next), so after signing in you go back to the home page, where the button becomes "Sign out" (`POST /admin/logout`). `/admin` pages are sent with `X-Robots-Tag: noindex`; every page rendered for a signed-in owner gets `Cache-Control: no-store`.
+
+- **Login** (`/admin/login`): email + password, then a 6-digit TOTP code from an authenticator app (RFC 6238). Code: [`src/lib/server/auth/`](src/lib/server/auth/).
+- **Passwords**: scrypt (`node:crypto`), stored as `scrypt$N$r$p$salt$hash`. An unknown email takes as long as a wrong password, and both get the same message.
+- **Sessions**: random token in an `httpOnly`, `SameSite=Lax`, `Secure` cookie; `admin_session` only stores its SHA-256. After the password, a 5-minute pending session waits for the code; a full session lasts 8 hours.
+- **Lockout**: 5 wrong passwords or codes lock the account for 15 minutes. A TOTP code cannot be reused (`totp_last_step`).
+- **Access control**: `src/hooks.server.ts` loads the session when the cookie is present (`locals.admin`; the site layout only passes a `signedIn` flag to the browser) and redirects every other `/admin` request without a full session to the login, form actions included. SvelteKit's origin check blocks cross-site form posts in production.
+
+### Create or reset the account
+
+```sh
+npm run admin:create            # asks for the email and password
+npm run admin:create you@example.com
+```
+
+The script generates the 2FA key, shows it as a QR code to scan, checks a code from the app, then prints the SQL to run in phpMyAdmin. It can also apply it to the local database from `.env`. Running it again for the same email replaces the password and the 2FA key and closes open sessions. The SQL contains the 2FA key: do not save it in the repository.
+
+The tables come from [`db/migrations/2026-11-27-admin-auth.sql`](db/migrations/2026-11-27-admin-auth.sql) on an existing database (already in `db/schema.sql`).
+
+### Database accounts
+
+The site uses two MariaDB accounts ([`src/lib/server/db/`](src/lib/server/db/)):
+
+- `DB_USER` / `DB_PASSWORD`: read-only (`SELECT`), for the public content: pages, CV, API (`query`).
+- `DB_WRITE_USER` / `DB_WRITE_PASSWORD`: `SELECT`, `INSERT`, `UPDATE`, `DELETE`, for the administration only (`writeQuery`). Without it (local Docker, tests), the administration uses `DB_USER`.
+
+The read-only account does not need the `admin_*` tables at all.
 
 ## API
 

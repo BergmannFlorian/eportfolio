@@ -45,6 +45,17 @@
 		<div class="flex flex-wrap items-center gap-4">
 			<ThemeSelect />
 			<LocaleSwitch />
+			{#if page.data.signedIn}
+				<form method="POST" action={localizeHref('/admin/logout')}>
+					<button type="submit" class="btn-outline cursor-pointer px-5 py-3 text-[15px]"
+						>{m.admin_logout()}</button
+					>
+				</form>
+			{:else}
+				<a href={localizeHref('/admin/login')} rel="nofollow" class="btn-outline px-5 py-3 text-[15px]"
+					>{m.nav_edit()}</a
+				>
+			{/if}
 			<a href="{home}#contact" class="btn-primary px-5 py-3 text-[15px]">{m.nav_contact()}</a>
 		</div>
 	</div>

@@ -15,7 +15,8 @@ Personal portfolio and CV of the owner, live at https://bergmann-florian.ch. Tal
 - `src/routes/(site)/`: home page (sections in `src/lib/components/`, data from `+page.server.ts`) and `projets/`, the personal projects page (`/projets`, `/en/projects`: translated slugs are declared in `urlPatterns` in `vite.config.ts`).
 - `src/routes/cv/`: printable CV page, ported from an older project (own components in `cv/components/`, helpers in `src/lib/cv/`).
 - `src/routes/api/v1/`: public read-only JSON API (`+server.ts`), meant for a future mobile app. Documented in the README; response types in `src/lib/api/types.ts`.
-- `src/lib/server/db/`: connection pool. `src/lib/server/content/`: every DB query and the derived shapes for the home page, `/cv` and the API (60 s cache per locale).
+- `src/lib/server/db/`: connection pools. `query` uses the read-only account (`DB_USER`) for public content; `writeQuery` uses `DB_WRITE_USER` and is for the administration only. `src/lib/server/content/`: every DB query and the derived shapes for the home page, `/cv` and the API (60 s cache per locale).
+- `src/routes/admin/`: owner login (password + TOTP) and logout; editing will happen on the site pages, which get a `signedIn` flag from `(site)/+layout.server.ts`. Guarded in `src/hooks.server.ts`; logic in `src/lib/server/auth/`. The account is created with `npm run admin:create` (`scripts/create-admin.ts`, run by Node directly: `password.ts` and `totp.ts` must keep importing node built-ins only).
 - `src/lib/theme/`: multi-theme system. See below.
 - `db/schema.sql`: schema. `db/migrations/`: ALTER scripts to run once on the production database when the schema changes. `db/seed.sql`: real content, **never committed**. `db/test/`: fixtures and the Vitest global setup.
 - `deploy/`: launcher and package.json uploaded to the server. `design/`: git-ignored design exports.
@@ -31,7 +32,7 @@ Personal portfolio and CV of the owner, live at https://bergmann-florian.ch. Tal
 
 ## Privacy
 
-The database holds private data: address, birthdate and references (names, phones). Never select address or references. The birthdate is only used to compute the age server-side. None of these may reach the browser, the API, a commit or a log. `db/seed.sql` and `.env` are git-ignored. Check `git ls-files db` before pushing.
+The database holds private data: address, birthdate and references (names, phones). Never select address or references. The birthdate is only used to compute the age server-side. None of these may reach the browser, the API, a commit or a log. The same goes for `admin_user` (password hash, TOTP secret) and session tokens: only `src/lib/server/auth/` reads them. `db/seed.sql` and `.env` are git-ignored. Check `git ls-files db` before pushing.
 
 ## Development
 
@@ -49,5 +50,5 @@ The Infomaniak database is only reachable from Infomaniak's network. Locally, al
 
 - Branches: `master` (main), `develop`, `deploy`. Pushing to `deploy` runs `.github/workflows/deploy.yml`: tests with a MariaDB service, build, SFTP upload to Infomaniak, then restart via the `.deploy-version` marker.
 - Server layout: `index.js` (launcher), `package.json`, `app/` (adapter-node build). The `mariadb` driver is bundled into the build (`ssr.noExternal`), so there is no `node_modules` to upload.
-- `REMOTE_PATH/.env` holds the production `DB_*` values and `ORIGIN`. It is created by hand and survives deployments.
+- `REMOTE_PATH/.env` holds the production `DB_*` values (read-only `DB_USER`, write `DB_WRITE_USER`) and `ORIGIN`. It is created by hand and survives deployments.
 - Commit or push only when the owner asks. The usual request is "commit and push on master and deploy".
