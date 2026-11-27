@@ -4,8 +4,15 @@ import { EDIT_LIMITS, type Localized } from '#lib/content/edit.js';
 import { baseLocale, locales } from '#lib/paraglide/runtime.js';
 import { writeQuery, type Transaction } from '#lib/server/db/index.js';
 
-/** Invalid data sent by the editor (answered with a 400). */
-export class EditError extends Error {}
+/** Invalid data sent by the editor, answered with `status` (400; 404, 405 or 409 for a refused deletion). */
+export class EditError extends Error {
+	constructor(
+		message: string,
+		readonly status: 400 | 404 | 405 | 409 = 400
+	) {
+		super(message);
+	}
+}
 
 /**
  * One editable section: read (every locale as stored), parse (validate and trim the
@@ -16,6 +23,41 @@ export interface SectionHandler<T> {
 	read(id: number | null): Promise<T>;
 	parse(body: unknown): T;
 	write(data: T, id: number | null): Promise<number | null>;
+	/** Deletes one row (sections editing one item) */
+	remove?(id: number): Promise<void>;
+}
+
+/** Skill choices of the project and experience editors, in the catalog order */
+export async function skillOptions(): Promise<{ id: number; name: string; category: string }[]> {
+	const rows = await writeQuery<{ id: number; name: string; category: string | null }>(
+		`SELECT s.id, s.name, COALESCE(t.name, c.code) AS category
+		FROM skill s
+		JOIN skill_category c ON c.id = s.category_id
+		LEFT JOIN skill_category_i18n t ON t.skill_category_id = c.id AND t.locale = ?
+		ORDER BY c.position, c.id, s.position, s.id`,
+		[baseLocale]
+	);
+	return rows.map((skill) => ({ id: skill.id, name: skill.name, category: skill.category ?? '' }));
+}
+
+/** Throws unless every id exists in `table` */
+export async function checkIds(
+	tx: Transaction,
+	table: 'experience' | 'skill' | 'organization',
+	ids: number[],
+	what: string
+): Promise<void> {
+	if (ids.length === 0) return;
+	const [{ count }] = await tx.query<{ count: number }>(
+		`SELECT COUNT(*) AS count FROM ${table} WHERE id IN (${ids.map(() => '?').join(', ')})`,
+		ids
+	);
+	if (Number(count) !== ids.length) throw new EditError(`${what}: unknown id`);
+}
+
+/** Ids of a list of skills (technologies of a project, skills of an experience) */
+export function skillIdList(value: unknown, what: string): number[] {
+	return [...new Set(list(value, what, EDIT_LIMITS.skills).map((id, i) => integer(id, `${what}[${i}]`, 1, 2 ** 32 - 1)))];
 }
 
 export type Row = Record<string, unknown> & { locale: string };

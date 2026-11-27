@@ -125,14 +125,15 @@ The tables come from [`db/migrations/2026-11-27-admin-auth.sql`](db/migrations/2
 
 ### Content editing
 
-Signed in, each editable block of the home page gets an "Edit" button that opens a dialog with the French and English fields side by side. So far: header (email, eyebrow, introduction), "About" text, facts, spoken languages, hobbies, projects and skills; the same data feeds the CV and the API.
+Signed in, each editable block of the home page gets an "Edit" button that opens a dialog with the French and English fields side by side. So far: header (email, eyebrow, introduction), "About" text, facts, spoken languages, hobbies, projects, skills and the journey (experiences and education); the same data feeds the CV and the API.
 
 - **Projects**: each card (home page, `/projets`) edits its project: name, link, experience (none for a personal project), home page selection, description, technologies and the details of the Projects page. "Add a project" creates one at the end; "Order and selection" reorders every project (positions 1…n), selects the home page ones and deletes projects (their image stays in the library).
 - **Skills** ("Stack" band and Skills section, same dialog): name, "Stack" and "Site" flags, category, order, add and remove, plus the category names. Categories themselves are fixed (the CV groups skills by their codes). Skills keep their ids, so projects and experiences keep their links; removing a skill removes those links too.
+- **Journey**: signed in, the section also lists the experiences hidden from the site (greyed, loaded only for the owner). Each row edits its experience: type, organization (existing or new by name) and its logo, dates, "show on the home page", title, degree, tasks and skills. "Add an experience" creates one; an experience can be deleted unless projects are attached to it (409: they would silently become personal projects). Positions, the CV order, are renumbered by date (most recent first) after every change.
 
 - **Translations**: French is required; an English field left empty falls back to the French text, field by field (the `*_i18n` columns of these lists are nullable, see [`db/migrations/2026-11-27-optional-translations.sql`](db/migrations/2026-11-27-optional-translations.sql)).
 - **Lists** (facts, languages, hobbies): add, remove and reorder; saving replaces the whole list in one transaction. A language name is shared by everyone speaking it (`language_i18n`).
-- **Code**: dialogs in [`src/lib/components/edit/`](src/lib/components/edit/), loaded only for the owner; `GET`/`POST /admin/content/<section>` (JSON only) in [`src/routes/admin/content/`](src/routes/admin/content/); validation and writes in [`src/lib/server/edit/`](src/lib/server/edit/); shared types and limits in `src/lib/content/edit.ts`.
+- **Code**: dialogs in [`src/lib/components/edit/`](src/lib/components/edit/), loaded only for the owner; `GET`/`POST`/`DELETE /admin/content/<section>` (JSON only, `?id=` for one project or experience) in [`src/routes/admin/content/`](src/routes/admin/content/); validation and writes in [`src/lib/server/edit/`](src/lib/server/edit/); shared types and limits in `src/lib/content/edit.ts`.
 
 ### Images
 

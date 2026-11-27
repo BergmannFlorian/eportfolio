@@ -14,7 +14,7 @@ import type {
 	ApiProject,
 	ApiSkills
 } from '#lib/api/types.js';
-import type { HomeContent, PersonalProject, SiteContact, SiteImage } from '#lib/content/types.js';
+import type { HomeContent, HomeJob, PersonalProject, SiteContact, SiteImage } from '#lib/content/types.js';
 import { SKILL_CATEGORIES, type RatedSkills, type SkillCategoryCode } from '#lib/cv/skills.js';
 import type { Formation, Job, Project as CvProject, PublicCV, SkillCatalog, SkillRefs } from '#lib/cv/types.js';
 import { m } from '#lib/paraglide/messages.js';
@@ -367,6 +367,28 @@ export async function getSiteContact(locale: Locale): Promise<SiteContact> {
 	};
 }
 
+/** Experiences of the home page "Journey" section (onSite), or the hidden ones, most recent first */
+function journey(portfolio: Portfolio, onSite: boolean): HomeJob[] {
+	return portfolio.experiences
+		.filter((experience) => experience.onSite === onSite)
+		.sort((a, b) => b.start.localeCompare(a.start))
+		.map((experience) => ({
+			experienceId: experience.id,
+			onSite,
+			start: experience.start,
+			date: periodLabel(experience, portfolio.locale),
+			role: experience.title,
+			org: experience.organization ?? '',
+			organizationId: experience.organizationId,
+			logo: mediaUrl(experience.organizationLogo)
+		}));
+}
+
+/** Experiences hidden from the home page, listed for the signed-in owner so they can be edited. */
+export async function getHiddenJourney(locale: Locale): Promise<HomeJob[]> {
+	return journey(await loadPortfolio(locale), false);
+}
+
 /** "Déc. 2021 – Juil. 2024", "Févr. – Juin 2021", "2019 – 2021" */
 function periodLabel(experience: Experience, locale: Locale): string {
 	const intl = dateLocales[locale] ?? locale;
@@ -452,16 +474,7 @@ export async function getHomeContent(locale: Locale): Promise<HomeContent> {
 					.map((skill) => skill.name)
 			}))
 			.filter((group) => group.items.length > 0),
-		jobs: portfolio.experiences
-			.filter((experience) => experience.onSite)
-			.sort((a, b) => b.start.localeCompare(a.start))
-			.map((experience) => ({
-				date: periodLabel(experience, locale),
-				role: experience.title,
-				org: experience.organization ?? '',
-				organizationId: experience.organizationId,
-				logo: mediaUrl(experience.organizationLogo)
-			})),
+		jobs: journey(portfolio, true),
 		facts: [
 			...ageFact,
 			...portfolio.facts.filter((fact) => fact.onSite).map((fact) => ({ label: fact.label, value: fact.value }))

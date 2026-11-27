@@ -23,6 +23,7 @@ import {
 	EditError,
 	bool,
 	byParent,
+	checkIds,
 	insertTranslations,
 	integer,
 	items,
@@ -30,6 +31,8 @@ import {
 	localized,
 	localizedText,
 	record,
+	skillIdList,
+	skillOptions,
 	text,
 	type Row,
 	type SectionHandler
@@ -47,21 +50,14 @@ async function options(): Promise<ProjectOptions> {
 			ORDER BY e.start_date DESC, e.id`,
 			[baseLocale]
 		),
-		writeQuery<{ id: number; name: string; category: string | null }>(
-			`SELECT s.id, s.name, COALESCE(t.name, c.code) AS category
-			FROM skill s
-			JOIN skill_category c ON c.id = s.category_id
-			LEFT JOIN skill_category_i18n t ON t.skill_category_id = c.id AND t.locale = ?
-			ORDER BY c.position, c.id, s.position, s.id`,
-			[baseLocale]
-		)
+		skillOptions()
 	]);
 	return {
 		experiences: experiences.map((experience) => ({
 			id: experience.id,
 			label: [experience.title, experience.organization, experience.start_date.slice(0, 4)].filter(Boolean).join(' · ')
 		})),
-		skills: skills.map((skill) => ({ id: skill.id, name: skill.name, category: skill.category ?? '' }))
+		skills
 	};
 }
 
@@ -147,7 +143,6 @@ function parseProject(value: unknown): ProjectEdit {
 	}
 	const texts = (what: 'tasks' | 'details') =>
 		list(input[what], what).map((entry, i) => localizedText(entry, MAX.projectText, `${what}[${i}]`));
-	const skillIds = list(input.skillIds, 'skillIds', MAX.skills).map((id, i) => integer(id, `skillIds[${i}]`, 1, 2 ** 32 - 1));
 	return {
 		name: text(input.name, MAX.projectName, 'name', true),
 		url,
@@ -162,18 +157,8 @@ function parseProject(value: unknown): ProjectEdit {
 		snippet: text(input.snippet ?? '', MAX.snippet, 'snippet'),
 		tasks: texts('tasks'),
 		details: texts('details'),
-		skillIds: [...new Set(skillIds)]
+		skillIds: skillIdList(input.skillIds, 'skillIds')
 	};
-}
-
-/** Throws unless every id exists in `table` */
-async function checkIds(tx: Transaction, table: 'experience' | 'skill', ids: number[], what: string) {
-	if (ids.length === 0) return;
-	const [{ count }] = await tx.query<{ count: number }>(
-		`SELECT COUNT(*) AS count FROM ${table} WHERE id IN (${ids.map(() => '?').join(', ')})`,
-		ids
-	);
-	if (Number(count) !== ids.length) throw new EditError(`${what}: unknown id`);
 }
 
 async function writeProject(project: ProjectEdit, id: number | null): Promise<number> {

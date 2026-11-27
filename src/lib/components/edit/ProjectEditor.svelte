@@ -14,6 +14,7 @@
 	import { FIELD, HINT, LABEL, TEXTAREA } from './field.js';
 	import ListEditor from './ListEditor.svelte';
 	import LocaleField from './LocaleField.svelte';
+	import SkillPicker from './SkillPicker.svelte';
 
 	/** Dialog of one project (projectId), or of a new one (null) */
 	interface Props {
@@ -40,14 +41,6 @@
 		archived: m.project_status_archived()
 	};
 
-	// Skills by category, in the catalog order
-	const skillGroups = $derived.by(() => {
-		const groups = new Map<string, { id: number; name: string }[]>();
-		for (const skill of data?.options.skills ?? []) {
-			groups.set(skill.category, [...(groups.get(skill.category) ?? []), skill]);
-		}
-		return [...groups];
-	});
 
 	const emptyText = (): Localized => Object.fromEntries(locales.map((locale) => [locale, '']));
 
@@ -197,24 +190,7 @@
 			</ListEditor>
 		</div>
 
-		<fieldset class="m-0 flex flex-col gap-3 border-0 p-0">
-			<legend class="pb-2 {LABEL}">{m.edit_project_skills()}</legend>
-			{#each skillGroups as [category, skills] (category)}
-				<div class="flex flex-col gap-2">
-					<span class="font-mono text-xs text-fg-subtle uppercase">{category}</span>
-					<div class="flex flex-wrap gap-2">
-						{#each skills as skill (skill.id)}
-							<label
-								class="cursor-pointer border border-chip-border px-2.5 py-1.5 font-mono text-xs has-checked:border-inverse has-checked:bg-inverse has-checked:text-inverse-fg has-focus-visible:outline-2 has-focus-visible:outline-offset-2 has-focus-visible:outline-accent"
-							>
-								<input type="checkbox" value={skill.id} bind:group={project.skillIds} class="sr-only" />
-								{skill.name}
-							</label>
-						{/each}
-					</div>
-				</div>
-			{/each}
-		</fieldset>
+		<SkillPicker legend={m.edit_project_skills()} skills={data.options.skills} bind:selected={project.skillIds} />
 
 		<fieldset class="m-0 flex flex-col gap-4 border-0 border-t border-border p-0 pt-5">
 			<legend class="float-left pb-1 {LABEL}">{m.edit_project_details_legend()}</legend>

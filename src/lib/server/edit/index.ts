@@ -4,17 +4,19 @@
  */
 
 import type { EditSection, EditSections } from '#lib/content/edit.js';
+import { experienceSections } from './experiences.js';
 import { profileSections } from './profile.js';
 import { projectSections } from './projects.js';
-import type { SectionHandler } from './shared.js';
+import { EditError, type SectionHandler } from './shared.js';
 import { skillSections } from './skills.js';
 
-export { EditError } from './shared.js';
+export { EditError };
 
 const sections: { [S in EditSection]: SectionHandler<EditSections[S]> } = {
 	...profileSections,
 	...projectSections,
-	...skillSections
+	...skillSections,
+	...experienceSections
 };
 
 /** Current content of a section, every locale as stored. `id`: project id (project section). */
@@ -34,4 +36,11 @@ export function writeSection<S extends EditSection>(
 	id: number | null = null
 ): Promise<number | null> {
 	return sections[section].write(data, id);
+}
+
+/** Deletes one row of a section editing single items (an experience). */
+export async function removeFromSection(section: EditSection, id: number): Promise<void> {
+	const handler: SectionHandler<unknown> = sections[section];
+	if (!handler.remove) throw new EditError(`${section}: cannot delete`, 405);
+	await handler.remove(id);
 }

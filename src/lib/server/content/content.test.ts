@@ -1,7 +1,7 @@
 // Home page and CV page data built from the test database (db/test/fixtures.sql).
 import { afterAll, describe, expect, it } from 'vitest';
 import { resetPool } from '#lib/server/db/index.js';
-import { getCV, getHomeContent, getPersonalProjects, getSiteContact } from './index.js';
+import { getCV, getHiddenJourney, getHomeContent, getPersonalProjects, getSiteContact } from './index.js';
 import { ageFromIso } from './portfolio.js';
 
 afterAll(async () => {
@@ -68,14 +68,28 @@ describe('getHomeContent', () => {
 		const fr = await getHomeContent('fr');
 		expect(fr.jobs).toEqual([
 			{
+				experienceId: 1,
+				onSite: true,
+				start: '2023-01-01',
 				date: "Janv. 2023 – aujourd'hui",
 				role: 'Développeuse web',
 				org: 'Acme SA',
 				organizationId: 1,
 				logo: '/media/fedcba9876543210fedcba9876543210.svg'
 			},
-			{ date: '2019 – 2022', role: 'Diplôme test', org: 'École Test', organizationId: 2, logo: null }
+			{
+				experienceId: 3,
+				onSite: true,
+				start: '2019-09-01',
+				date: '2019 – 2022',
+				role: 'Diplôme test',
+				org: 'École Test',
+				organizationId: 2,
+				logo: null
+			}
 		]);
+		// Hidden experiences, for the signed-in owner only
+		expect((await getHiddenJourney('fr')).map((job) => [job.experienceId, job.onSite])).toEqual([[2, false]]);
 		const en = await getHomeContent('en');
 		expect(en.jobs[0].date).toBe('Jan 2023 – present');
 	});

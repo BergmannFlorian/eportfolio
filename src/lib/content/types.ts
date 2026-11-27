@@ -37,6 +37,12 @@ export interface HomeSkillGroup {
 }
 
 export interface HomeJob {
+	/** Database id, used by the editor when signed in */
+	experienceId: number;
+	/** false only in the hidden experiences listed for the signed-in owner */
+	onSite: boolean;
+	/** Start date (YYYY-MM-DD), to merge visible and hidden experiences */
+	start: string;
 	date: string;
 	role: string;
 	org: string;

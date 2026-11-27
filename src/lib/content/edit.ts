@@ -113,6 +113,36 @@ export interface SkillCategoryEdit {
 	skills: SkillEdit[];
 }
 
+export const EXPERIENCE_KINDS = ['job', 'education', 'other'] as const;
+
+/** Organization choice of an experience: no organization, or a new one named `newOrganization` */
+export const NO_ORGANIZATION = 0;
+export const NEW_ORGANIZATION = -1;
+
+/** One experience or education, edited from its Journey row (?id=, none for a new one) */
+export interface ExperienceEdit {
+	kind: (typeof EXPERIENCE_KINDS)[number];
+	/** Existing organization id, NO_ORGANIZATION or NEW_ORGANIZATION */
+	organizationId: number;
+	newOrganization: string;
+	/** YYYY-MM-DD */
+	start: string;
+	/** YYYY-MM-DD, '' while ongoing */
+	end: string;
+	/** Shown in the home page Journey section (always on the CV) */
+	onSite: boolean;
+	title: Localized;
+	/** Education only */
+	degree: Localized;
+	tasks: Localized[];
+	skillIds: number[];
+}
+
+export interface ExperienceOptions {
+	organizations: { id: number; name: string; logo: { file: string; url: string } | null }[];
+	skills: ProjectOptions['skills'];
+}
+
 export interface EditSections {
 	hero: HeroEdit;
 	about: AboutEdit;
@@ -123,6 +153,8 @@ export interface EditSections {
 	project: { project: ProjectEdit; options: ProjectOptions; image: ProjectImage | null };
 	projects: { items: ProjectOrderItem[] };
 	skills: { categories: SkillCategoryEdit[] };
+	/** `projects`: names of the projects made during it (read only, edited on their cards) */
+	experience: { experience: ExperienceEdit; options: ExperienceOptions; projects: string[] };
 }
 
 export type EditSection = keyof EditSections;
@@ -135,7 +167,8 @@ export const EDIT_SECTIONS: readonly EditSection[] = [
 	'hobbies',
 	'project',
 	'projects',
-	'skills'
+	'skills',
+	'experience'
 ];
 
 /** Maximum lengths, mirrored by the database columns */
@@ -164,7 +197,10 @@ export const EDIT_LIMITS = {
 	/** Technologies of a project, skills of a category */
 	skills: 100,
 	skillName: 100,
-	categoryName: 100
+	categoryName: 100,
+	experienceTitle: 255,
+	organizationName: 255,
+	experienceTask: 2000
 } as const;
 
 export const LANGUAGE_CODE = /^[a-z]{2,3}$/;

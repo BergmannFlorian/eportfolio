@@ -23,6 +23,6 @@
 <StackBand stack={home.stack} />
 <Works works={home.works} personalWorks={home.personalWorks} />
 <Skills skills={home.skills} />
-<Journey jobs={home.jobs} />
+<Journey jobs={home.jobs} hidden={data.hiddenJourney} />
 <About about={home.about} facts={home.facts} languages={home.languages} hobbies={home.hobbies} />
 <Contact email={home.email} />

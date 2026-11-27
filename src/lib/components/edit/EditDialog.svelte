@@ -35,6 +35,8 @@
 		afterSave?: (id: number | null) => Promise<void>;
 		/** Message when afterSave fails (the section itself is saved) */
 		afterSaveError?: string;
+		/** Delete button of an existing item: its label, the confirmation and the 409 message */
+		remove?: { label: string; confirm: string; conflict: string };
 		class?: string;
 		children: Snippet;
 	}
@@ -54,6 +56,7 @@
 		isDirty,
 		afterSave,
 		afterSaveError,
+		remove,
 		class: className = '',
 		children
 	}: Props = $props();
@@ -98,6 +101,26 @@
 		const dirty = data !== null && (JSON.stringify(data) !== snapshot || isDirty?.() === true);
 		if (dirty && !confirm(m.edit_discard())) return;
 		dialog.close();
+	}
+
+	async function deleteItem() {
+		if (!remove || rowId === null || busy || !confirm(remove.confirm)) return;
+		busy = true;
+		error = null;
+		try {
+			const response = await fetch(endpoint, { method: 'DELETE' });
+			if (response.status === 409) {
+				error = remove.conflict;
+				return;
+			}
+			if (!response.ok) throw new Error(String(response.status));
+			dialog.close();
+			await invalidateAll();
+		} catch {
+			error = m.edit_error_save();
+		} finally {
+			busy = false;
+		}
 	}
 
 	async function submit(event: SubmitEvent) {
@@ -186,7 +209,16 @@
 			<p role="alert" class="mx-7 mb-4 border-l-3 border-accent bg-bg px-3.5 py-3 text-[15px]">{error}</p>
 		{/if}
 
-		<div class="flex flex-wrap justify-end gap-3 border-t border-border px-7 pt-5 pb-6">
+		<div class="flex flex-wrap items-center justify-end gap-3 border-t border-border px-7 pt-5 pb-6">
+			{#if remove && rowId !== null && data}
+				<button
+					type="button"
+					disabled={busy}
+					onclick={deleteItem}
+					class="mr-auto min-h-11 cursor-pointer text-sm text-fg-muted underline underline-offset-4 hover:text-accent disabled:opacity-45"
+					>{remove.label}</button
+				>
+			{/if}
 			<button type="button" onclick={cancel} class="btn-outline min-h-11 cursor-pointer px-5 text-[15px]"
 				>{m.edit_cancel()}</button
 			>

@@ -198,7 +198,7 @@ CREATE TABLE IF NOT EXISTS experience (
 CREATE TABLE IF NOT EXISTS experience_i18n (
 	experience_id INT UNSIGNED NOT NULL,
 	locale        VARCHAR(5)   NOT NULL,
-	title         VARCHAR(255) NOT NULL,            -- 'Développeur web', 'Diplôme ES'
+	title         VARCHAR(255) NULL,                -- 'Développeur web', 'Diplôme ES' (NULL: falls back to fr)
 	degree        VARCHAR(255) NULL,                -- education only
 	PRIMARY KEY (experience_id, locale),
 	CONSTRAINT fk_experience_i18n_experience FOREIGN KEY (experience_id) REFERENCES experience (id) ON DELETE CASCADE,
