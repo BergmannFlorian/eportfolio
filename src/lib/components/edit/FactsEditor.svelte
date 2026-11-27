@@ -8,7 +8,12 @@
 	import ListEditor from './ListEditor.svelte';
 	import LocaleField from './LocaleField.svelte';
 
-	let { class: className = '' }: { class?: string } = $props();
+	/** context / triggerLabel: when opened from another page (the CV toolbar) */
+	let {
+		class: className = '',
+		context,
+		triggerLabel
+	}: { class?: string; context?: string; triggerLabel?: string } = $props();
 	let data = $state<{ items: FactEdit[] } | null>(null);
 	const uid = $props.id();
 
@@ -22,6 +27,8 @@
 	section="facts"
 	title={m.about_facts()}
 	hint="{m.edit_facts_hint()} {m.edit_shared_hint()}"
+	{context}
+	{triggerLabel}
 	bind:data
 	class={className}
 >

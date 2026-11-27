@@ -1,3 +1,5 @@
+import { cefrPercent, levelText } from '#lib/content/cefr.js';
+import { m } from '#lib/paraglide/messages.js';
 import { query } from '#lib/server/db/index.js';
 import { baseLocale, type Locale } from '#lib/paraglide/runtime.js';
 
@@ -282,7 +284,13 @@ async function fetchPortfolio(locale: Locale): Promise<Portfolio> {
 			label: f.label,
 			value: f.value
 		})),
-		languages,
+		// The bar and the CEFR code of the level follow the CEFR level; the stored percent
+		// only serves levels outside the scale
+		languages: languages.map((language) => ({
+			...language,
+			level: levelText(language.cefr, language.level ?? '', m.language_native({}, { locale })),
+			percent: cefrPercent(language.cefr, Number(language.percent))
+		})),
 		hobbies: hobbies.map((h) => ({ name: h.name, reason: h.reason ?? '' })),
 		certificates: certificates.map((c) => ({
 			title: c.title,

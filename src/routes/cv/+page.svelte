@@ -55,6 +55,28 @@
 	const addPage = (pages: number[]) => (startIndex: number) => {
 		if (!pages.includes(startIndex)) pages.push(startIndex);
 	};
+
+	// Editing toolbar of the signed-in owner; editor code only loads then.
+	// Experiences and projects are edited on the home page.
+	const editors = $derived(
+		data.signedIn
+			? Promise.all([
+					import('#lib/components/edit/CvInfoEditor.svelte'),
+					import('#lib/components/edit/CertificatesEditor.svelte'),
+					import('#lib/components/edit/SocialsEditor.svelte'),
+					import('#lib/components/edit/FactsEditor.svelte'),
+					import('#lib/components/edit/LanguagesEditor.svelte'),
+					import('#lib/components/edit/HobbiesEditor.svelte')
+				]).then(([info, certificates, socials, facts, languages, hobbies]) => ({
+					CvInfoEditor: info.default,
+					CertificatesEditor: certificates.default,
+					SocialsEditor: socials.default,
+					FactsEditor: facts.default,
+					LanguagesEditor: languages.default,
+					HobbiesEditor: hobbies.default
+				}))
+			: null
+	);
 </script>
 
 <svelte:head>
@@ -90,6 +112,19 @@
 				>{m.cv_print()}</button
 			>
 		</div>
+		{#await editors then loaded}
+			{#if loaded}
+				<div class="flex basis-full flex-wrap items-center gap-2 border-t border-white/20 pt-3">
+					<span class="mr-1 text-neutral-300">{m.edit_cv_toolbar()}</span>
+					<loaded.CvInfoEditor />
+					<loaded.CertificatesEditor />
+					<loaded.SocialsEditor />
+					<loaded.FactsEditor context={m.edit_context_cv()} triggerLabel={m.about_facts()} />
+					<loaded.LanguagesEditor context={m.edit_context_cv()} triggerLabel={m.about_languages()} />
+					<loaded.HobbiesEditor context={m.edit_context_cv()} triggerLabel={m.about_hobbies()} />
+				</div>
+			{/if}
+		{/await}
 	</div>
 
 	<div class="pdf pt-1 font-cv text-[14px] font-normal">

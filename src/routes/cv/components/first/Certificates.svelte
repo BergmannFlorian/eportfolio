@@ -8,7 +8,7 @@
 
 <table class="w-full text-[11px]">
 	<tbody class="w-full">
-		{#each certificates as certificate (certificate.title)}
+		{#each certificates as certificate, i (i)}
 			<tr class="w-full pb-3">
 				<td class="w-[30%] text-cv-dark">
 					<H3>{dateFormat(certificate.date).toUpperCase()}</H3>

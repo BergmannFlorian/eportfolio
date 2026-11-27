@@ -17,10 +17,12 @@
 		/** Text of the "Add" button */
 		addLabel?: string;
 		compact?: boolean;
+		/** Move up/down buttons (off for lists sorted by date) */
+		reorder?: boolean;
 		item: Snippet<[number]>;
 	}
 
-	let { items = $bindable(), name, create, addLabel, compact = false, item }: Props = $props();
+	let { items = $bindable(), name, create, addLabel, compact = false, reorder = true, item }: Props = $props();
 	let list: HTMLOListElement;
 
 	function move(from: number, to: number) {
@@ -39,12 +41,14 @@
 
 {#snippet controls(i: number, label: string)}
 	<span class="flex shrink-0 gap-1">
-		<button type="button" class={icon} disabled={i === 0} onclick={() => move(i, i - 1)} aria-label={m.edit_move_up({ item: label })}>
-			<svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M5 12l7-7 7 7" /></svg>
-		</button>
-		<button type="button" class={icon} disabled={i === items.length - 1} onclick={() => move(i, i + 1)} aria-label={m.edit_move_down({ item: label })}>
-			<svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M19 12l-7 7-7-7" /></svg>
-		</button>
+		{#if reorder}
+			<button type="button" class={icon} disabled={i === 0} onclick={() => move(i, i - 1)} aria-label={m.edit_move_up({ item: label })}>
+				<svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M5 12l7-7 7 7" /></svg>
+			</button>
+			<button type="button" class={icon} disabled={i === items.length - 1} onclick={() => move(i, i + 1)} aria-label={m.edit_move_down({ item: label })}>
+				<svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M19 12l-7 7-7-7" /></svg>
+			</button>
+		{/if}
 		<button type="button" class={icon} onclick={() => items.splice(i, 1)} aria-label={m.edit_remove({ item: label })}>
 			<svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3" /></svg>
 		</button>
@@ -77,7 +81,7 @@
 					</div>
 					{@render item(i)}
 				</li>
-			{/if}
+		{/if}
 		{/each}
 	</ol>
 	{#if create}

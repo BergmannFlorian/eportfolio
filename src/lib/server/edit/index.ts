@@ -4,6 +4,7 @@
  */
 
 import type { EditSection, EditSections } from '#lib/content/edit.js';
+import { cvSections } from './cv.js';
 import { experienceSections } from './experiences.js';
 import { profileSections } from './profile.js';
 import { projectSections } from './projects.js';
@@ -16,7 +17,8 @@ const sections: { [S in EditSection]: SectionHandler<EditSections[S]> } = {
 	...profileSections,
 	...projectSections,
 	...skillSections,
-	...experienceSections
+	...experienceSections,
+	...cvSections
 };
 
 /** Current content of a section, every locale as stored. `id`: project id (project section). */

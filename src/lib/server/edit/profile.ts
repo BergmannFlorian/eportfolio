@@ -4,6 +4,7 @@
  * columns (address, birthdate, references) are never read nor written here.
  */
 
+import { cefrPercent, normalizeCefr, stripCefr, type CefrLevel } from '#lib/content/cefr.js';
 import {
 	EDIT_LIMITS as MAX,
 	LANGUAGE_CODE,
@@ -20,7 +21,6 @@ import {
 	bool,
 	byParent,
 	insertTranslations,
-	integer,
 	items,
 	localized,
 	localizedText,
@@ -30,6 +30,16 @@ import {
 	type Row,
 	type SectionHandler
 } from './shared.js';
+
+const stripLevels = (level: Localized): Localized =>
+	Object.fromEntries(Object.entries(level).map(([locale, label]) => [locale, stripCefr(label)]));
+
+/** A CEFR level of the scale ('native', 'C2'…'A1') */
+function cefr(value: unknown, what: string): CefrLevel {
+	const level = normalizeCefr(text(value, 10, what, true));
+	if (!level) throw new EditError(`${what}: CEFR level expected`);
+	return level;
+}
 
 /** Updates some person_i18n columns, leaving the others (bio, CV title…) untouched */
 async function updatePersonTexts(tx: Transaction, pid: number, columns: Record<string, Localized>): Promise<void> {
@@ -144,8 +154,8 @@ const languages: SectionHandler<EditSections['languages']> = {
 	async read() {
 		const pid = await personId();
 		const [rows, levels, names] = await Promise.all([
-			writeQuery<{ id: number; code: string; cefr: string; percent: number }>(
-				`SELECT id, language_code AS code, cefr, percent FROM person_language
+			writeQuery<{ id: number; code: string; cefr: string }>(
+				`SELECT id, language_code AS code, cefr FROM person_language
 				WHERE person_id = ? ORDER BY position, id`,
 				[pid]
 			),
@@ -162,9 +172,10 @@ const languages: SectionHandler<EditSections['languages']> = {
 			items: rows.map((language) => ({
 				code: language.code,
 				name: localized(namesByCode.get(language.code) ?? [], 'name'),
-				cefr: language.cefr,
-				percent: Number(language.percent),
-				level: localized(levelsById.get(language.id) ?? [], 'level_label')
+				// A level outside the scale (older data) must be picked again
+				cefr: normalizeCefr(language.cefr) ?? '',
+				// The CEFR code is added on display: older labels lose their own copy of it
+				level: stripLevels(localized(levelsById.get(language.id) ?? [], 'level_label'))
 			}))
 		};
 	},
@@ -175,9 +186,8 @@ const languages: SectionHandler<EditSections['languages']> = {
 			return {
 				code,
 				name: localizedText(item.name, MAX.languageName, `items[${i}].name`),
-				cefr: text(item.cefr, MAX.cefr, `items[${i}].cefr`, true),
-				percent: integer(item.percent, `items[${i}].percent`, 0, 100),
-				level: localizedText(item.level, MAX.level, `items[${i}].level`)
+				cefr: cefr(item.cefr, `items[${i}].cefr`),
+				level: stripLevels(localizedText(item.level, MAX.level, `items[${i}].level`, false))
 			};
 		});
 		if (new Set(parsed.map((language) => language.code)).size !== parsed.length) {
@@ -200,7 +210,8 @@ const languages: SectionHandler<EditSections['languages']> = {
 				}
 				const id = await tx.insert(
 					'INSERT INTO person_language (person_id, language_code, cefr, percent, position) VALUES (?, ?, ?, ?, ?)',
-					[pid, language.code, language.cefr, language.percent, i + 1]
+					// percent: kept in sync for older readers of the column
+					[pid, language.code, language.cefr, cefrPercent(language.cefr), i + 1]
 				);
 				await insertTranslations(tx, 'person_language_i18n', 'person_language_id', id, {
 					level_label: language.level

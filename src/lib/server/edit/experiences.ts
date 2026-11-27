@@ -24,6 +24,7 @@ import {
 	checkIds,
 	insertTranslations,
 	integer,
+	isoDate,
 	list,
 	localized,
 	localizedText,
@@ -35,18 +36,6 @@ import {
 	type Row,
 	type SectionHandler
 } from './shared.js';
-
-const ISO_DATE = /^\d{4}-\d{2}-\d{2}$/;
-
-/** A real calendar date as YYYY-MM-DD */
-function date(value: unknown, what: string): string {
-	const raw = text(value, 10, what, true);
-	const parsed = new Date(`${raw}T00:00:00Z`);
-	if (!ISO_DATE.test(raw) || Number.isNaN(parsed.getTime()) || parsed.toISOString().slice(0, 10) !== raw) {
-		throw new EditError(`${what}: YYYY-MM-DD expected`);
-	}
-	return raw;
-}
 
 async function options(): Promise<ExperienceOptions> {
 	const [organizations, skills] = await Promise.all([
@@ -129,8 +118,8 @@ function parseExperience(value: unknown): ExperienceEdit {
 		'newOrganization',
 		organizationId === NEW_ORGANIZATION
 	);
-	const start = date(input.start, 'start');
-	const end = input.end === '' || input.end === null || input.end === undefined ? '' : date(input.end, 'end');
+	const start = isoDate(input.start, 'start');
+	const end = input.end === '' || input.end === null || input.end === undefined ? '' : isoDate(input.end, 'end');
 	if (end && end < start) throw new EditError('end: before start');
 	return {
 		kind: input.kind as ExperienceEdit['kind'],

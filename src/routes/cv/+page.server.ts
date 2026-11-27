@@ -9,13 +9,15 @@ async function qrSvg(text: string): Promise<string> {
 	return svg.replace(/<path fill="#ffffff"[^>]*\/>/, '').replace('stroke="#000000"', 'stroke="currentColor"');
 }
 
-export const load: PageServerLoad = async ({ url }) => {
+export const load: PageServerLoad = async ({ url, locals }) => {
 	const { cv, levels } = await getCV(getLocale());
 	// Home page in the CV's language, e.g. https://bergmann-florian.ch/en
 	const siteUrl = new URL(localizeHref('/'), url.origin).href.replace(/\/$/, '');
 	return {
 		cv,
 		levels,
+		// Only a flag reaches the browser (editing toolbar)
+		signedIn: locals.admin?.stage === 'full',
 		site: { url: siteUrl, label: siteUrl.replace(/^https?:\/\//, ''), qr: await qrSvg(siteUrl) }
 	};
 };

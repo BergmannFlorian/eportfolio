@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { CEFR_LEVELS, cefrPercent } from '#lib/content/cefr.js';
 	import { EDIT_LIMITS, type LanguageEdit } from '#lib/content/edit.js';
 	import { m } from '#lib/paraglide/messages.js';
 	import { baseLocale, locales } from '#lib/paraglide/runtime.js';
@@ -7,12 +8,17 @@
 	import ListEditor from './ListEditor.svelte';
 	import LocaleField from './LocaleField.svelte';
 
-	let { class: className = '' }: { class?: string } = $props();
+	/** context / triggerLabel: when opened from another page (the CV toolbar) */
+	let {
+		class: className = '',
+		context,
+		triggerLabel
+	}: { class?: string; context?: string; triggerLabel?: string } = $props();
 	let data = $state<{ items: LanguageEdit[] } | null>(null);
 	const uid = $props.id();
 
 	const empty = () => Object.fromEntries(locales.map((locale) => [locale, '']));
-	const create = (): LanguageEdit => ({ code: '', name: empty(), cefr: '', percent: 50, level: empty() });
+	const create = (): LanguageEdit => ({ code: '', name: empty(), cefr: '', level: empty() });
 
 	function validate({ items }: { items: LanguageEdit[] }) {
 		const codes = items.map((language) => language.code.trim().toLowerCase());
@@ -20,7 +26,16 @@
 	}
 </script>
 
-<EditDialog section="languages" title={m.about_languages()} hint={m.edit_shared_hint()} bind:data {validate} class={className}>
+<EditDialog
+	section="languages"
+	title={m.about_languages()}
+	hint={m.edit_shared_hint()}
+	{context}
+	{triggerLabel}
+	bind:data
+	{validate}
+	class={className}
+>
 	{#if data}
 		<ListEditor bind:items={data.items} name={(language) => language.name[baseLocale]} {create}>
 			{#snippet item(i)}
@@ -46,31 +61,24 @@
 						<label for="{uid}-{i}-cefr" class={LABEL}>
 							{m.edit_language_cefr()} <span class={HINT}>{m.edit_language_cefr_hint()}</span>
 						</label>
-						<input
-							id="{uid}-{i}-cefr"
-							type="text"
-							required
-							maxlength={EDIT_LIMITS.cefr}
-							bind:value={language.cefr}
-							class="{FIELD} font-mono"
-						/>
-					</div>
-					<div class="flex flex-col gap-1.5">
-						<label for="{uid}-{i}-percent" class={LABEL}>{m.edit_language_percent()}</label>
-						<input
-							id="{uid}-{i}-percent"
-							type="number"
-							required
-							min="0"
-							max="100"
-							step="1"
-							bind:value={language.percent}
-							class={FIELD}
-						/>
+						<select id="{uid}-{i}-cefr" required bind:value={language.cefr} class="{FIELD} cursor-pointer">
+							<option value="" disabled>—</option>
+							{#each CEFR_LEVELS as level (level)}
+								<option value={level}>
+									{level === 'native' ? m.edit_language_native() : level} · {cefrPercent(level)} %
+								</option>
+							{/each}
+						</select>
 					</div>
 				</div>
 				<LocaleField label={m.edit_language_name()} bind:value={language.name} maxlength={EDIT_LIMITS.languageName} />
-				<LocaleField label={m.edit_language_level()} bind:value={language.level} maxlength={EDIT_LIMITS.level} />
+				<LocaleField
+					label={m.edit_language_level()}
+					hint={m.edit_language_level_hint()}
+					bind:value={language.level}
+					maxlength={EDIT_LIMITS.level}
+					required={false}
+				/>
 			{/snippet}
 		</ListEditor>
 	{/if}

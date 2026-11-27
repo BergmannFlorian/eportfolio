@@ -37,12 +37,12 @@
 			<Info icon="solar:calendar-outline">
 				<div>{m.cv_age({ age: infos.contact.age })}</div>
 			</Info>
-			{#each infos.others as other (other.title)}
+			{#each infos.others as other, i (i)}
 				<Info icon={other.icon}>
 					<div>{other.title}</div>
 				</Info>
 			{/each}
-			{#each infos.socials as social (social.link)}
+			{#each infos.socials as social, i (i)}
 				<Info icon="solar:link-broken">
 					<a href="https://{social.link}">{social.link}</a>
 				</Info>
@@ -54,7 +54,7 @@
 		<Section title={m.cv_section_languages()} center={true}>
 			<table>
 				<tbody>
-					{#each infos.langs as lang (lang.name)}
+					{#each infos.langs as lang, i (i)}
 						<tr>
 							<td>{lang.name}</td>
 							<td class="px-1">:</td>
@@ -65,7 +65,7 @@
 			</table>
 		</Section>
 		<Section title={m.cv_section_hobbies()} center={true}>
-			{#each infos.hobbys as hobby (hobby)}
+			{#each infos.hobbys as hobby, i (i)}
 				<div>{hobby}</div>
 			{/each}
 		</Section>

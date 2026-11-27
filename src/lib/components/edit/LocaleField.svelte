@@ -10,6 +10,8 @@
 	 */
 	interface Props {
 		label: string;
+		/** Shown after the label */
+		hint?: string;
 		value: Localized;
 		maxlength: number;
 		multiline?: boolean;
@@ -18,12 +20,14 @@
 		required?: boolean;
 	}
 
-	let { label, value = $bindable(), maxlength, multiline = false, rows = 3, required = true }: Props = $props();
+	let { label, hint, value = $bindable(), maxlength, multiline = false, rows = 3, required = true }: Props = $props();
 	const uid = $props.id();
 </script>
 
 <fieldset class="m-0 flex min-w-0 flex-col gap-2 border-0 p-0">
-	<legend class="pb-2 {LABEL}">{label}</legend>
+	<legend class="pb-2 {LABEL}">
+		{label}{#if hint} <span class={HINT}>{hint}</span>{/if}
+	</legend>
 	<div class="grid gap-3 sm:grid-cols-2">
 		{#each locales as locale (locale)}
 			{@const isBase = locale === baseLocale}

@@ -118,6 +118,30 @@ export function items(body: unknown, max: number = EDIT_LIMITS.items): Record<st
 	return list(record(body, 'body').items, 'items', max).map((item, i) => record(item, `items[${i}]`));
 }
 
+/** A real calendar date as YYYY-MM-DD */
+export function isoDate(value: unknown, what: string): string {
+	const raw = text(value, 10, what, true);
+	const parsed = new Date(`${raw}T00:00:00Z`);
+	if (!/^\d{4}-\d{2}-\d{2}$/.test(raw) || Number.isNaN(parsed.getTime()) || parsed.toISOString().slice(0, 10) !== raw) {
+		throw new EditError(`${what}: YYYY-MM-DD expected`);
+	}
+	return raw;
+}
+
+/** An http(s) URL, or '' when not required */
+export function httpUrl(value: unknown, max: number, what: string, required = false): string {
+	const url = text(value ?? '', max, what, required);
+	if (!url) return url;
+	let protocol = '';
+	try {
+		protocol = new URL(url).protocol;
+	} catch {
+		// handled below
+	}
+	if (protocol !== 'https:' && protocol !== 'http:') throw new EditError(`${what}: invalid`);
+	return url;
+}
+
 export function bool(value: unknown, what: string): boolean {
 	if (typeof value !== 'boolean') throw new EditError(`${what}: boolean expected`);
 	return value;

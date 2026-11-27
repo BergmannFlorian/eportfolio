@@ -24,6 +24,7 @@ import {
 	bool,
 	byParent,
 	checkIds,
+	httpUrl,
 	insertTranslations,
 	integer,
 	items,
@@ -125,16 +126,7 @@ async function readProject(id: number): Promise<ProjectEdit> {
 
 function parseProject(value: unknown): ProjectEdit {
 	const input = record(value, 'project');
-	const url = text(input.url ?? '', MAX.projectUrl, 'url');
-	if (url) {
-		let protocol = '';
-		try {
-			protocol = new URL(url).protocol;
-		} catch {
-			// handled below
-		}
-		if (protocol !== 'https:' && protocol !== 'http:') throw new EditError('url: invalid');
-	}
+	const url = httpUrl(input.url, MAX.projectUrl, 'url');
 	const kind = input.kind ?? '';
 	if (kind !== '' && !PROJECT_KINDS.includes(kind as (typeof PROJECT_KINDS)[number])) throw new EditError('kind: invalid');
 	const status = input.status ?? '';

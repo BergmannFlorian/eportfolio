@@ -41,19 +41,19 @@ describe('readSection', () => {
 			code: 'en',
 			name: { fr: 'Anglais', en: 'English' },
 			cefr: 'B2',
-			percent: 70,
-			level: { fr: 'Courant (B2)', en: 'Fluent (B2)' }
+			// The CEFR code is added on display, not stored in the label
+			level: { fr: 'Courant', en: 'Fluent' }
 		});
 	});
 });
 
 describe('parseSection', () => {
 	const hero = { email: 'a@b.ch', headline: { fr: 'Titre', en: '' }, bio: { fr: ' Bio ', en: 'Bio' } };
-	const language = { code: 'DE', name: { fr: 'Allemand', en: '' }, cefr: 'A2', percent: 30, level: { fr: 'Scolaire', en: '' } };
+	const language = { code: 'DE', name: { fr: 'Allemand', en: '' }, cefr: 'a2', level: { fr: 'Scolaire', en: '' } };
 
 	it('trims texts and normalizes codes', () => {
 		expect(parseSection('hero', hero).bio).toEqual({ fr: 'Bio', en: 'Bio' });
-		expect(parseSection('languages', { items: [language] }).items[0].code).toBe('de');
+		expect(parseSection('languages', { items: [language] }).items[0]).toMatchObject({ code: 'de', cefr: 'A2' });
 	});
 
 	it('refuses missing French, invalid values and unknown shapes', () => {
@@ -65,7 +65,8 @@ describe('parseSection', () => {
 			['facts', { items: [{ icon: '<b>', onSite: true, onCv: true, label: { fr: 'A' }, value: { fr: 'B' } }] }],
 			['facts', { items: 'nope' }],
 			['languages', { items: [language, { ...language, code: 'de' }] }],
-			['languages', { items: [{ ...language, percent: 101 }] }],
+			['languages', { items: [{ ...language, cefr: 'D1' }] }],
+			['languages', { items: [{ ...language, cefr: '' }] }],
 			['languages', { items: [{ ...language, code: 'deu1' }] }],
 			['hobbies', { items: Array.from({ length: 31 }, () => ({ name: { fr: 'x' }, reason: {} })) }],
 			['hobbies', null]
@@ -123,12 +124,13 @@ describe('writeSection', () => {
 				await writeSection('languages', {
 					items: [
 						...items,
-						{ code: 'de', name: { fr: 'Allemand', en: 'German' }, cefr: 'A2', percent: 30, level: { fr: 'Scolaire', en: '' } }
+						{ code: 'de', name: { fr: 'Allemand', en: 'German' }, cefr: 'A2', level: { fr: 'Scolaire', en: '' } }
 					]
 				});
 				clearContentCache();
 				const home = await getHomeContent('en');
-				expect(home.languages.at(-1)).toEqual({ name: 'German', level: 'Scolaire', percent: 30 });
+				// The bar follows the CEFR level
+				expect(home.languages.at(-1)).toEqual({ name: 'German', level: 'Scolaire (A2)', percent: 30 });
 				// Age first, then the facts shown on the site, in the new order
 				expect(home.facts.slice(1).map((fact) => fact.label)).toEqual(['Voiture', 'Nationality', 'Location']);
 			});
@@ -137,9 +139,23 @@ describe('writeSection', () => {
 
 	it('writes nothing when a statement fails', async () => {
 		const before = await readSection('languages');
-		const broken = { ...before.items[0], code: 'xx', percent: 200 };
-		// Bypasses parseSection: the CHECK constraint fails after the first rows were written
+		const broken = { ...before.items[0], code: 'xx', level: { fr: 'x'.repeat(200), en: '' } };
+		// Bypasses parseSection: the too long level fails after the first rows were written
 		await expect(writeSection('languages', { items: [before.items[1], broken] })).rejects.toThrow();
 		expect(await readSection('languages')).toEqual(before);
+	});
+});
+
+describe('language levels', () => {
+	it('shows the CEFR code after the optional label, whatever the label says', async () => {
+		const { levelText } = await import('#lib/content/cefr.js');
+		expect(levelText('B1', 'Technique (B1)', 'Langue maternelle')).toBe('Technique (B1)');
+		// An outdated code in the label is replaced by the real level
+		expect(levelText('B2', 'Technique (B1)', 'Langue maternelle')).toBe('Technique (B2)');
+		expect(levelText('C1', '', 'Langue maternelle')).toBe('C1');
+		expect(levelText('native', '', 'Langue maternelle')).toBe('Langue maternelle');
+		expect(levelText('native', 'Maternelle', 'Langue maternelle')).toBe('Maternelle');
+		// Outside the scale (older data): the label as is
+		expect(levelText('fluent', 'Courant', 'Langue maternelle')).toBe('Courant');
 	});
 });

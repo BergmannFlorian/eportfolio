@@ -4,6 +4,8 @@
  * the site then shows the French text. French is required where the site needs a text.
  */
 
+import type { CefrLevel } from './cefr.js';
+
 /** Text per locale ('' when unset) */
 export type Localized = Record<string, string>;
 
@@ -31,10 +33,8 @@ export interface LanguageEdit {
 	code: string;
 	/** Language name, shared by every person speaking it */
 	name: Localized;
-	/** 'native', 'C1', 'B2'… */
-	cefr: string;
-	/** Level bar on the site, 0-100 */
-	percent: number;
+	/** CEFR level; the level bar of the site follows it (src/lib/content/cefr.ts) */
+	cefr: CefrLevel | '';
 	/** Level shown on the site and the CV, e.g. 'Courant (B2)' */
 	level: Localized;
 }
@@ -143,6 +143,30 @@ export interface ExperienceOptions {
 	skills: ProjectOptions['skills'];
 }
 
+/** CV heading and contact lines (the address stays private: never edited here) */
+export interface CvInfoEdit {
+	name: string;
+	postalCode: string;
+	city: string;
+	/** CV heading, line breaks kept */
+	cvTitle: Localized;
+}
+
+/** Certificate (title kept in its original language), sorted by date on the CV */
+export interface CertificateEdit {
+	title: string;
+	issuer: string;
+	/** YYYY-MM-DD */
+	issuedOn: string;
+	url: string;
+}
+
+export interface SocialEdit {
+	/** 'linkedin' (also the site footer), 'github'… */
+	network: string;
+	url: string;
+}
+
 export interface EditSections {
 	hero: HeroEdit;
 	about: AboutEdit;
@@ -155,6 +179,9 @@ export interface EditSections {
 	skills: { categories: SkillCategoryEdit[] };
 	/** `projects`: names of the projects made during it (read only, edited on their cards) */
 	experience: { experience: ExperienceEdit; options: ExperienceOptions; projects: string[] };
+	cv: CvInfoEdit;
+	certificates: { items: CertificateEdit[] };
+	socials: { items: SocialEdit[] };
 }
 
 export type EditSection = keyof EditSections;
@@ -168,8 +195,13 @@ export const EDIT_SECTIONS: readonly EditSection[] = [
 	'project',
 	'projects',
 	'skills',
-	'experience'
+	'experience',
+	'cv',
+	'certificates',
+	'socials'
 ];
+
+export const SOCIAL_NETWORK = /^[a-z0-9-]{1,50}$/;
 
 /** Maximum lengths, mirrored by the database columns */
 export const EDIT_LIMITS = {
@@ -181,7 +213,6 @@ export const EDIT_LIMITS = {
 	factValue: 255,
 	languageCode: 5,
 	languageName: 100,
-	cefr: 10,
 	level: 100,
 	hobbyName: 100,
 	hobbyReason: 255,
@@ -200,7 +231,14 @@ export const EDIT_LIMITS = {
 	categoryName: 100,
 	experienceTitle: 255,
 	organizationName: 255,
-	experienceTask: 2000
+	experienceTask: 2000,
+	personName: 255,
+	postalCode: 10,
+	city: 255,
+	cvTitle: 255,
+	certificateTitle: 255,
+	issuer: 255,
+	url: 500
 } as const;
 
 export const LANGUAGE_CODE = /^[a-z]{2,3}$/;
