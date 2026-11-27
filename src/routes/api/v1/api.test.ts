@@ -1,7 +1,7 @@
 // API tests against the test database (db/test/fixtures.sql, recreated by db/test/setup.ts).
 import { afterAll, describe, expect, it } from 'vitest';
 import type { ApiCertificate, ApiError, ApiExperience, ApiIndex, ApiProfile, ApiProject, ApiSkills } from '#lib/api/types.js';
-import { SKILL_CATEGORIES, SKILL_LEVELS } from '#lib/cv/skills.js';
+import { SKILL_LEVELS } from '#lib/cv/skills.js';
 import { ageFromIso } from '#lib/server/content/portfolio.js';
 import { clearContentCache } from '#lib/server/content/index.js';
 import { resetPool } from '#lib/server/db/index.js';
@@ -235,7 +235,8 @@ describe('/api/v1/skills', () => {
 	it('returns every category with recency levels and the stack', async () => {
 		const { body } = await call<ApiSkills>(getSkills, '/api/v1/skills?lang=en');
 		expect(body.stack).toEqual(['TypeScript', 'SvelteKit']);
-		expect(body.categories.map((c) => c.code)).toEqual([...SKILL_CATEGORIES]);
+		// The categories shown on the CV, in order (business is not)
+		expect(body.categories.map((c) => c.code)).toEqual(['langs', 'libs', 'tools']);
 		expect(body.categories.map((c) => c.name)).toEqual(['Languages', 'Frameworks', 'Tools']);
 
 		const skills = body.categories.flatMap((c) => c.skills);
@@ -258,9 +259,10 @@ describe('/api/v1/cv', () => {
 		const { body } = await call<{
 			cv: { infos: Record<string, unknown> & { contact: Record<string, unknown> }; jobs: { start: string }[] };
 			skills: { langs: string[] };
-			levels: { langs: { name: string; level: string }[] };
+			levels: { code: string; skills: { name: string; level: string }[] }[];
 		}>(getCv, '/api/v1/cv');
-		expect(body.levels.langs.find((s) => s.name === 'TypeScript')?.level).toBe('top');
+		const langs = body.levels.find((category) => category.code === 'langs');
+		expect(langs?.skills.find((s) => s.name === 'TypeScript')?.level).toBe('top');
 		expect(body.cv.infos).not.toHaveProperty('references');
 		expect(body.cv.infos.contact).not.toHaveProperty('address');
 		expect(body.cv.infos.contact.age).toBe(ageFromIso(FIXTURE.birthdate));

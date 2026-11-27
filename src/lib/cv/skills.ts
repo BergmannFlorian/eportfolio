@@ -8,9 +8,8 @@ export type SkillLevel = 'top' | 'mid' | 'bottom';
 
 export const SKILL_LEVELS: readonly SkillLevel[] = ['top', 'mid', 'bottom'];
 
-export type SkillCategoryCode = 'langs' | 'libs' | 'tools';
-
-export const SKILL_CATEGORIES: readonly SkillCategoryCode[] = ['langs', 'libs', 'tools'];
+/** Code of a skill category ('langs', 'libs', 'tools'…), editable categories get one from their name */
+export type SkillCategoryCode = string;
 
 export interface RatedSkill {
 	name: string;
@@ -19,4 +18,12 @@ export interface RatedSkill {
 	personalOnly: boolean;
 }
 
+/** Rated skills per category code */
 export type RatedSkills = Record<SkillCategoryCode, RatedSkill[]>;
+
+/** A column of the CV skills table: a category shown on the CV, in order */
+export interface RatedCategory {
+	code: SkillCategoryCode;
+	name: string;
+	skills: RatedSkill[];
+}

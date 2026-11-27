@@ -15,13 +15,13 @@ import type {
 	ApiSkills
 } from '#lib/api/types.js';
 import type { HomeContent, HomeJob, PersonalProject, SiteContact, SiteImage } from '#lib/content/types.js';
-import { SKILL_CATEGORIES, type RatedSkills, type SkillCategoryCode } from '#lib/cv/skills.js';
+import type { RatedCategory, RatedSkill } from '#lib/cv/skills.js';
 import type { Formation, Job, Project as CvProject, PublicCV, SkillCatalog, SkillRefs } from '#lib/cv/types.js';
 import { m } from '#lib/paraglide/messages.js';
-import type { Locale } from '#lib/paraglide/runtime.js';
+import { baseLocale, type Locale } from '#lib/paraglide/runtime.js';
 import { mediaUrl } from '#lib/server/media/storage.js';
 import { loadPortfolio, type Experience, type Portfolio, type ProjectKind } from './portfolio.js';
-import { rateSkills, type RatableSkill } from './skills.js';
+import { rateSkills, type RatableSkill, type SkillUse } from './skills.js';
 
 export { clearContentCache } from './portfolio.js';
 
@@ -65,6 +65,19 @@ function categoryCode(portfolio: Portfolio, categoryId: number): string | undefi
 	return portfolio.categories.find((category) => category.id === categoryId)?.code;
 }
 
+/** Categories of the CV skills table, in order */
+function cvCategories(portfolio: Portfolio) {
+	return portfolio.categories.filter((category) => category.onCv);
+}
+
+/** Skills shown on the CV: ticked "CV", in a category shown on the CV */
+function cvSkillIds(portfolio: Portfolio): Set<number> {
+	const categories = new Set(cvCategories(portfolio).map((category) => category.id));
+	return new Set(
+		portfolio.skills.filter((skill) => skill.onCv && categories.has(skill.categoryId)).map((skill) => skill.id)
+	);
+}
+
 // ─── Skill levels ───────────────────────────────────────────────────────────
 
 /**
@@ -72,14 +85,24 @@ function categoryCode(portfolio: Portfolio, categoryId: number): string | undefi
  * Personal projects come last: an online or in-progress project counts as used
  * today, an archived one until the end of its year.
  */
-function rateAllSkills(portfolio: Portfolio, now = new Date()): RatedSkills {
+function rateAllSkills(portfolio: Portfolio, now = new Date()): RatedCategory[] {
+	const shown = cvSkillIds(portfolio);
+	const skills: RatableSkill[] = portfolio.skills
+		.filter((skill) => shown.has(skill.id))
+		.map((skill) => ({ id: skill.id, name: skill.name, category: categoryCode(portfolio, skill.categoryId) ?? '' }));
+	const categories = cvCategories(portfolio);
+	const rated = rateSkills(
+		skillUses(portfolio, now),
+		skills,
+		categories.map((category) => category.code),
+		now
+	);
+	return categories.map((category) => ({ code: category.code, name: category.name, skills: rated[category.code] }));
+}
+
+/** Uses of the skills, rated by rateSkills: experiences (jobs first), then personal projects */
+function skillUses(portfolio: Portfolio, now: Date): SkillUse[] {
 	const today = now.toISOString().slice(0, 10);
-	const skills: RatableSkill[] = portfolio.skills.flatMap((skill) => {
-		const code = categoryCode(portfolio, skill.categoryId);
-		return SKILL_CATEGORIES.includes(code as SkillCategoryCode)
-			? [{ id: skill.id, name: skill.name, category: code as SkillCategoryCode }]
-			: [];
-	});
 	const experiences = [
 		...portfolio.experiences.filter((experience) => experience.kind === 'job'),
 		...portfolio.experiences.filter((experience) => experience.kind !== 'job')
@@ -91,7 +114,24 @@ function rateAllSkills(portfolio: Portfolio, now = new Date()): RatedSkills {
 			const end = current ? today : project.year ? `${project.year}-12-31` : null;
 			return end ? [{ end, skillIds: project.skillIds, personal: true }] : [];
 		});
-	return rateSkills([...experiences, ...projects], skills, now);
+	return [...experiences, ...projects];
+}
+
+/**
+ * Level of every skill, shown on the CV or not, for the skill editor (null: never used).
+ * Same computation as the CV, read from the base locale.
+ */
+export async function getSkillLevels(now = new Date()): Promise<Map<number, Omit<RatedSkill, 'name'>>> {
+	const portfolio = await loadPortfolio(baseLocale);
+	// One pseudo-category per skill: names may repeat across categories
+	const skills = portfolio.skills.map((skill) => ({ id: skill.id, name: skill.name, category: String(skill.id) }));
+	const rated = rateSkills(skillUses(portfolio, now), skills, skills.map((skill) => skill.category), now);
+	const levels = new Map<number, Omit<RatedSkill, 'name'>>();
+	for (const skill of portfolio.skills) {
+		const [entry] = rated[String(skill.id)];
+		if (entry) levels.set(skill.id, { level: entry.level, personalOnly: entry.personalOnly });
+	}
+	return levels;
 }
 
 /** Uploaded image with its description, or null when there is none. */
@@ -111,20 +151,21 @@ function projectKindLabels(locale: Locale): Record<ProjectKind, string> {
 
 // ─── Legacy CV format (src/routes/cv components) ────────────────────────────
 
-function toLegacyCV(portfolio: Portfolio): { cv: PublicCV; skills: SkillCatalog; levels: RatedSkills } {
-	// Catalog: skill names per category, in display order; experiences reference them by index
-	const catalog: Required<SkillCatalog> = { langs: [], libs: [], tools: [], buisness: [] };
-	const refOf = new Map<number, { category: keyof SkillRefs; index: number }>();
+function toLegacyCV(portfolio: Portfolio): { cv: PublicCV; skills: SkillCatalog; levels: RatedCategory[] } {
+	// Catalog: CV skill names per CV category code, in display order; experiences reference them by index
+	const shown = cvSkillIds(portfolio);
+	const codes = cvCategories(portfolio).map((category) => category.code);
+	const catalog: SkillCatalog = Object.fromEntries(codes.map((code) => [code, []]));
+	const refOf = new Map<number, { category: string; index: number }>();
 	for (const skill of portfolio.skills) {
-		const code = categoryCode(portfolio, skill.categoryId);
-		const category = (code === 'business' ? 'buisness' : code) as keyof SkillRefs | undefined;
-		if (!category || !(category in catalog)) continue;
+		const category = categoryCode(portfolio, skill.categoryId);
+		if (!shown.has(skill.id) || !category) continue;
 		refOf.set(skill.id, { category, index: catalog[category].length });
 		catalog[category].push(skill.name);
 	}
 
 	const refs = (skillIds: number[]): SkillRefs => {
-		const result: SkillRefs = { langs: [], libs: [], tools: [], buisness: [] };
+		const result: SkillRefs = Object.fromEntries(codes.map((code) => [code, []]));
 		for (const id of skillIds) {
 			const ref = refOf.get(id);
 			if (ref) result[ref.category].push(ref.index);
@@ -192,7 +233,8 @@ function toLegacyCV(portfolio: Portfolio): { cv: PublicCV; skills: SkillCatalog;
 				name: project.name,
 				kind: project.kind ? kindLabels[project.kind] : null,
 				description: project.tasks.join(' '),
-				skills: project.skills,
+				// Technologies shown on the CV only (same order as project.skills)
+				skills: project.skills.filter((_, i) => shown.has(project.skillIds[i])),
 				link: project.url,
 				linkLabel: project.url ? displayUrl(project.url) : null
 			})),
@@ -289,12 +331,10 @@ export async function getProjects(locale: Locale, featuredOnly = false): Promise
 
 export async function getSkills(locale: Locale): Promise<ApiSkills> {
 	const portfolio = await loadPortfolio(locale);
-	const rated = rateAllSkills(portfolio);
-	const nameOf = (code: SkillCategoryCode) =>
-		portfolio.categories.find((category) => category.code === code)?.name ?? code;
 	return {
 		stack: portfolio.skills.filter((skill) => skill.inStack).map((skill) => skill.name),
-		categories: SKILL_CATEGORIES.map((code) => ({ code, name: nameOf(code), skills: rated[code] }))
+		// Same categories and skills as the CV skills table
+		categories: rateAllSkills(portfolio)
 	};
 }
 

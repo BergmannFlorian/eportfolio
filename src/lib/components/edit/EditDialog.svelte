@@ -21,6 +21,8 @@
 		icon?: 'edit' | 'add' | 'order';
 		/** Shows the "empty translation falls back to French" note */
 		translated?: boolean;
+		/** wide: boards with several columns (skills) */
+		size?: 'default' | 'wide';
 		/** Note shown above the fields */
 		hint?: string;
 		/** Content being edited, null until loaded */
@@ -49,6 +51,7 @@
 		triggerLabel,
 		icon = 'edit',
 		translated = true,
+		size = 'default',
 		hint,
 		data = $bindable(),
 		validate,
@@ -173,7 +176,7 @@
 		event.preventDefault();
 		cancel();
 	}}
-	class="m-auto max-h-[calc(100dvh-32px)] w-[calc(100%-32px)] max-w-200 flex-col border-0 border-t-2 border-border-strong bg-surface p-0 text-fg backdrop:bg-[rgb(20_20_20/0.55)] open:flex"
+	class="m-auto max-h-[calc(100dvh-32px)] w-[calc(100%-32px)] {size === 'wide' ? 'max-w-[90rem]' : 'max-w-200'} flex-col border-0 border-t-2 border-border-strong bg-surface p-0 text-fg backdrop:bg-[rgb(20_20_20/0.55)] open:flex"
 >
 	<form onsubmit={submit} class="flex min-h-0 flex-1 flex-col">
 		<div class="flex items-baseline justify-between gap-4 px-7 pt-6">

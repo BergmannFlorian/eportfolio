@@ -280,6 +280,7 @@ CREATE TABLE IF NOT EXISTS project_item_i18n (
 CREATE TABLE IF NOT EXISTS skill_category (
 	id          INT UNSIGNED NOT NULL AUTO_INCREMENT,
 	code        VARCHAR(20)  NOT NULL,              -- 'langs', 'libs', 'tools', 'business'
+	on_cv       BOOLEAN      NOT NULL DEFAULT TRUE,  -- a column of the CV skills table
 	position    SMALLINT     NOT NULL DEFAULT 0,
 	PRIMARY KEY (id),
 	UNIQUE KEY uq_skill_category_code (code)
@@ -300,6 +301,7 @@ CREATE TABLE IF NOT EXISTS skill (
 	name        VARCHAR(100) NOT NULL,              -- 'Docker' (not translated)
 	in_stack    BOOLEAN      NOT NULL DEFAULT FALSE, -- home page "Stack" band
 	on_site     BOOLEAN      NOT NULL DEFAULT FALSE, -- home page "Skills" chips
+	on_cv       BOOLEAN      NOT NULL DEFAULT TRUE,  -- CV skills table and project technologies
 	position    SMALLINT     NOT NULL DEFAULT 0,
 	PRIMARY KEY (id),
 	UNIQUE KEY uq_skill_category_name (category_id, name),

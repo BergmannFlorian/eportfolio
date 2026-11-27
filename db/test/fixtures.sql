@@ -53,6 +53,9 @@ INSERT INTO hobby_i18n (hobby_id, locale, name, reason) VALUES
 INSERT INTO certificate (id, person_id, title, issuer, issued_on, url) VALUES
 	(1, 1, 'Test Certificate', 'Example Org', '2024-03-14', 'https://example.com/cert');
 
+-- Business skills are not a column of the CV skills table
+UPDATE skill_category SET on_cv = 0 WHERE code = 'business';
+
 INSERT INTO skill_category_i18n (skill_category_id, locale, name) VALUES
 	(1, 'fr', 'Langages'), (1, 'en', 'Languages'),
 	(2, 'fr', 'Frameworks'), (2, 'en', 'Frameworks'),

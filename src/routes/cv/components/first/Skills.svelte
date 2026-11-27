@@ -1,26 +1,18 @@
 <script lang="ts">
 	import { SvelteSet } from 'svelte/reactivity';
-	import type { RatedSkill, RatedSkills, SkillLevel } from '#lib/cv/skills.js';
+	import type { RatedCategory, RatedSkill, SkillLevel } from '#lib/cv/skills.js';
 	import { m } from '#lib/paraglide/messages.js';
 	import H3 from '../fonts/H3.svelte';
 
-	// Levels are computed server-side (same as /api/v1/skills)
-	let { levels: categories }: { levels: RatedSkills } = $props();
+	// One column per category shown on the CV; levels computed server-side (same as /api/v1/skills)
+	let { levels: cols }: { levels: RatedCategory[] } = $props();
 
-	const hasPersonalOnly = $derived(
-		Object.values(categories).some((list) => list.some((skill) => skill.personalOnly))
-	);
+	const hasPersonalOnly = $derived(cols.some((col) => col.skills.some((skill) => skill.personalOnly)));
 
 	const rows = $derived<{ title: string; level: SkillLevel }[]>([
 		{ title: m.cv_level_top(), level: 'top' },
 		{ title: m.cv_level_mid(), level: 'mid' },
 		{ title: m.cv_level_bottom(), level: 'bottom' }
-	]);
-
-	const cols = $derived([
-		{ title: m.cv_col_langs(), skills: categories.langs },
-		{ title: m.cv_col_libs(), skills: categories.libs },
-		{ title: m.cv_col_tools(), skills: categories.tools }
 	]);
 
 	// Skills highlighted before printing (bold and moved to the top of their cell)
@@ -40,13 +32,14 @@
 	}
 </script>
 
-<table class="w-full border-solid text-[9px]">
+<table class="w-full table-fixed border-solid text-[9px]">
 	<thead class="font-bold">
 		<tr class="border-b border-cv-light text-center">
-			<td class="w-[25%] border-r border-cv-light"></td>
-			{#each cols as col (col.title)}
-				<td class="w-[25%]">
-					<H3>{col.title.toLocaleUpperCase()}</H3>
+			<!-- Level column, then equal columns for the categories -->
+			<td class="border-r border-cv-light {cols.length > 3 ? 'w-[16%]' : 'w-[25%]'}"></td>
+			{#each cols as col (col.code)}
+				<td>
+					<H3>{col.name.toLocaleUpperCase()}</H3>
 				</td>
 			{/each}
 		</tr>
@@ -57,12 +50,12 @@
 				<td class="border-r border-cv-light text-[7px] font-bold">
 					{row.title.toUpperCase()}
 				</td>
-				{#each cols as col (col.title)}
+				{#each cols as col (col.code)}
 					<td>
 						{#each cell(col.skills, row.level) as skill (skill.name)}
 							<button
 								type="button"
-								class="w-full cursor-pointer {highlighted.has(skill.name) ? 'font-bold' : ''}"
+								class="w-full cursor-pointer break-words {highlighted.has(skill.name) ? 'font-bold' : ''}"
 								aria-pressed={highlighted.has(skill.name)}
 								onclick={() => toggle(skill.name)}
 							>

@@ -32,8 +32,10 @@ export interface Portfolio {
 	languages: { code: string; cefr: string; percent: number; name: string; level: string }[];
 	hobbies: { name: string; reason: string }[];
 	certificates: { title: string; issuer: string | null; issuedOn: string; url: string | null }[];
-	categories: { id: number; code: string; name: string }[];
-	skills: { id: number; categoryId: number; name: string; inStack: boolean; onSite: boolean }[];
+	/** In display order; onCv: a column of the CV skills table */
+	categories: { id: number; code: string; name: string; onCv: boolean }[];
+	/** In display order (category, then skill); onCv: on the CV when its category is too */
+	skills: { id: number; categoryId: number; name: string; inStack: boolean; onSite: boolean; onCv: boolean }[];
 	experiences: Experience[];
 	/** All projects, including personal ones not tied to an experience */
 	projects: (Project & { experienceId: number | null })[];
@@ -147,16 +149,18 @@ async function fetchPortfolio(locale: Locale): Promise<Portfolio> {
 			query<{ title: string; issuer: string | null; issued_on: string; url: string | null }>(
 				`SELECT title, issuer, issued_on, url FROM certificate ORDER BY issued_on, id`
 			),
-			query<{ id: number; code: string; name: string | null }>(
-				`SELECT c.id, c.code, ${tr('name')}
+			query<{ id: number; code: string; on_cv: number; name: string | null }>(
+				`SELECT c.id, c.code, c.on_cv, ${tr('name')}
 				FROM skill_category c
 				LEFT JOIN skill_category_i18n t ON t.skill_category_id = c.id AND t.locale = ?
 				LEFT JOIN skill_category_i18n b ON b.skill_category_id = c.id AND b.locale = ?
 				ORDER BY c.position, c.id`,
 				l
 			),
-			query<{ id: number; category_id: number; name: string; in_stack: number; on_site: number }>(
-				`SELECT id, category_id, name, in_stack, on_site FROM skill ORDER BY category_id, position, id`
+			query<{ id: number; category_id: number; name: string; in_stack: number; on_site: number; on_cv: number }>(
+				`SELECT s.id, s.category_id, s.name, s.in_stack, s.on_site, s.on_cv
+				FROM skill s JOIN skill_category c ON c.id = s.category_id
+				ORDER BY c.position, c.id, s.position, s.id`
 			)
 		]);
 
@@ -298,13 +302,14 @@ async function fetchPortfolio(locale: Locale): Promise<Portfolio> {
 			issuedOn: c.issued_on,
 			url: c.url
 		})),
-		categories: categories.map((c) => ({ id: c.id, code: c.code, name: c.name ?? c.code })),
+		categories: categories.map((c) => ({ id: c.id, code: c.code, name: c.name ?? c.code, onCv: bool(c.on_cv) })),
 		skills: skills.map((s) => ({
 			id: s.id,
 			categoryId: s.category_id,
 			name: s.name,
 			inStack: bool(s.in_stack),
-			onSite: bool(s.on_site)
+			onSite: bool(s.on_site),
+			onCv: bool(s.on_cv)
 		})),
 		experiences: experiences.map((e) => ({
 			id: e.id,

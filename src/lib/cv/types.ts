@@ -45,13 +45,8 @@ export interface Project {
 	img: string | null;
 }
 
-/** Indexes into the `SkillCatalog` lists. */
-export interface SkillRefs {
-	langs: number[];
-	libs: number[];
-	tools: number[];
-	buisness: number[];
-}
+/** Indexes into the `SkillCatalog` lists, per category code of the CV. */
+export type SkillRefs = Record<string, number[]>;
 
 export interface Job {
 	category: string;
@@ -89,12 +84,8 @@ export interface CV {
 	certificates: Certificate[];
 }
 
-export interface SkillCatalog {
-	langs: string[];
-	libs: string[];
-	tools: string[];
-	buisness?: string[];
-}
+/** Skill names shown on the CV, per category code ('langs', 'libs', 'tools'…), in display order. */
+export type SkillCatalog = Record<string, string[]>;
 
 /** Personal project (not tied to a job), shown on the first page. */
 export interface PersonalProject {

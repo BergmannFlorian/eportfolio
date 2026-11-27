@@ -4,6 +4,7 @@
  * the site then shows the French text. French is required where the site needs a text.
  */
 
+import type { SkillLevel } from '#lib/cv/skills.js';
 import type { CefrLevel } from './cefr.js';
 
 /** Text per locale ('' when unset) */
@@ -102,14 +103,25 @@ export interface SkillEdit {
 	inStack: boolean;
 	/** Home page "Skills" section */
 	onSite: boolean;
+	/** CV skills table and project technologies (when its category is on the CV) */
+	onCv: boolean;
 	/** Projects and experiences using it (read only, lost on deletion) */
 	uses: number;
+	/** CV level from the dates of its uses, null when never used (read only) */
+	level: SkillLevel | null;
+	/** Only used in personal projects (read only) */
+	personalOnly: boolean;
 }
 
-/** Skill category: fixed set (the CV relies on their codes), names and skills editable */
+/** Skill category: added, renamed, reordered, removed when empty */
 export interface SkillCategoryEdit {
-	id: number;
+	/** null for a new category (its code is made from the French name) */
+	id: number | null;
+	/** Stable code of the API ('langs', 'libs'…), read only */
+	code: string;
 	name: Localized;
+	/** A column of the CV skills table */
+	onCv: boolean;
 	skills: SkillEdit[];
 }
 

@@ -3,7 +3,7 @@
  * Dates are ISO 8601 (YYYY-MM-DD). All text fields are in the requested locale.
  */
 
-import type { SkillCategoryCode, SkillLevel } from '#lib/cv/skills.js';
+import type { SkillLevel } from '#lib/cv/skills.js';
 
 export type ApiLocale = 'fr' | 'en';
 
@@ -83,7 +83,8 @@ export interface ApiSkills {
 	/** Short list shown in the home page "Stack" band */
 	stack: string[];
 	categories: {
-		code: SkillCategoryCode;
+		/** 'langs', 'libs', 'tools'…, or the code of a category added on the site */
+		code: string;
 		name: string;
 		/** personalOnly: only used in personal projects */
 		skills: { name: string; level: SkillLevel; personalOnly: boolean }[];

@@ -66,14 +66,16 @@
 					import('#lib/components/edit/SocialsEditor.svelte'),
 					import('#lib/components/edit/FactsEditor.svelte'),
 					import('#lib/components/edit/LanguagesEditor.svelte'),
-					import('#lib/components/edit/HobbiesEditor.svelte')
-				]).then(([info, certificates, socials, facts, languages, hobbies]) => ({
+					import('#lib/components/edit/HobbiesEditor.svelte'),
+					import('#lib/components/edit/SkillsEditor.svelte')
+				]).then(([info, certificates, socials, facts, languages, hobbies, skills]) => ({
 					CvInfoEditor: info.default,
 					CertificatesEditor: certificates.default,
 					SocialsEditor: socials.default,
 					FactsEditor: facts.default,
 					LanguagesEditor: languages.default,
-					HobbiesEditor: hobbies.default
+					HobbiesEditor: hobbies.default,
+					SkillsEditor: skills.default
 				}))
 			: null
 	);
@@ -117,6 +119,7 @@
 				<div class="flex basis-full flex-wrap items-center gap-2 border-t border-white/20 pt-3">
 					<span class="mr-1 text-neutral-300">{m.edit_cv_toolbar()}</span>
 					<loaded.CvInfoEditor />
+					<loaded.SkillsEditor context={m.edit_context_cv()} triggerLabel={m.edit_skills_title()} />
 					<loaded.CertificatesEditor />
 					<loaded.SocialsEditor />
 					<loaded.FactsEditor context={m.edit_context_cv()} triggerLabel={m.about_facts()} />

@@ -8,7 +8,8 @@ import { EditError, parseSection, readSection, writeSection } from './index.js';
 
 type Rows = Record<string, unknown>[];
 const saved: Record<string, Rows> = {};
-const TABLES = ['skill', 'project_skill', 'experience_skill', 'skill_category_i18n'] as const;
+// In insertion order (foreign keys)
+const TABLES = ['skill_category', 'skill', 'project_skill', 'experience_skill', 'skill_category_i18n'] as const;
 
 async function insertAll(table: string, rows: Rows) {
 	for (const row of rows) {
@@ -26,7 +27,7 @@ beforeAll(async () => {
 
 afterEach(async () => {
 	await writeQuery('DELETE FROM skill'); // cascades to the links
-	await writeQuery('DELETE FROM skill_category_i18n');
+	await writeQuery('DELETE FROM skill_category'); // cascades to the names
 	for (const table of TABLES) await insertAll(table, saved[table]);
 	clearContentCache();
 });
@@ -50,9 +51,10 @@ describe('skills section', () => {
 		]);
 		expect(categories[0].skills).toEqual([
 			// Project 3, experiences 1 and 3
-			{ id: 1, name: 'TypeScript', inStack: true, onSite: true, uses: 3 },
-			{ id: 2, name: 'SQL', inStack: false, onSite: true, uses: 1 },
-			{ id: 3, name: 'Cobol', inStack: false, onSite: false, uses: 1 }
+			// Levels as on the CV: ongoing job, education ended in 2022, job ended in 2012
+			{ id: 1, name: 'TypeScript', inStack: true, onSite: true, onCv: true, uses: 3, level: 'top', personalOnly: false },
+			{ id: 2, name: 'SQL', inStack: false, onSite: true, onCv: true, uses: 1, level: 'mid', personalOnly: false },
+			{ id: 3, name: 'Cobol', inStack: false, onSite: false, onCv: true, uses: 1, level: 'bottom', personalOnly: false }
 		]);
 	});
 
@@ -65,7 +67,7 @@ describe('skills section', () => {
 		langs.skills[1].name = 'PostgreSQL';
 		// Git moves to the languages, first; a new skill goes to the stack
 		langs.skills.unshift(tools.skills.pop()!);
-		libs.skills.push({ id: null, name: 'Svelte', inStack: true, onSite: true, uses: 0 });
+		libs.skills.push({ id: null, name: 'Svelte', inStack: true, onSite: true, onCv: true, uses: 0, level: null, personalOnly: false });
 		libs.name = { fr: 'Bibliothèques', en: '' };
 		await save(data);
 
@@ -91,7 +93,7 @@ describe('skills section', () => {
 		expect((await getHomeContent('fr')).works[0].skills).toEqual([]);
 	});
 
-	it('refuses duplicates, missing categories and unknown skills', async () => {
+	it('refuses duplicates, unknown categories and unknown skills', async () => {
 		const data = await readSection('skills');
 		const twice = structuredClone(data);
 		twice.categories[0].skills[1].name = ' typescript ';
@@ -100,13 +102,59 @@ describe('skills section', () => {
 		sameId.categories[1].skills.push(sameId.categories[0].skills[0]);
 		expect(() => parseSection('skills', sameId)).toThrow(EditError);
 
-		const missing = structuredClone(data);
-		missing.categories.pop();
-		await expect(save(missing)).rejects.toThrow(EditError);
+		const unknownCategory = structuredClone(data);
+		unknownCategory.categories[3].id = 999;
+		await expect(save(unknownCategory)).rejects.toThrow(EditError);
 		const unknown = structuredClone(data);
 		unknown.categories[0].skills[0].id = 999;
 		await expect(save(unknown)).rejects.toThrow(EditError);
 		// Nothing written
 		expect(await readSection('skills')).toEqual(data);
+	});
+
+	it('adds, reorders and removes categories, and keeps site-only skills off the CV', async () => {
+		const data = await readSection('skills');
+		expect(data.categories.map((category) => [category.code, category.onCv])).toEqual([
+			['langs', true],
+			['libs', true],
+			['tools', true],
+			['business', false]
+		]);
+		const [langs, libs, tools] = data.categories;
+		// A new "Bibliothèques" category takes SvelteKit, right after the languages
+		const added = { id: null, code: '', name: { fr: 'Bibliothèques', en: 'Libraries' }, onCv: true, skills: libs.skills.splice(0) };
+		// Git stays on the site only; the empty business category goes (left out)
+		tools.skills[0].onCv = false;
+		await save({ categories: [langs, added, libs, tools] });
+
+		const after = await readSection('skills');
+		expect(after.categories.map((category) => category.code)).toEqual(['langs', 'bibliotheques', 'libs', 'tools']);
+		expect(after.categories[1].skills.map((skill) => [skill.id, skill.uses])).toEqual([[4, 3]]);
+
+		clearContentCache();
+		const { getCV } = await import('#lib/server/content/index.js');
+		const { levels } = await getCV('en');
+		// One CV column per category on the CV, in order; Git is off the CV
+		expect(levels.map((column) => [column.name, column.skills.map((skill) => skill.name)])).toEqual([
+			// Jobs first, then education (SQL)
+			['Languages', ['TypeScript', 'Cobol', 'SQL']],
+			['Libraries', ['SvelteKit']],
+			['Frameworks', []],
+			['Tools', []]
+		]);
+		// Still on the site
+		expect((await getHomeContent('en')).skills.at(-1)).toEqual({ title: 'Tools', items: ['Git'] });
+	});
+
+	it('removes categories once their skills moved, never two with the same id', async () => {
+		const data = await readSection('skills');
+		const kept = data.categories.slice(0, 1);
+		kept[0].skills.push(...data.categories[1].skills, ...data.categories[2].skills);
+		// Removing categories whose skills moved is fine
+		await save({ categories: [...kept, data.categories[3]] });
+		expect((await readSection('skills')).categories.map((category) => category.code)).toEqual(['langs', 'business']);
+
+		const twice = await readSection('skills');
+		expect(() => parseSection('skills', { categories: [twice.categories[0], twice.categories[0]] })).toThrow(EditError);
 	});
 });

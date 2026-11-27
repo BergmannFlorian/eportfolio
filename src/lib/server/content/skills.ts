@@ -1,5 +1,4 @@
 import type { RatedSkills, SkillCategoryCode, SkillLevel } from '#lib/cv/skills.js';
-import { SKILL_CATEGORIES } from '#lib/cv/skills.js';
 
 /** `top` = used less than RECENT_YEARS ago, `bottom` = more than OLD_YEARS ago, `mid` otherwise. */
 const RECENT_YEARS = 2;
@@ -36,15 +35,21 @@ function levelFor(end: string, now: Date): SkillLevel {
  * Rates every skill referenced by the given uses. A skill used several times keeps
  * its best (most recent) level. Order follows first appearance, so pass
  * experiences before personal projects to list project-only skills last.
+ * Only skills of the given categories are rated; each category gets a list, even empty.
  */
-export function rateSkills(uses: SkillUse[], skills: RatableSkill[], now = new Date()): RatedSkills {
-	const result: RatedSkills = { langs: [], libs: [], tools: [] };
+export function rateSkills(
+	uses: SkillUse[],
+	skills: RatableSkill[],
+	categories: readonly SkillCategoryCode[],
+	now = new Date()
+): RatedSkills {
+	const result: RatedSkills = Object.fromEntries(categories.map((code) => [code, []]));
 	const byId = new Map(skills.map((skill) => [skill.id, skill]));
 	for (const use of uses) {
 		const level = levelFor(use.end, now);
 		for (const id of use.skillIds) {
 			const skill = byId.get(id);
-			if (!skill || !SKILL_CATEGORIES.includes(skill.category)) continue;
+			if (!skill || !Object.hasOwn(result, skill.category)) continue;
 			const list = result[skill.category];
 			const existing = list.find((rated) => rated.name === skill.name);
 			if (!existing) {

@@ -9,6 +9,8 @@ const skills: RatableSkill[] = [
 	{ id: 5, name: 'Astro', category: 'libs' }
 ];
 const now = new Date('2026-11-24T12:00:00Z');
+// Categories to rate, e.g. the columns of the CV skills table
+const CATEGORIES = ['langs', 'libs', 'tools'];
 
 describe('rateSkills', () => {
 	it('rates skills by how recently they were used', () => {
@@ -19,6 +21,7 @@ describe('rateSkills', () => {
 				{ end: '2012-06-30', skillIds: [3], personal: false }
 			],
 			skills,
+			CATEGORIES,
 			now
 		);
 		expect(rated).toEqual({
@@ -39,6 +42,7 @@ describe('rateSkills', () => {
 				{ end: '2026-01-31', skillIds: [3], personal: false }
 			],
 			skills,
+			CATEGORIES,
 			now
 		);
 		expect(rated.langs).toEqual([{ name: 'Cobol', level: 'top', personalOnly: false }]);
@@ -51,6 +55,7 @@ describe('rateSkills', () => {
 				{ end: '2026-11-24', skillIds: [4, 5], personal: true }
 			],
 			skills,
+			CATEGORIES,
 			now
 		);
 		expect(rated.langs).toEqual([{ name: 'TypeScript', level: 'mid', personalOnly: false }]);
@@ -58,5 +63,10 @@ describe('rateSkills', () => {
 			{ name: 'SvelteKit', level: 'top', personalOnly: false },
 			{ name: 'Astro', level: 'top', personalOnly: true }
 		]);
+	});
+
+	it('only rates the given categories', () => {
+		const rated = rateSkills([{ end: '2025-06-30', skillIds: [1, 4], personal: false }], skills, ['frameworks', 'libs'], now);
+		expect(rated).toEqual({ frameworks: [], libs: [{ name: 'SvelteKit', level: 'top', personalOnly: false }] });
 	});
 });
