@@ -27,6 +27,10 @@
 	--font-sans: 'Inter Variable', ui-sans-serif, system-ui, sans-serif;
 	--font-mono: 'JetBrains Mono Variable', ui-monospace, monospace;
 
+	/* Site header on one line from 1200px (`wide:`). A named breakpoint, in rem like the
+	   defaults, so it is sorted after `md:`; an arbitrary min-[1200px] is not. */
+	--breakpoint-wide: 75rem;
+
 	/* Printable CV (/cv) — legacy project style, independent from the site themes */
 	--color-cv-dark: #2e2e2e;
 	--color-cv-light: #b5b5b5;

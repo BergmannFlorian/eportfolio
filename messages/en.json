@@ -118,5 +118,8 @@
 	"admin_error_code": "Invalid or expired code.",
 	"admin_error_locked": "Too many attempts. Try again in {minutes} minutes.",
 	"admin_error_expired": "The sign-in has expired, please start over.",
-	"admin_logout": "Sign out"
+	"admin_logout": "Sign out",
+	"menu_open": "Menu",
+	"menu_close": "Close",
+	"theme_current": "Theme: {theme}"
 }

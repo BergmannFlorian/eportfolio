@@ -118,5 +118,8 @@
 	"admin_error_code": "Code invalide ou expiré.",
 	"admin_error_locked": "Trop de tentatives. Réessayez dans {minutes} minutes.",
 	"admin_error_expired": "La connexion a expiré, recommencez.",
-	"admin_logout": "Se déconnecter"
+	"admin_logout": "Déconnexion",
+	"menu_open": "Menu",
+	"menu_close": "Fermer",
+	"theme_current": "Thème : {theme}"
 }
