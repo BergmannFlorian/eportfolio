@@ -55,6 +55,35 @@ export function writeQuery<T>(sql: string, params: unknown[] = []): Promise<T[]>
 	return run<T>('write', sql, params);
 }
 
+export interface Transaction {
+	query<T>(sql: string, params?: unknown[]): Promise<T[]>;
+	/** Runs an INSERT and returns the new AUTO_INCREMENT id */
+	insert(sql: string, params?: unknown[]): Promise<number>;
+}
+
+/**
+ * Write account, all statements in one transaction: committed when `work` resolves,
+ * rolled back when it throws (the error is rethrown).
+ */
+export async function writeTransaction<T>(work: (tx: Transaction) => Promise<T>): Promise<T> {
+	pools.write ??= createPool('write');
+	const connection = await pools.write.getConnection();
+	try {
+		await connection.beginTransaction();
+		const result = await work({
+			query: async <R>(sql: string, params: unknown[] = []) => (await connection.query(sql, params)) as R[],
+			insert: async (sql, params = []) => Number(((await connection.query(sql, params)) as { insertId: number }).insertId)
+		});
+		await connection.commit();
+		return result;
+	} catch (error) {
+		await connection.rollback().catch(() => {});
+		throw error;
+	} finally {
+		await connection.release();
+	}
+}
+
 /** Closes the pools; the next query opens new ones with the current environment (used by tests). */
 export async function resetPool(): Promise<void> {
 	const current = Object.values(pools);

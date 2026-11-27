@@ -35,6 +35,12 @@
 			</a>
 			<a href="mailto:{email}" class="btn-outline px-7 py-[15px]">{m.hero_cta_contact()}</a>
 		</div>
+		{#if signedIn}
+			<!-- Editor code only loads for the owner -->
+			{#await import('./edit/HeroEditor.svelte') then { default: HeroEditor }}
+				<HeroEditor class="self-start" />
+			{/await}
+		{/if}
 	</div>
 
 	<figure class="m-0 flex max-w-[420px] flex-[1_1_340px] flex-col gap-3">

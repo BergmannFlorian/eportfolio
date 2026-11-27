@@ -91,8 +91,8 @@ CREATE TABLE IF NOT EXISTS fact (
 CREATE TABLE IF NOT EXISTS fact_i18n (
 	fact_id     INT UNSIGNED NOT NULL,
 	locale      VARCHAR(5)   NOT NULL,
-	label       VARCHAR(100) NOT NULL,              -- 'Nationalité'
-	value       VARCHAR(255) NOT NULL,              -- 'Suisse'
+	label       VARCHAR(100) NULL,                  -- 'Nationalité' (NULL: falls back to fr)
+	value       VARCHAR(255) NULL,                  -- 'Suisse'
 	PRIMARY KEY (fact_id, locale),
 	CONSTRAINT fk_fact_i18n_fact   FOREIGN KEY (fact_id) REFERENCES fact (id) ON DELETE CASCADE,
 	CONSTRAINT fk_fact_i18n_locale FOREIGN KEY (locale) REFERENCES locale (code) ON DELETE RESTRICT
@@ -107,7 +107,7 @@ CREATE TABLE IF NOT EXISTS language (
 CREATE TABLE IF NOT EXISTS language_i18n (
 	language_code VARCHAR(5)  NOT NULL,
 	locale        VARCHAR(5)  NOT NULL,
-	name          VARCHAR(100) NOT NULL,            -- 'Allemand' / 'German'
+	name          VARCHAR(100) NULL,                -- 'Allemand' / 'German' (NULL: falls back to fr)
 	PRIMARY KEY (language_code, locale),
 	CONSTRAINT fk_language_i18n_language FOREIGN KEY (language_code) REFERENCES language (code) ON DELETE CASCADE,
 	CONSTRAINT fk_language_i18n_locale   FOREIGN KEY (locale) REFERENCES locale (code) ON DELETE RESTRICT
@@ -130,7 +130,7 @@ CREATE TABLE IF NOT EXISTS person_language (
 CREATE TABLE IF NOT EXISTS person_language_i18n (
 	person_language_id INT UNSIGNED NOT NULL,
 	locale             VARCHAR(5)   NOT NULL,
-	level_label        VARCHAR(100) NOT NULL,       -- 'Scolaire (A2)'
+	level_label        VARCHAR(100) NULL,           -- 'Scolaire (A2)' (NULL: falls back to fr)
 	PRIMARY KEY (person_language_id, locale),
 	CONSTRAINT fk_person_language_i18n_parent FOREIGN KEY (person_language_id) REFERENCES person_language (id) ON DELETE CASCADE,
 	CONSTRAINT fk_person_language_i18n_locale FOREIGN KEY (locale) REFERENCES locale (code) ON DELETE RESTRICT
@@ -148,7 +148,7 @@ CREATE TABLE IF NOT EXISTS hobby (
 CREATE TABLE IF NOT EXISTS hobby_i18n (
 	hobby_id    INT UNSIGNED NOT NULL,
 	locale      VARCHAR(5)   NOT NULL,
-	name        VARCHAR(100) NOT NULL,              -- 'Cuisine'
+	name        VARCHAR(100) NULL,                  -- 'Cuisine' (NULL: falls back to fr)
 	reason      VARCHAR(255) NULL,                  -- 'Rigueur et précision'
 	PRIMARY KEY (hobby_id, locale),
 	CONSTRAINT fk_hobby_i18n_hobby  FOREIGN KEY (hobby_id) REFERENCES hobby (id) ON DELETE CASCADE,

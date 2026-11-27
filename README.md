@@ -104,7 +104,7 @@ Infomaniak has no API to restart a Node.js site, so `index.js` is a small launch
 
 ## Administration
 
-Owner login, reached from the "Edit" button of the site header. Content will be edited directly on the site pages (coming next), so after signing in you go back to the home page, where the button becomes "Sign out" (`POST /admin/logout`). `/admin` pages are sent with `X-Robots-Tag: noindex`; every page rendered for a signed-in owner gets `Cache-Control: no-store`.
+Owner login, reached from the "Edit" button of the site header. Content is edited directly on the site pages, so after signing in you go back to the home page, where the button becomes "Sign out" (`POST /admin/logout`). `/admin` pages are sent with `X-Robots-Tag: noindex`; every page rendered for a signed-in owner gets `Cache-Control: no-store`.
 
 - **Login** (`/admin/login`): email + password, then a 6-digit TOTP code from an authenticator app (RFC 6238). Code: [`src/lib/server/auth/`](src/lib/server/auth/).
 - **Passwords**: scrypt (`node:crypto`), stored as `scrypt$N$r$p$salt$hash`. An unknown email takes as long as a wrong password, and both get the same message.
@@ -123,6 +123,14 @@ The script generates the 2FA key, shows it as a QR code to scan, checks a code f
 
 The tables come from [`db/migrations/2026-11-27-admin-auth.sql`](db/migrations/2026-11-27-admin-auth.sql) on an existing database (already in `db/schema.sql`).
 
+### Content editing
+
+Signed in, each editable block of the home page gets an "Edit" button that opens a dialog with the French and English fields side by side. So far: header (email, eyebrow, introduction), "About" text, facts, spoken languages and hobbies; the same data feeds the CV and the API.
+
+- **Translations**: French is required; an English field left empty falls back to the French text, field by field (the `*_i18n` columns of these lists are nullable, see [`db/migrations/2026-11-27-optional-translations.sql`](db/migrations/2026-11-27-optional-translations.sql)).
+- **Lists** (facts, languages, hobbies): add, remove and reorder; saving replaces the whole list in one transaction. A language name is shared by everyone speaking it (`language_i18n`).
+- **Code**: dialogs in [`src/lib/components/edit/`](src/lib/components/edit/), loaded only for the owner; `GET`/`POST /admin/content/<section>` (JSON only) in [`src/routes/admin/content/`](src/routes/admin/content/); validation and writes in [`src/lib/server/edit/`](src/lib/server/edit/); shared types and limits in `src/lib/content/edit.ts`.
+
 ### Images
 
 Signed in, the owner edits images directly on the pages: the portrait (home page and CV), project images (home works and personal projects cards, `/projets`) and organization logos (Journey section). The CV only shows the portrait.
@@ -133,14 +141,16 @@ Signed in, the owner edits images directly on the pages: the portrait (home page
 - **Serving**: `GET /media/<file>` with `Cache-Control: immutable` (a replaced image gets a new name) and a CSP that sandboxes SVG files. The server checks the actual content (WebP, PNG, JPEG, SVG without scripts) and accepts 3 MB at most; `deploy/launcher.js` raises adapter-node's `BODY_SIZE_LIMIT` to 4M.
 - **Works cards** (client and personal): the image is a grayscale background under a veil of the card color; the veil opacity is `--work-veil-opacity` (90%) in `src/app.css`.
 
-Migration: [`db/migrations/2026-11-27-images.sql`](db/migrations/2026-11-27-images.sql). The write account needs `UPDATE` on `person`, `project`, `organization` and `INSERT`/`UPDATE` on `person_i18n` and `project_i18n`.
+Migration: [`db/migrations/2026-11-27-images.sql`](db/migrations/2026-11-27-images.sql).
 
 ### Database accounts
 
 The site uses two MariaDB accounts ([`src/lib/server/db/`](src/lib/server/db/)):
 
 - `DB_USER` / `DB_PASSWORD`: read-only (`SELECT`), for the public content: pages, CV, API (`query`).
-- `DB_WRITE_USER` / `DB_WRITE_PASSWORD`: `SELECT`, `INSERT`, `UPDATE`, `DELETE`, for the administration only (`writeQuery`). Without it (local Docker, tests), the administration uses `DB_USER`.
+- `DB_WRITE_USER` / `DB_WRITE_PASSWORD`: `SELECT`, `INSERT`, `UPDATE`, `DELETE` on the whole database (the hosting has no per-table grants), no schema changes; for the administration only (`writeQuery`). Without it (local Docker, tests), the administration uses `DB_USER`.
+
+Schema changes are never applied by the site: run the scripts of `db/migrations/` by hand (phpMyAdmin) before deploying the code that needs them.
 
 The read-only account does not need the `admin_*` tables at all.
 
