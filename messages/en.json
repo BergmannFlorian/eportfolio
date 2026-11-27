@@ -242,5 +242,15 @@
 	"edit_project_image_removed": "The image will be removed on save. It stays in the library.",
 	"edit_project_image_keep": "Keep the current image",
 	"edit_project_image_alt": "Image description",
-	"edit_error_image": "The project is saved, but not the image. Try again."
+	"edit_error_image": "The project is saved, but not the image. Try again.",
+	"edit_skills_title": "Skills",
+	"edit_skills_hint": "“Stack”: band below the header; “Site”: Skills section. Categories are fixed, only their names change. Removing a skill also removes it from the projects and experiences using it. The CV levels are still computed from experiences and projects.",
+	"edit_skill_category_name": "Category name",
+	"edit_skill_name": "Skill name",
+	"edit_skill_in_stack": "Stack",
+	"edit_skill_on_site": "Site",
+	"edit_skill_category": "Category of {skill}",
+	"edit_skill_uses": "used {count}×",
+	"edit_skill_add": "Add a skill",
+	"edit_skill_duplicate": "A category has two skills with the same name."
 }

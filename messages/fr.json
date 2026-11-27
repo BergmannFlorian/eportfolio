@@ -242,5 +242,15 @@
 	"edit_project_image_removed": "L'image sera retirée à l'enregistrement. Elle reste dans la bibliothèque.",
 	"edit_project_image_keep": "Garder l'image actuelle",
 	"edit_project_image_alt": "Description de l'image",
-	"edit_error_image": "Le projet est enregistré, mais pas l'image. Réessayez."
+	"edit_error_image": "Le projet est enregistré, mais pas l'image. Réessayez.",
+	"edit_skills_title": "Compétences",
+	"edit_skills_hint": "« Stack » : bandeau sous l'en-tête ; « Site » : section Compétences. Les catégories sont fixes, seuls leurs noms changent. Supprimer une compétence la retire aussi des projets et expériences qui l'utilisent. Les niveaux du CV restent calculés à partir des expériences et projets.",
+	"edit_skill_category_name": "Nom de la catégorie",
+	"edit_skill_name": "Nom de la compétence",
+	"edit_skill_in_stack": "Stack",
+	"edit_skill_on_site": "Site",
+	"edit_skill_category": "Catégorie de {skill}",
+	"edit_skill_uses": "utilisée {count}×",
+	"edit_skill_add": "Ajouter une compétence",
+	"edit_skill_duplicate": "Une catégorie contient deux compétences du même nom."
 }

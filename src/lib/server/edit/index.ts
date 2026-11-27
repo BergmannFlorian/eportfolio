@@ -7,10 +7,15 @@ import type { EditSection, EditSections } from '#lib/content/edit.js';
 import { profileSections } from './profile.js';
 import { projectSections } from './projects.js';
 import type { SectionHandler } from './shared.js';
+import { skillSections } from './skills.js';
 
 export { EditError } from './shared.js';
 
-const sections: { [S in EditSection]: SectionHandler<EditSections[S]> } = { ...profileSections, ...projectSections };
+const sections: { [S in EditSection]: SectionHandler<EditSections[S]> } = {
+	...profileSections,
+	...projectSections,
+	...skillSections
+};
 
 /** Current content of a section, every locale as stored. `id`: project id (project section). */
 export function readSection<S extends EditSection>(section: S, id: number | null = null): Promise<EditSections[S]> {

@@ -92,6 +92,27 @@ export interface ProjectOrderItem {
 	featured: boolean;
 }
 
+/** A skill of the catalog. The id is kept: projects and experiences reference skills. */
+export interface SkillEdit {
+	/** null for a new skill */
+	id: number | null;
+	/** Not translated */
+	name: string;
+	/** Home page "Stack" band */
+	inStack: boolean;
+	/** Home page "Skills" section */
+	onSite: boolean;
+	/** Projects and experiences using it (read only, lost on deletion) */
+	uses: number;
+}
+
+/** Skill category: fixed set (the CV relies on their codes), names and skills editable */
+export interface SkillCategoryEdit {
+	id: number;
+	name: Localized;
+	skills: SkillEdit[];
+}
+
 export interface EditSections {
 	hero: HeroEdit;
 	about: AboutEdit;
@@ -101,6 +122,7 @@ export interface EditSections {
 	/** The image is read here, but saved through /admin/media (same dialog) */
 	project: { project: ProjectEdit; options: ProjectOptions; image: ProjectImage | null };
 	projects: { items: ProjectOrderItem[] };
+	skills: { categories: SkillCategoryEdit[] };
 }
 
 export type EditSection = keyof EditSections;
@@ -112,7 +134,8 @@ export const EDIT_SECTIONS: readonly EditSection[] = [
 	'languages',
 	'hobbies',
 	'project',
-	'projects'
+	'projects',
+	'skills'
 ];
 
 /** Maximum lengths, mirrored by the database columns */
@@ -138,7 +161,10 @@ export const EDIT_LIMITS = {
 	items: 30,
 	/** Projects in the order dialog */
 	projects: 200,
-	skills: 100
+	/** Technologies of a project, skills of a category */
+	skills: 100,
+	skillName: 100,
+	categoryName: 100
 } as const;
 
 export const LANGUAGE_CODE = /^[a-z]{2,3}$/;
