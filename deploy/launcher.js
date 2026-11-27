@@ -36,13 +36,21 @@ let retryTimer = null;
 
 const log = (message) => console.log(`[launcher] ${new Date().toISOString()} ${message}`);
 
+// Used when neither .env nor the Manager sets them
+const DEFAULTS = {
+	// Uploaded images, next to app/ so deployments keep them
+	UPLOADS_DIR: join(root, 'uploads'),
+	// adapter-node accepts 512K by default; images are sent up to 3 MB
+	BODY_SIZE_LIMIT: '4M'
+};
+
 function serverEnv() {
-	if (!existsSync(envFile)) return process.env;
+	if (!existsSync(envFile)) return { ...DEFAULTS, ...process.env };
 	try {
-		return { ...parseEnv(readFileSync(envFile, 'utf8')), ...process.env };
+		return { ...DEFAULTS, ...parseEnv(readFileSync(envFile, 'utf8')), ...process.env };
 	} catch (error) {
 		log(`cannot read ${envFile}: ${error.message}`);
-		return process.env;
+		return { ...DEFAULTS, ...process.env };
 	}
 }
 

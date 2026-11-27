@@ -19,7 +19,7 @@
 	<meta name="description" content={m.meta_description()} />
 </svelte:head>
 
-<Hero headline={home.headline} bio={home.bio} email={home.email} />
+<Hero headline={home.headline} bio={home.bio} email={home.email} portrait={home.portrait} />
 <StackBand stack={home.stack} />
 <Works works={home.works} personalWorks={home.personalWorks} />
 <Skills skills={home.skills} />

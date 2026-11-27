@@ -41,7 +41,9 @@ describe('getHomeContent', () => {
 		// Client grid: featured projects tied to an experience only
 		expect(fr.works).toEqual([
 			{
+				projectId: 1,
 				name: 'Acme Shop',
+				image: { url: '/media/abcdefabcdefabcdefabcdefabcdefab.webp', alt: 'Boutique Acme' },
 				domain: 'acme-shop.example.com',
 				url: 'https://www.acme-shop.example.com',
 				skills: ['SvelteKit']
@@ -49,7 +51,9 @@ describe('getHomeContent', () => {
 		]);
 		expect(fr.personalWorks).toEqual([
 			{
+				projectId: 3,
 				name: 'Side Project',
+				image: null,
 				description: 'Application de test',
 				skills: ['TypeScript', 'SvelteKit'],
 				url: 'https://side.example.com',
@@ -63,11 +67,26 @@ describe('getHomeContent', () => {
 	it('lists the experiences shown on the site, most recent first, with readable periods', async () => {
 		const fr = await getHomeContent('fr');
 		expect(fr.jobs).toEqual([
-			{ date: "Janv. 2023 – aujourd'hui", role: 'Développeuse web', org: 'Acme SA' },
-			{ date: '2019 – 2022', role: 'Diplôme test', org: 'École Test' }
+			{
+				date: "Janv. 2023 – aujourd'hui",
+				role: 'Développeuse web',
+				org: 'Acme SA',
+				organizationId: 1,
+				logo: '/media/fedcba9876543210fedcba9876543210.svg'
+			},
+			{ date: '2019 – 2022', role: 'Diplôme test', org: 'École Test', organizationId: 2, logo: null }
 		]);
 		const en = await getHomeContent('en');
 		expect(en.jobs[0].date).toBe('Jan 2023 – present');
+	});
+
+	it('returns the uploaded portrait, its description falling back to French', async () => {
+		const portrait = { url: '/media/0123456789abcdef0123456789abcdef.webp', alt: 'Portrait de Jane' };
+		expect((await getHomeContent('fr')).portrait).toEqual(portrait);
+		expect((await getHomeContent('en')).portrait).toEqual(portrait);
+		expect((await getCV('en')).cv.portrait).toEqual(portrait);
+		// Project image description is translated
+		expect((await getHomeContent('en')).works[0].image?.alt).toBe('Acme shop');
 	});
 });
 
@@ -77,6 +96,8 @@ describe('getPersonalProjects', () => {
 		expect(fr.map((project) => project.id)).toEqual(['side-project', 'tiny-app']);
 		expect(fr[0]).toEqual({
 			id: 'side-project',
+			projectId: 3,
+			image: null,
 			kind: 'script',
 			kindLabel: 'Script',
 			name: 'Side Project',

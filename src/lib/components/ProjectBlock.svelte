@@ -1,9 +1,12 @@
 <script lang="ts">
 	import { pad, type PersonalProject } from '#lib/content/types.js';
 	import { m } from '#lib/paraglide/messages.js';
+	import { page } from '$app/state';
 	import ArrowUpRight from './icons/ArrowUpRight.svelte';
+	import ImageEditor from './ImageEditor.svelte';
 
 	let { project, index }: { project: PersonalProject; index: number } = $props();
+	const signedIn = $derived(page.data.signedIn === true);
 
 	let open = $state(false);
 	const panelId = $derived(`projet-${project.id}-details`);
@@ -20,7 +23,8 @@
 		{/if}
 	</div>
 
-	<div class="flex min-w-0 flex-[999_1_560px] flex-col gap-5">
+	<div class="flex min-w-0 flex-[999_1_560px] flex-wrap gap-x-10 gap-y-8">
+	<div class="flex min-w-0 flex-[999_1_380px] flex-col gap-5">
 		<h2 class="m-0 font-display text-4xl leading-[1.1] font-normal tracking-[-0.5px] text-fg-strong">
 			{project.name}
 		</h2>
@@ -68,11 +72,44 @@
 			</div>
 		{/if}
 
+	</div>
+
+		<!-- Project image (16:10), beside the text; below it on small screens -->
+		{#if project.image}
+			<figure class="relative m-0 max-w-105 flex-[1_1_320px]">
+				<img
+					src={project.image.url}
+					alt={project.image.alt}
+					loading="lazy"
+					class="block aspect-[16/10] w-full border border-border object-cover"
+				/>
+				{#if signedIn}
+					<ImageEditor
+						target="project"
+						id={project.projectId}
+						hasImage={true}
+						variant="overlay"
+						context={project.name}
+						class="absolute right-3 bottom-3"
+					/>
+				{/if}
+			</figure>
+		{:else if signedIn}
+			<ImageEditor
+				target="project"
+				id={project.projectId}
+				hasImage={false}
+				variant="add"
+				context={project.name}
+				class="aspect-[16/10] max-w-105 flex-[1_1_320px]"
+			/>
+		{/if}
+
 		{#if project.hasMore}
 			<div
 				id={panelId}
 				hidden={!open}
-				class="mt-2 flex flex-wrap gap-x-12 gap-y-8 border border-border bg-surface p-6 sm:p-8"
+				class="mt-2 flex basis-full flex-wrap gap-x-12 gap-y-8 border border-border bg-surface p-6 sm:p-8"
 			>
 				<div class="flex min-w-0 flex-[999_1_420px] flex-col gap-4">
 					{#if project.highlights.length > 0}

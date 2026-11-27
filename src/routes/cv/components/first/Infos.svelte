@@ -7,12 +7,22 @@
 
 	let {
 		infos,
-		site
-	}: { infos: PublicCV['infos']; site: { url: string; label: string; qr: string } } = $props();
+		site,
+		portrait
+	}: {
+		infos: PublicCV['infos'];
+		site: { url: string; label: string; qr: string };
+		portrait: PublicCV['portrait'];
+	} = $props();
 </script>
 
 <div class="flex h-full flex-col bg-cv-dark text-cv-light">
-	<img class="h-[8cm] w-full object-cover" src={profil} alt={m.cv_photo_alt()} />
+	<!-- Same portrait as the home page (uploaded one, or the default photo) -->
+	<img
+		class="h-[8cm] w-full object-cover object-top"
+		src={portrait?.url ?? profil}
+		alt={portrait?.alt || m.cv_photo_alt()}
+	/>
 	<div class="text-center font-display text-[29px]">
 		{infos.contact.name}
 	</div>

@@ -36,3 +36,5 @@ vite.config.ts.timestamp-*
 
 # data
 seed.sql
+# Uploaded images (UPLOADS_DIR, served at /media)
+/uploads

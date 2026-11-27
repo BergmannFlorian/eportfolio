@@ -1,11 +1,14 @@
 <script lang="ts">
+	import { page } from '$app/state';
 	import { pad, type HomePersonalWork, type HomeWork } from '#lib/content/types.js';
 	import { m } from '#lib/paraglide/messages.js';
 	import { localizeHref } from '#lib/paraglide/runtime.js';
 	import ArrowRight from './icons/ArrowRight.svelte';
 	import ArrowUpRight from './icons/ArrowUpRight.svelte';
+	import ImageEditor from './ImageEditor.svelte';
 	import SectionIntro from './SectionIntro.svelte';
 	let { works, personalWorks }: { works: HomeWork[]; personalWorks: HomePersonalWork[] } = $props();
+	const signedIn = $derived(page.data.signedIn === true);
 </script>
 
 <section
@@ -26,11 +29,23 @@
 		class="m-0 grid list-none grid-cols-[repeat(auto-fill,minmax(260px,1fr))] border-t border-l border-t-border-strong border-l-border p-0"
 	>
 		{#each works as work, i (work.url)}
-			<li class="border-r border-b border-border">
+			<li class="relative border-r border-b border-border">
 				<a
 					href={work.url}
-					class="group flex h-full min-h-42 flex-col gap-6 p-7 text-fg no-underline transition-colors hover:bg-inverse hover:text-inverse-fg"
+					class="group relative isolate flex h-full min-h-42 flex-col gap-6 overflow-hidden p-7 text-fg no-underline transition-colors hover:text-inverse-fg {work.image
+						? ''
+						: 'hover:bg-inverse'}"
 				>
+					{#if work.image}
+						<!-- Decorative background: grayscale image under a veil (see .work-veil in app.css) -->
+						<img
+							src={work.image.url}
+							alt=""
+							loading="lazy"
+							class="absolute inset-0 -z-20 size-full object-cover grayscale transition-transform duration-500 group-hover:scale-[1.04]"
+						/>
+						<span aria-hidden="true" class="work-veil absolute inset-0 -z-10"></span>
+					{/if}
 					<span class="flex items-start justify-between gap-3">
 						<span class="font-mono text-[13px]">{pad(i)}</span>
 						<ArrowUpRight />
@@ -50,6 +65,16 @@
 						<span class="text-sm text-fg-subtle group-hover:text-inverse-subtle">{work.domain}</span>
 					</span>
 				</a>
+				{#if signedIn}
+					<ImageEditor
+						target="project"
+						id={work.projectId}
+						hasImage={work.image !== null}
+						variant="overlay"
+						context={work.name}
+						class="absolute right-3 bottom-3 z-10"
+					/>
+				{/if}
 			</li>
 		{/each}
 	</ul>
@@ -73,14 +98,24 @@
 				class="m-0 grid list-none grid-cols-[repeat(auto-fill,minmax(320px,1fr))] border-t border-l border-t-border-strong border-l-border p-0"
 			>
 				{#each personalWorks as work, i (work.name)}
-					<li class="border-r border-b border-border">
+					<li class="relative border-r border-b border-border">
+						<!-- Only linked cards react to hover (group) -->
 						<svelte:element
 							this={work.url ? 'a' : 'div'}
 							href={work.url ?? undefined}
-							class="group flex h-full min-h-56 flex-col gap-6 bg-surface p-7 text-fg no-underline transition-colors {work.url
-								? 'hover:bg-inverse hover:text-inverse-fg'
+							class="relative isolate flex h-full min-h-56 flex-col gap-6 overflow-hidden bg-surface p-7 text-fg no-underline transition-colors [--veil-color:var(--surface)] {work.url
+								? `group hover:text-inverse-fg ${work.image ? '' : 'hover:bg-inverse'}`
 								: ''}"
 						>
+							{#if work.image}
+								<img
+									src={work.image.url}
+									alt=""
+									loading="lazy"
+									class="absolute inset-0 -z-20 size-full object-cover grayscale transition-transform duration-500 group-hover:scale-[1.04]"
+								/>
+								<span aria-hidden="true" class="work-veil absolute inset-0 -z-10"></span>
+							{/if}
 							<span class="flex items-start justify-between gap-3">
 								<span class="font-mono text-[13px]">{pad(i)}</span>
 								{#if work.url}<ArrowUpRight />{/if}
@@ -115,6 +150,16 @@
 								{/if}
 							</span>
 						</svelte:element>
+						{#if signedIn}
+							<ImageEditor
+								target="project"
+								id={work.projectId}
+								hasImage={work.image !== null}
+								variant="overlay"
+								context={work.name}
+								class="absolute right-3 bottom-3 z-10"
+							/>
+						{/if}
 					</li>
 				{/each}
 			</ul>

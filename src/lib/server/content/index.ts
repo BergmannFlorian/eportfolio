@@ -14,11 +14,12 @@ import type {
 	ApiProject,
 	ApiSkills
 } from '#lib/api/types.js';
-import type { HomeContent, PersonalProject, SiteContact } from '#lib/content/types.js';
+import type { HomeContent, PersonalProject, SiteContact, SiteImage } from '#lib/content/types.js';
 import { SKILL_CATEGORIES, type RatedSkills, type SkillCategoryCode } from '#lib/cv/skills.js';
 import type { Formation, Job, Project as CvProject, PublicCV, SkillCatalog, SkillRefs } from '#lib/cv/types.js';
 import { m } from '#lib/paraglide/messages.js';
 import type { Locale } from '#lib/paraglide/runtime.js';
+import { mediaUrl } from '#lib/server/media/storage.js';
 import { loadPortfolio, type Experience, type Portfolio, type ProjectKind } from './portfolio.js';
 import { rateSkills, type RatableSkill } from './skills.js';
 
@@ -91,6 +92,12 @@ function rateAllSkills(portfolio: Portfolio, now = new Date()): RatedSkills {
 			return end ? [{ end, skillIds: project.skillIds, personal: true }] : [];
 		});
 	return rateSkills([...experiences, ...projects], skills, now);
+}
+
+/** Uploaded image with its description, or null when there is none. */
+function siteImage(file: string | null, alt: string): SiteImage | null {
+	const url = mediaUrl(file);
+	return url ? { url, alt } : null;
 }
 
 function projectKindLabels(locale: Locale): Record<ProjectKind, string> {
@@ -189,6 +196,7 @@ function toLegacyCV(portfolio: Portfolio): { cv: PublicCV; skills: SkillCatalog;
 				link: project.url,
 				linkLabel: project.url ? displayUrl(project.url) : null
 			})),
+		portrait: siteImage(person.photoFile, person.photoAlt),
 		certificates: portfolio.certificates.map((certificate) => ({
 			title: certificate.title,
 			date: toSwissDate(certificate.issuedOn),
@@ -218,6 +226,7 @@ export async function getProfile(locale: Locale): Promise<ApiProfile> {
 		bio: person.bio,
 		about: person.about,
 		title: person.cvTitle,
+		photo: siteImage(person.photoFile, person.photoAlt),
 		socials: portfolio.socials,
 		facts: portfolio.facts
 			.filter((fact) => fact.onSite)
@@ -242,6 +251,7 @@ export async function getExperiences(locale: Locale, kind?: 'job' | 'education')
 			title: experience.title,
 			degree: experience.degree,
 			organization: experience.organization,
+			organizationLogo: mediaUrl(experience.organizationLogo),
 			start: experience.start,
 			end: experience.end,
 			tasks: experience.tasks,
@@ -261,7 +271,8 @@ export async function getProjects(locale: Locale, featuredOnly = false): Promise
 			id: slug(project.name),
 			name: project.name,
 			url: project.url,
-			image: project.image,
+			image: mediaUrl(project.imageFile),
+			imageAlt: project.imageFile ? project.imageAlt : null,
 			featured: project.featured,
 			position: project.position,
 			experienceId: project.experienceId === null ? null : (experienceIds.get(project.experienceId) ?? null),
@@ -327,6 +338,8 @@ export async function getPersonalProjects(locale: Locale): Promise<PersonalProje
 
 			return {
 				id: slug(project.name),
+				projectId: project.id,
+				image: siteImage(project.imageFile, project.imageAlt),
 				kind: project.kind,
 				kindLabel,
 				name: project.name,
@@ -408,11 +421,14 @@ export async function getHomeContent(locale: Locale): Promise<HomeContent> {
 		bio: person.bio,
 		about: person.about,
 		email: person.email,
+		portrait: siteImage(person.photoFile, person.photoAlt),
 		stack: portfolio.skills.filter((skill) => skill.inStack).map((skill) => skill.name),
 		works: portfolio.projects
 			.filter((project) => project.featured && project.experienceId !== null && project.url)
 			.map((project) => ({
+				projectId: project.id,
 				name: project.name,
+				image: siteImage(project.imageFile, project.imageAlt),
 				domain: hostname(project.url!),
 				url: project.url!,
 				skills: project.skills
@@ -420,7 +436,9 @@ export async function getHomeContent(locale: Locale): Promise<HomeContent> {
 		personalWorks: portfolio.projects
 			.filter((project) => project.featured && project.experienceId === null)
 			.map((project) => ({
+				projectId: project.id,
 				name: project.name,
+				image: siteImage(project.imageFile, project.imageAlt),
 				description: project.tasks.join(' '),
 				skills: project.skills,
 				url: project.url,
@@ -440,7 +458,9 @@ export async function getHomeContent(locale: Locale): Promise<HomeContent> {
 			.map((experience) => ({
 				date: periodLabel(experience, locale),
 				role: experience.title,
-				org: experience.organization ?? ''
+				org: experience.organization ?? '',
+				organizationId: experience.organizationId,
+				logo: mediaUrl(experience.organizationLogo)
 			})),
 		facts: [
 			...ageFact,

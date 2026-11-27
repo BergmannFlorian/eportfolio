@@ -17,6 +17,9 @@ export interface Portfolio {
 		city: string | null;
 		age: number | null;
 		photoUrl: string | null;
+		/** Uploaded portrait (file name in UPLOADS_DIR) and its description */
+		photoFile: string | null;
+		photoAlt: string;
 		headline: string;
 		bio: string;
 		about: string;
@@ -39,6 +42,9 @@ export interface Experience {
 	kind: 'job' | 'education' | 'other';
 	category: string;
 	organization: string | null;
+	organizationId: number | null;
+	/** Uploaded logo of the organization (file name in UPLOADS_DIR) */
+	organizationLogo: string | null;
 	start: string;
 	end: string | null;
 	onSite: boolean;
@@ -59,6 +65,9 @@ export interface Project {
 	name: string;
 	url: string | null;
 	image: string | null;
+	/** Uploaded image (file name in UPLOADS_DIR) and its description */
+	imageFile: string | null;
+	imageAlt: string;
 	featured: boolean;
 	kind: ProjectKind | null;
 	year: number | null;
@@ -95,8 +104,8 @@ async function fetchPortfolio(locale: Locale): Promise<Portfolio> {
 	const [people, socials, facts, languages, hobbies, certificates, categories, skills] =
 		await Promise.all([
 			query<Record<string, string | null>>(
-				`SELECT p.id, p.name, p.email, p.postal_code, p.city, p.birthdate, p.photo_url,
-					${tr('headline')}, ${tr('bio')}, ${tr('about')}, ${tr('cv_title')}
+				`SELECT p.id, p.name, p.email, p.postal_code, p.city, p.birthdate, p.photo_url, p.photo_file,
+					${tr('headline')}, ${tr('bio')}, ${tr('about')}, ${tr('cv_title')}, ${tr('photo_alt')}
 				FROM person p
 				LEFT JOIN person_i18n t ON t.person_id = p.id AND t.locale = ?
 				LEFT JOIN person_i18n b ON b.person_id = p.id AND b.locale = ?
@@ -155,6 +164,8 @@ async function fetchPortfolio(locale: Locale): Promise<Portfolio> {
 			kind: Experience['kind'];
 			category: string;
 			organization: string | null;
+			organization_id: number | null;
+			logo_file: string | null;
 			start_date: string;
 			end_date: string | null;
 			on_site: number;
@@ -162,7 +173,7 @@ async function fetchPortfolio(locale: Locale): Promise<Portfolio> {
 			base_title: string;
 			degree: string | null;
 		}>(
-			`SELECT e.id, e.kind, e.category, o.name AS organization, e.start_date, e.end_date, e.on_site,
+			`SELECT e.id, e.kind, e.category, o.name AS organization, e.organization_id, o.logo_file, e.start_date, e.end_date, e.on_site,
 				${tr('title')}, b.title AS base_title, ${tr('degree')}
 			FROM experience e
 			LEFT JOIN organization o ON o.id = e.organization_id
@@ -190,6 +201,8 @@ async function fetchPortfolio(locale: Locale): Promise<Portfolio> {
 			name: string;
 			url: string | null;
 			image: string | null;
+			image_file: string | null;
+			image_alt: string | null;
 			featured: number;
 			kind: ProjectKind | null;
 			year: number | null;
@@ -198,8 +211,13 @@ async function fetchPortfolio(locale: Locale): Promise<Portfolio> {
 			snippet: string | null;
 			position: number;
 		}>(
-			`SELECT id, experience_id, name, url, image, featured, kind, year, status, hosting, snippet, position
-			FROM project ORDER BY position, id`
+			`SELECT p.id, p.experience_id, p.name, p.url, p.image, p.image_file, ${tr('image_alt')},
+				p.featured, p.kind, p.year, p.status, p.hosting, p.snippet, p.position
+			FROM project p
+			LEFT JOIN project_i18n t ON t.project_id = p.id AND t.locale = ?
+			LEFT JOIN project_i18n b ON b.project_id = p.id AND b.locale = ?
+			ORDER BY p.position, p.id`,
+			l
 		),
 		query<{ project_id: number; kind: 'task' | 'detail'; text: string }>(
 			`SELECT i.project_id, i.kind, ${tr('text')}
@@ -225,6 +243,8 @@ async function fetchPortfolio(locale: Locale): Promise<Portfolio> {
 		name: p.name,
 		url: p.url,
 		image: p.image,
+		imageFile: p.image_file,
+		imageAlt: p.image_alt ?? '',
 		featured: bool(p.featured),
 		kind: p.kind,
 		year: p.year,
@@ -247,6 +267,8 @@ async function fetchPortfolio(locale: Locale): Promise<Portfolio> {
 			city: person.city,
 			age: person.birthdate ? ageFromIso(person.birthdate) : null,
 			photoUrl: person.photo_url,
+			photoFile: person.photo_file,
+			photoAlt: person.photo_alt ?? '',
 			headline: person.headline ?? '',
 			bio: person.bio ?? '',
 			about: person.about ?? '',
@@ -281,6 +303,8 @@ async function fetchPortfolio(locale: Locale): Promise<Portfolio> {
 			kind: e.kind,
 			category: e.category,
 			organization: e.organization,
+			organizationId: e.organization_id,
+			organizationLogo: e.logo_file,
 			start: e.start_date,
 			end: e.end_date,
 			onSite: bool(e.on_site),

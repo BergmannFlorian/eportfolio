@@ -38,6 +38,11 @@
 }
 
 @layer base {
+	:root {
+		/* Opacity of the veil over the home works card images (.work-veil) */
+		--work-veil-opacity: 90%;
+	}
+
 	html {
 		scroll-behavior: smooth;
 		scroll-padding-top: 1.5rem;
@@ -87,5 +92,17 @@
 
 	.btn-outline {
 		@apply border-[1.5px] border-border-strong text-fg hover:bg-inverse hover:text-inverse-fg;
+	}
+
+	/* Home works cards with an image: veil over the grayscale picture so the text stays readable.
+	   Page background color, then the inverse color on hover (like cards without image). */
+	/* The card color shows through: --veil-color, page background by default */
+	.work-veil {
+		background-color: color-mix(in oklab, var(--veil-color, var(--bg)) var(--work-veil-opacity), transparent);
+		transition: background-color 0.2s;
+	}
+
+	.group:hover .work-veil {
+		background-color: color-mix(in oklab, var(--inverse) var(--work-veil-opacity), transparent);
 	}
 }

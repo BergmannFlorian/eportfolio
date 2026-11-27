@@ -123,6 +123,18 @@ The script generates the 2FA key, shows it as a QR code to scan, checks a code f
 
 The tables come from [`db/migrations/2026-11-27-admin-auth.sql`](db/migrations/2026-11-27-admin-auth.sql) on an existing database (already in `db/schema.sql`).
 
+### Images
+
+Signed in, the owner edits images directly on the pages: the portrait (home page and CV), project images (home works and personal projects cards, `/projets`) and organization logos (Journey section). The CV only shows the portrait.
+
+- **Upload**: `ImageEditor.svelte` crops and resizes the picture in the browser and encodes it as WebP (PNG/JPEG when the browser cannot encode WebP). Formats: portrait 4:5 (960×1200 max), project 16:10 (1600×1000 max), logo uncropped (256 px max, SVG kept as is). It posts to `POST /admin/media` (`src/routes/admin/media/`), behind the admin session.
+- **Storage**: files in `UPLOADS_DIR` (`./uploads` locally, git-ignored; `REMOTE_PATH/uploads` in production, outside `app/`, so deployments keep them), under random names. The database stores the file name (`person.photo_file`, `project.image_file`, `organization.logo_file`) and the descriptions (`person_i18n.photo_alt`, `project_i18n.image_alt`). Code: [`src/lib/server/media/`](src/lib/server/media/).
+- **Library**: the dialog can also reuse a file already uploaded (`GET /admin/media/library` lists every file with the slots showing it). Replaced or removed images stay in the library; only unused files can be deleted from there (`DELETE /admin/media/library?file=…`, 409 when in use).
+- **Serving**: `GET /media/<file>` with `Cache-Control: immutable` (a replaced image gets a new name) and a CSP that sandboxes SVG files. The server checks the actual content (WebP, PNG, JPEG, SVG without scripts) and accepts 3 MB at most; `deploy/launcher.js` raises adapter-node's `BODY_SIZE_LIMIT` to 4M.
+- **Works cards** (client and personal): the image is a grayscale background under a veil of the card color; the veil opacity is `--work-veil-opacity` (90%) in `src/app.css`.
+
+Migration: [`db/migrations/2026-11-27-images.sql`](db/migrations/2026-11-27-images.sql). The write account needs `UPDATE` on `person`, `project`, `organization` and `INSERT`/`UPDATE` on `person_i18n` and `project_i18n`.
+
 ### Database accounts
 
 The site uses two MariaDB accounts ([`src/lib/server/db/`](src/lib/server/db/)):
@@ -139,9 +151,9 @@ Public, read-only JSON API served by the same Node server, under `/api/v1`. All 
 | Endpoint | Query | Returns |
 | --- | --- | --- |
 | `/api/v1` | | API index: version, locales, endpoint list |
-| `/api/v1/profile` | | Contact, age, bio, about, social links, facts, spoken languages, hobbies |
-| `/api/v1/experiences` | `kind=job\|education` | Jobs and education with ISO dates, tasks, skills and linked project ids |
-| `/api/v1/projects` | `featured=true\|false` | Projects sorted by `position` (display order, 1 = first), with tasks, details, technologies, `kind` (`website`, `script`, `app`), `year`, `status`, `hosting` and `snippet` (`featured` = shown on the home page; personal projects have `experienceId: null`) |
+| `/api/v1/profile` | | Contact, age, bio, about, `photo` (uploaded portrait `{ url, alt }` or null), social links, facts, spoken languages, hobbies |
+| `/api/v1/experiences` | `kind=job\|education` | Jobs and education with ISO dates, tasks, skills, linked project ids and `organizationLogo` |
+| `/api/v1/projects` | `featured=true\|false` | Projects sorted by `position` (display order, 1 = first), with tasks, details, technologies, `kind` (`website`, `script`, `app`), `year`, `status`, `hosting`, `snippet`, `image` and `imageAlt` (`featured` = shown on the home page; personal projects have `experienceId: null`) |
 | `/api/v1/skills` | | Skills by category with a recency level (`top` < 2 years, `mid`, `bottom` > 5 years; computed from experiences and personal projects, `personalOnly` when only used in personal projects) and the "Stack" list |
 | `/api/v1/certificates` | | Certifications with ISO dates |
 | `/api/v1/cv` | | Full public CV in one call (same data as the `/cv` page) |
@@ -151,6 +163,8 @@ Public, read-only JSON API served by the same Node server, under `/api/v1`. All 
 **Errors** — JSON body `{ "error": { "status": 400, "message": "…" } }`: `400` for an unsupported `lang` or filter value, `404` for an unknown path.
 
 **Headers** — `Cache-Control: public, max-age=300`, `Access-Control-Allow-Origin: *`, `Vary: Accept-Language`.
+
+**Images** — `photo.url`, `organizationLogo` and `image` are paths relative to the site (`/media/<file>`, e.g. `https://bergmann-florian.ch/media/…`), or `null`. Files never change under a given name.
 
 **Privacy** — private CV fields (address, birthdate, references) are never returned; the age is computed server-side.
 

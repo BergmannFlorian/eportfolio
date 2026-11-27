@@ -39,7 +39,11 @@ export default defineConfig(({ mode, command }) => {
 					}
 				],
 				// The JSON API picks its locale from ?lang / Accept-Language, not from the URL
-				routeStrategies: [{ match: '/api/:path(.*)?', exclude: true }]
+				routeStrategies: [
+					{ match: '/api/:path(.*)?', exclude: true },
+					// Uploaded images are not localized either
+					{ match: '/media/:path(.*)?', exclude: true }
+				]
 			}),
 			sveltekit({
 				compilerOptions: {
@@ -60,6 +64,8 @@ export default defineConfig(({ mode, command }) => {
 			// Recreates the test database (db/schema.sql + db/test/fixtures.sql) once per run
 			globalSetup: ['./db/test/setup.ts'],
 			include: ['src/**/*.test.ts'],
+			// All files share one database and some write to it: run them one at a time
+			fileParallelism: false,
 			testTimeout: 20_000
 		}
 	};

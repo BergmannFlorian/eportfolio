@@ -28,6 +28,8 @@ export interface ApiProfile {
 	bio: string;
 	about: string;
 	title: string;
+	/** Uploaded portrait, path relative to the site (/media/…), or null */
+	photo: { url: string; alt: string } | null;
 	socials: { network: string; url: string }[];
 	facts: { label: string; value: string }[];
 	languages: { name: string; level: string; percent: number }[];
@@ -41,6 +43,8 @@ export interface ApiExperience {
 	title: string;
 	degree: string | null;
 	organization: string | null;
+	/** Uploaded logo of the organization, path relative to the site (/media/…), or null */
+	organizationLogo: string | null;
 	start: string;
 	/** null while ongoing */
 	end: string | null;
@@ -54,7 +58,10 @@ export interface ApiProject {
 	id: string;
 	name: string;
 	url: string | null;
+	/** Uploaded image, path relative to the site (/media/…), or null */
 	image: string | null;
+	/** Description of the image (null without image) */
+	imageAlt: string | null;
 	featured: boolean;
 	/** Display order (1 = first); projects are returned sorted by it */
 	position: number;

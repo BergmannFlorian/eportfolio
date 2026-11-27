@@ -34,6 +34,7 @@ CREATE TABLE IF NOT EXISTS person (
 	city        VARCHAR(255) NULL,
 	birthdate   DATE         NULL,                  -- PRIVATE (only the computed age is public)
 	photo_url   VARCHAR(500) NULL,
+	photo_file  VARCHAR(64)  NULL,                  -- uploaded portrait (UPLOADS_DIR), served at /media/<file>
 	PRIMARY KEY (id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
@@ -44,6 +45,7 @@ CREATE TABLE IF NOT EXISTS person_i18n (
 	bio         TEXT         NULL,                  -- hero lead paragraph
 	about       TEXT         NULL,                  -- "About" section
 	cv_title    VARCHAR(255) NULL,                  -- CV heading (may contain line breaks)
+	photo_alt   VARCHAR(255) NULL,                  -- portrait description
 	PRIMARY KEY (person_id, locale),
 	CONSTRAINT fk_person_i18n_person FOREIGN KEY (person_id) REFERENCES person (id) ON DELETE CASCADE,
 	CONSTRAINT fk_person_i18n_locale FOREIGN KEY (locale) REFERENCES locale (code) ON DELETE RESTRICT
@@ -171,6 +173,7 @@ CREATE TABLE IF NOT EXISTS organization (
 	id          INT UNSIGNED NOT NULL AUTO_INCREMENT,
 	name        VARCHAR(255) NOT NULL,              -- 'IOMEDIA SA', 'CPNV'
 	website     VARCHAR(500) NULL,
+	logo_file   VARCHAR(64)  NULL,                  -- uploaded logo, served at /media/<file>
 	PRIMARY KEY (id),
 	UNIQUE KEY uq_organization_name (name)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -225,7 +228,8 @@ CREATE TABLE IF NOT EXISTS project (
 	experience_id INT UNSIGNED NULL,                -- NULL for a personal project
 	name          VARCHAR(255) NOT NULL,            -- 'Breitling'
 	url           VARCHAR(500) NULL,
-	image         VARCHAR(255) NULL,
+	image         VARCHAR(255) NULL,                -- legacy key, unused
+	image_file    VARCHAR(64)  NULL,                -- uploaded image, served at /media/<file>
 	featured      BOOLEAN      NOT NULL DEFAULT FALSE, -- home page "Work" grid
 	-- Details shown on the personal projects page (all optional)
 	kind          ENUM('website', 'script', 'app') NULL,
@@ -238,6 +242,15 @@ CREATE TABLE IF NOT EXISTS project (
 	KEY idx_project_experience (experience_id, position),
 	KEY idx_project_featured (featured, position),
 	CONSTRAINT fk_project_experience FOREIGN KEY (experience_id) REFERENCES experience (id) ON DELETE SET NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE IF NOT EXISTS project_i18n (
+	project_id INT UNSIGNED NOT NULL,
+	locale     VARCHAR(5)   NOT NULL,
+	image_alt  VARCHAR(255) NULL,
+	PRIMARY KEY (project_id, locale),
+	CONSTRAINT fk_project_i18n_project FOREIGN KEY (project_id) REFERENCES project (id) ON DELETE CASCADE,
+	CONSTRAINT fk_project_i18n_locale  FOREIGN KEY (locale) REFERENCES locale (code) ON DELETE RESTRICT
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- Project bullet points: `task` = what I did, `detail` = context or tech used.

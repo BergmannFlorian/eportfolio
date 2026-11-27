@@ -1,7 +1,17 @@
 /** Home page data, loaded from the database by src/routes/(site)/+page.server.ts. */
 
+/** An uploaded image (served at /media/…) with its description. */
+export interface SiteImage {
+	url: string;
+	alt: string;
+}
+
 export interface HomeWork {
+	/** Database id, used by the image editor when signed in */
+	projectId: number;
 	name: string;
+	/** Card background (grayscale, under a veil) */
+	image: SiteImage | null;
 	domain: string;
 	url: string;
 	skills: string[];
@@ -9,7 +19,11 @@ export interface HomeWork {
 
 /** Personal project (no experience), shown as a detailed card. */
 export interface HomePersonalWork {
+	/** Database id, used by the image editor when signed in */
+	projectId: number;
 	name: string;
+	/** Card background (grayscale, under a veil), as for client works */
+	image: SiteImage | null;
 	/** Project tasks, joined */
 	description: string;
 	skills: string[];
@@ -26,6 +40,10 @@ export interface HomeJob {
 	date: string;
 	role: string;
 	org: string;
+	/** Database id of the organization (null for e.g. a language stay) */
+	organizationId: number | null;
+	/** Uploaded logo URL */
+	logo: string | null;
 }
 
 export interface HomeFact {
@@ -50,6 +68,8 @@ export interface HomeContent {
 	bio: string;
 	about: string;
 	email: string;
+	/** Uploaded portrait, or null for the default one */
+	portrait: SiteImage | null;
 	stack: string[];
 	works: HomeWork[];
 	personalWorks: HomePersonalWork[];
@@ -64,6 +84,9 @@ export interface HomeContent {
 export interface PersonalProject {
 	/** Stable identifier (same as the API project id) */
 	id: string;
+	/** Database id, used by the image editor when signed in */
+	projectId: number;
+	image: SiteImage | null;
 	kind: 'website' | 'script' | 'app' | null;
 	kindLabel: string | null;
 	name: string;

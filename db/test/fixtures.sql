@@ -114,3 +114,11 @@ INSERT INTO project_item_i18n (project_item_id, locale, text) VALUES
 	(5, 'fr', 'Point clé'), (5, 'en', 'Highlight');
 
 INSERT INTO project_skill (project_id, skill_id) VALUES (1, 4), (3, 4), (3, 1);
+
+-- Uploaded images (file names only: the tests never read the files)
+UPDATE person SET photo_file = '0123456789abcdef0123456789abcdef.webp' WHERE id = 1;
+UPDATE person_i18n SET photo_alt = 'Portrait de Jane' WHERE person_id = 1 AND locale = 'fr';
+UPDATE project SET image_file = 'abcdefabcdefabcdefabcdefabcdefab.webp' WHERE id = 1;
+INSERT INTO project_i18n (project_id, locale, image_alt) VALUES
+	(1, 'fr', 'Boutique Acme'), (1, 'en', 'Acme shop');
+UPDATE organization SET logo_file = 'fedcba9876543210fedcba9876543210.svg' WHERE id = 1;

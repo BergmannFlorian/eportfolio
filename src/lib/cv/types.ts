@@ -117,4 +117,6 @@ export interface PublicCV extends Omit<CV, 'infos'> {
 		contact: { name: string; email: string; city: string; age: number };
 	};
 	personalProjects: PersonalProject[];
+	/** Uploaded portrait (/media/…), or null for the default photo */
+	portrait: { url: string; alt: string } | null;
 }
