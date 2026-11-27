@@ -4,7 +4,7 @@ import { afterAll, describe, expect, it } from 'vitest';
 import type { EditSection, EditSections } from '#lib/content/edit.js';
 import { clearContentCache, getCV, getHomeContent } from '#lib/server/content/index.js';
 import { resetPool, writeQuery } from '#lib/server/db/index.js';
-import { EditError, parseSection, readSection, writeSection } from './profile.js';
+import { EditError, parseSection, readSection, writeSection } from './index.js';
 
 afterAll(async () => {
 	clearContentCache();

@@ -125,7 +125,9 @@ The tables come from [`db/migrations/2026-11-27-admin-auth.sql`](db/migrations/2
 
 ### Content editing
 
-Signed in, each editable block of the home page gets an "Edit" button that opens a dialog with the French and English fields side by side. So far: header (email, eyebrow, introduction), "About" text, facts, spoken languages and hobbies; the same data feeds the CV and the API.
+Signed in, each editable block of the home page gets an "Edit" button that opens a dialog with the French and English fields side by side. So far: header (email, eyebrow, introduction), "About" text, facts, spoken languages, hobbies and projects; the same data feeds the CV and the API.
+
+- **Projects**: each card (home page, `/projets`) edits its project: name, link, experience (none for a personal project), home page selection, description, technologies and the details of the Projects page. "Add a project" creates one at the end; "Order and selection" reorders every project (positions 1…n), selects the home page ones and deletes projects (their image stays in the library).
 
 - **Translations**: French is required; an English field left empty falls back to the French text, field by field (the `*_i18n` columns of these lists are nullable, see [`db/migrations/2026-11-27-optional-translations.sql`](db/migrations/2026-11-27-optional-translations.sql)).
 - **Lists** (facts, languages, hobbies): add, remove and reorder; saving replaces the whole list in one transaction. A language name is shared by everyone speaking it (`language_i18n`).
@@ -133,9 +135,9 @@ Signed in, each editable block of the home page gets an "Edit" button that opens
 
 ### Images
 
-Signed in, the owner edits images directly on the pages: the portrait (home page and CV), project images (home works and personal projects cards, `/projets`) and organization logos (Journey section). The CV only shows the portrait.
+Signed in, the owner edits images directly on the pages: the portrait (home page and CV) and organization logos (Journey section) through their own dialog, project images inside the project dialog (shown on the home works and personal projects cards and on `/projets`). The CV only shows the portrait.
 
-- **Upload**: `ImageEditor.svelte` crops and resizes the picture in the browser and encodes it as WebP (PNG/JPEG when the browser cannot encode WebP). Formats: portrait 4:5 (960×1200 max), project 16:10 (1600×1000 max), logo uncropped (256 px max, SVG kept as is). It posts to `POST /admin/media` (`src/routes/admin/media/`), behind the admin session.
+- **Upload**: `ImagePicker.svelte` (used by `ImageEditor.svelte` and the project editor) crops and resizes the picture in the browser and encodes it as WebP (PNG/JPEG when the browser cannot encode WebP). Formats: portrait 4:5 (960×1200 max), project 16:10 (1600×1000 max), logo uncropped (256 px max, SVG kept as is). `src/lib/media/send-image.ts` posts it to `POST /admin/media` (`src/routes/admin/media/`), behind the admin session; the project dialog does so right after saving the project (a new project gets its id first).
 - **Storage**: files in `UPLOADS_DIR` (`./uploads` locally, git-ignored; `REMOTE_PATH/uploads` in production, outside `app/`, so deployments keep them), under random names. The database stores the file name (`person.photo_file`, `project.image_file`, `organization.logo_file`) and the descriptions (`person_i18n.photo_alt`, `project_i18n.image_alt`). Code: [`src/lib/server/media/`](src/lib/server/media/).
 - **Library**: the dialog can also reuse a file already uploaded (`GET /admin/media/library` lists every file with the slots showing it). Replaced or removed images stay in the library; only unused files can be deleted from there (`DELETE /admin/media/library?file=…`, 409 when in use).
 - **Serving**: `GET /media/<file>` with `Cache-Control: immutable` (a replaced image gets a new name) and a CSP that sandboxes SVG files. The server checks the actual content (WebP, PNG, JPEG, SVG without scripts) and accepts 3 MB at most; `deploy/launcher.js` raises adapter-node's `BODY_SIZE_LIMIT` to 4M.

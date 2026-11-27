@@ -12,25 +12,48 @@
 	 */
 	interface Props {
 		section: S;
+		/** Row of the section (project id); none for a new project */
+		id?: number | null;
 		title: string;
 		context?: string;
+		/** Visible text of the button, "Edit" by default */
+		triggerLabel?: string;
+		icon?: 'edit' | 'add' | 'order';
+		/** Shows the "empty translation falls back to French" note */
+		translated?: boolean;
 		/** Note shown above the fields */
 		hint?: string;
 		/** Content being edited, null until loaded */
 		data: EditSections[S] | null;
 		/** Extra check before saving, returns an error message */
 		validate?: (data: EditSections[S]) => string | null;
+		/** Called once the content is loaded, to set up state kept outside `data` */
+		onload?: (data: EditSections[S]) => void;
+		/** Changes kept outside `data` (asks before closing) */
+		isDirty?: () => boolean;
+		/** Runs after the section is saved, with the row id (a created project's id) */
+		afterSave?: (id: number | null) => Promise<void>;
+		/** Message when afterSave fails (the section itself is saved) */
+		afterSaveError?: string;
 		class?: string;
 		children: Snippet;
 	}
 
 	let {
 		section,
+		id = null,
 		title,
 		context = m.edit_context_home(),
+		triggerLabel,
+		icon = 'edit',
+		translated = true,
 		hint,
 		data = $bindable(),
 		validate,
+		onload,
+		isDirty,
+		afterSave,
+		afterSaveError,
 		class: className = '',
 		children
 	}: Props = $props();
@@ -41,16 +64,28 @@
 	let busy = $state(false);
 	let error = $state<string | null>(null);
 	let snapshot = '';
+	// Row being edited: becomes the created id once a new project is saved, so saving
+	// again (e.g. after a failed image upload) updates it instead of creating another
+	let rowId = $state<number | null>(null);
+	const endpoint = $derived(`/admin/content/${section}${rowId === null ? '' : `?id=${rowId}`}`);
+	const icons = {
+		edit: 'M4 20h4L19 9l-4-4L4 16v4z M13 7l4 4',
+		add: 'M12 5v14M5 12h14',
+		order: 'M8 4v16M4 8l4-4 4 4M16 20V4M12 16l4 4 4-4'
+	};
 
 	async function open() {
 		error = null;
 		data = null;
+		rowId = id;
 		loading = true;
 		dialog.showModal();
 		try {
-			const response = await fetch(`/admin/content/${section}`);
+			const response = await fetch(endpoint);
 			if (!response.ok) throw new Error(String(response.status));
-			data = await response.json();
+			const loaded: EditSections[S] = await response.json();
+			onload?.(loaded);
+			data = loaded;
 			snapshot = JSON.stringify(data);
 		} catch {
 			error = m.edit_error_load();
@@ -60,7 +95,7 @@
 	}
 
 	function cancel() {
-		const dirty = data !== null && JSON.stringify(data) !== snapshot;
+		const dirty = data !== null && (JSON.stringify(data) !== snapshot || isDirty?.() === true);
 		if (dirty && !confirm(m.edit_discard())) return;
 		dialog.close();
 	}
@@ -72,18 +107,28 @@
 		if (error) return;
 		busy = true;
 		try {
-			const response = await fetch(`/admin/content/${section}`, {
+			const response = await fetch(endpoint, {
 				method: 'POST',
 				headers: { 'Content-Type': 'application/json' },
 				body: JSON.stringify(data)
 			});
 			if (!response.ok) throw new Error(String(response.status));
-			dialog.close();
-			await invalidateAll();
+			const saved: { id: number | null } = await response.json();
+			rowId = saved.id ?? rowId;
+			snapshot = JSON.stringify(data);
 		} catch {
 			error = m.edit_error_save();
+			busy = false;
+			return;
+		}
+		try {
+			await afterSave?.(rowId);
+			dialog.close();
+		} catch {
+			error = afterSaveError ?? m.edit_error_save();
 		} finally {
 			busy = false;
+			await invalidateAll();
 		}
 	}
 </script>
@@ -91,11 +136,11 @@
 <button
 	type="button"
 	onclick={open}
-	aria-label={m.edit_button_label({ section: title })}
+	aria-label={triggerLabel ? undefined : m.edit_button_label({ section: title })}
 	class="inline-flex min-h-10 shrink-0 cursor-pointer items-center gap-2 border border-border-strong bg-bg px-3.5 text-sm font-medium text-fg-strong normal-case tracking-normal hover:border-accent hover:bg-accent hover:text-accent-fg {className}"
 >
-	<svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20h4L19 9l-4-4L4 16v4z M13 7l4 4" /></svg>
-	{m.edit_button()}
+	<svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d={icons[icon]} /></svg>
+	{triggerLabel ?? m.edit_button()}
 </button>
 
 <dialog
@@ -124,10 +169,12 @@
 		</div>
 
 		<div class="flex min-h-0 flex-1 flex-col gap-6 overflow-y-auto px-7 py-6">
-			<p class="m-0 text-sm text-fg-subtle">
-				{#if hint}{hint}{/if}
-				{m.edit_fallback_hint()}
-			</p>
+			{#if hint || translated}
+				<p class="m-0 text-sm text-fg-subtle">
+					{#if hint}{hint}{/if}
+					{#if translated}{m.edit_fallback_hint()}{/if}
+				</p>
+			{/if}
 			{#if loading}
 				<p class="m-0 py-10 text-center text-fg-muted">{m.edit_loading()}</p>
 			{:else if data}

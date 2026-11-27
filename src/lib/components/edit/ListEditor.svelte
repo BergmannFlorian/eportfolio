@@ -11,7 +11,8 @@
 		items: T[];
 		/** Short name of an item, shown on its card and in the button labels */
 		name: (item: T) => string;
-		create: () => T;
+		/** New item of the "Add" button (no button without it) */
+		create?: () => T;
 		item: Snippet<[number]>;
 	}
 
@@ -23,6 +24,7 @@
 	}
 
 	async function add() {
+		if (!create) return;
 		items.push(create());
 		await tick();
 		list.lastElementChild?.querySelector<HTMLElement>('input, textarea, select')?.focus();
@@ -60,8 +62,10 @@
 			</li>
 		{/each}
 	</ol>
-	<button type="button" onclick={add} class="btn-outline min-h-11 cursor-pointer self-start px-5 text-[15px]">
-		<svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14" /></svg>
-		{m.edit_add()}
-	</button>
+	{#if create}
+		<button type="button" onclick={add} class="btn-outline min-h-11 cursor-pointer self-start px-5 text-[15px]">
+			<svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14" /></svg>
+			{m.edit_add()}
+		</button>
+	{/if}
 </div>
